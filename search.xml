@@ -176,40 +176,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Android 音量控制</title>
-    <url>/dev/200509-audioManager.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
-<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
-<li><p>设置声音模式：</p>
-<p><code>setRingerMode(int ringerMode)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整声音大小</p>
-<p><code>adjustVolume(int direction, int flags)</code>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取最大音量和当前音量</p>
-<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整音量为具体数值</p>
-<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>想丶把代码写出诗意</category>
-      </categories>
-      <tags>
-        <tag>Dev</tag>
-        <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kotlin-webSocket的基本封装</title>
     <url>/dev/190809-webSocket.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
@@ -248,6 +214,40 @@
       </tags>
   </entry>
   <entry>
+    <title>Android 音量控制</title>
+    <url>/dev/200509-audioManager.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
+<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
+<li><p>设置声音模式：</p>
+<p><code>setRingerMode(int ringerMode)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整声音大小</p>
+<p><code>adjustVolume(int direction, int flags)</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取最大音量和当前音量</p>
+<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整音量为具体数值</p>
+<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>想丶把代码写出诗意</category>
+      </categories>
+      <tags>
+        <tag>Dev</tag>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android沉浸式布局导致的键盘遮挡问题处理方案</title>
     <url>/dev/190808-virtual-Keyboard.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目——沉浸式布局<br>沉浸式方案：全屏+透明状态栏<br>问题：键盘遮挡输入框<a id="more"></a><br>解决思路：检测键盘是否弹起，根据键盘的弹起与回收，重新绘制界面<br>解决方案：AndroidBug5497Workaround</p>
@@ -261,6 +261,82 @@
       <tags>
         <tag>Dev</tag>
         <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android热补丁技术初探</title>
+    <url>/dev/190924-hotfix.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
+]]></content>
+      <categories>
+        <category>想丶把代码写出诗意</category>
+      </categories>
+      <tags>
+        <tag>Dev</tag>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Flutter踩坑日记</title>
+    <url>/dev/200512-flutter.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
+<li><p>什么是Flutter</p>
+<p>Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。<a id="more"></a></p>
+</li>
+<li><p>Flutter使用什么语言</p>
+<p>dart语言</p>
+</li>
+<li><p>Dart的特点</p>
+<p>基于 Dart 的特点：</p>
+<ul>
+<li>高效优秀的编程语言</li>
+<li>丰富强大的框架</li>
+<li>方便灵活的工具</li>
+</ul>
+<p>我们可以通过它在不同的设备上创作华丽的、高品质体验的应用</p>
+</li>
+</ol>
+<h1 id="踩坑笔记"><a href="#踩坑笔记" class="headerlink" title="踩坑笔记"></a>踩坑笔记</h1><ol>
+<li><p>Git与下载的区别</p>
+<p><a href="https://flutterchina.club/setup-windows/#%E8%8E%B7%E5%8F%96flutter-sdk">官网</a>描述，让人头大。Git下载，安全无忧。</p>
+<p>手动下载的FlutterSdk是没有灵魂的（没有 .git 文件的，需要手动生成）。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 手动生成</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br></pre></td></tr></table></figure>
+
+<p>而直接git clone到的就没有这个问题了</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Flutter Sdk</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> -b stable https://github.com/flutter/flutter.git</span></span><br></pre></td></tr></table></figure>
+
+<p>如果没有.git文件，在执行<code>flutter doctor</code>时会报错（此处没有截图）<br>执行<code>flutter doctor</code>时，大陆用户千万不要忘了配置环境变量（Windows为例 - 也可以手动添加）：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> PUB_HOSTED_URL=https://pub.flutter-io.cn</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>源自海外，长城警告</p>
+<p>git clone 完 FllutterSdk - flutter.doctor也成功了 - Android Studio Plugins也加载完毕了，一切看似美好，Flutter的世界正在向我招手，flutter run！！！</p>
+<p>1分钟：第一次加载嘛，应该要下载点东西，慢正常…<br>2分钟：第一次加载嘛，慢正常…<br>5分钟：慢挺正常的…</p>
+<p>报错…emmm…</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">//无法解决什么什么</span><br><span class="line">Could not resolve io.flutter:flutter_embedding_debug:1.0.0-540786dd51f112885a89792d678296b95e6622e5.</span><br><span class="line">//无法获取 https://storage.googleapis.com</span><br><span class="line">Could not get resource 'https://storage.googleapis.com/download.flutter.io/io/flutter/flutter_embedding_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/flutter_embedding_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.pom'</span><br></pre></td></tr></table></figure>
+
+<p>下载sdk失败？那一定是你和世界隔了一堵墙，请：科学上网、合理爬梯——好孩子千万不要学！</p>
+<p>当然，也可以用别人搭的瞭望塔看看世界。</p>
+<ul>
+<li>android/build.gradle</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">       <span class="comment">// google()</span></span><br><span class="line">       <span class="comment">// jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;<span class="comment">//一般放在allprojects就行 - 对应 storage.googleapis.com </span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>%FLUTTER_SDK_HOME%/packages/flutter_tools/gradle/flutter.gradle</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;之前在其他电脑上其实配置过一次Flutter（然后电脑送人了…），当时选择的是翻墙，一切过程走的很流畅，没啥坎坷的——我根本不觉得需要写个笔记记录。<br>&emsp;&emsp;这次在集团里想重新配置下，也不知道是不是Win10的锅（肯定不是），还是集团网络太差（不可能），也可能是命运吧总是颠沛流离…（手动滑稽）没翻墙真的是太难了！——集团翻墙会被网络安全部门警告！<br>&emsp;&emsp;玩Flutter的可能大概都是墙外生活的人，<code>maven { url &#39;http://download.flutter.io&#39; }</code>这句话真的是在度娘身上一阵猛翻才搜出来的。<br>&emsp;&emsp;如果有其他问题，欢迎评论区留言。</p>
+]]></content>
+      <categories>
+        <category>想丶把代码写出诗意</category>
+      </categories>
+      <tags>
+        <tag>Dev</tag>
+        <tag>Flutter</tag>
+        <tag>Dart</tag>
       </tags>
   </entry>
   <entry>
@@ -316,19 +392,6 @@
 <ol start="2">
 <li>我想我遇到一个大麻烦了：<code>Ilegal character &#39;.&#39; in Module name &#39;App.main&#39;</code><br>emmm…点开<a href="https://github.com/wequick/Small/issues">issues</a><br>emmm…很遗憾，朋友们，这篇文章结束了，忽然感觉自己少了好多事儿~~</li>
 </ol>
-]]></content>
-      <categories>
-        <category>想丶把代码写出诗意</category>
-      </categories>
-      <tags>
-        <tag>Dev</tag>
-        <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android热补丁技术初探</title>
-    <url>/dev/190924-hotfix.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
 ]]></content>
       <categories>
         <category>想丶把代码写出诗意</category>
@@ -457,69 +520,6 @@
       <tags>
         <tag>Dev</tag>
         <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Flutter踩坑日记</title>
-    <url>/dev/200512-flutter.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
-<li><p>什么是Flutter</p>
-<p>Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。<a id="more"></a></p>
-</li>
-<li><p>Flutter使用什么语言</p>
-<p>dart语言</p>
-</li>
-<li><p>Dart的特点</p>
-<p>基于 Dart 的特点：</p>
-<ul>
-<li>高效优秀的编程语言</li>
-<li>丰富强大的框架</li>
-<li>方便灵活的工具</li>
-</ul>
-<p>我们可以通过它在不同的设备上创作华丽的、高品质体验的应用</p>
-</li>
-</ol>
-<h1 id="踩坑笔记"><a href="#踩坑笔记" class="headerlink" title="踩坑笔记"></a>踩坑笔记</h1><ol>
-<li><p>Git与下载的区别</p>
-<p><a href="https://flutterchina.club/setup-windows/#%E8%8E%B7%E5%8F%96flutter-sdk">官网</a>描述，让人头大。Git下载，安全无忧。</p>
-<p>手动下载的FlutterSdk是没有灵魂的（没有 .git 文件的，需要手动生成）。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 手动生成</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br></pre></td></tr></table></figure>
-
-<p>而直接git clone到的就没有这个问题了</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Flutter Sdk</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> -b stable https://github.com/flutter/flutter.git</span></span><br></pre></td></tr></table></figure>
-
-<p>如果没有.git文件，在执行<code>flutter doctor</code>时会报错（此处没有截图）<br>执行<code>flutter doctor</code>时，大陆用户千万不要忘了配置环境变量（Windows为例 - 也可以手动添加）：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> PUB_HOSTED_URL=https://pub.flutter-io.cn</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>源自海外，长城警告</p>
-<p>git clone 完 FllutterSdk - flutter.doctor也成功了 - Android Studio Plugins也加载完毕了，一切看似美好，Flutter的世界正在向我招手，flutter run！！！</p>
-<p>1分钟：第一次加载嘛，应该要下载点东西，慢正常…<br>2分钟：第一次加载嘛，慢正常…<br>5分钟：慢挺正常的…</p>
-<p>报错…emmm…</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">//无法解决什么什么</span><br><span class="line">Could not resolve io.flutter:flutter_embedding_debug:1.0.0-540786dd51f112885a89792d678296b95e6622e5.</span><br><span class="line">//无法获取 https://storage.googleapis.com</span><br><span class="line">Could not get resource 'https://storage.googleapis.com/download.flutter.io/io/flutter/flutter_embedding_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/flutter_embedding_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.pom'</span><br></pre></td></tr></table></figure>
-
-<p>下载sdk失败？那一定是你和世界隔了一堵墙，请：科学上网、合理爬梯——好孩子千万不要学！</p>
-<p>当然，也可以用别人搭的瞭望塔看看世界。</p>
-<ul>
-<li>android/build.gradle</li>
-</ul>
-<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">       <span class="comment">// google()</span></span><br><span class="line">       <span class="comment">// jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;<span class="comment">//一般放在allprojects就行 - 对应 storage.googleapis.com </span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>%FLUTTER_SDK_HOME%/packages/flutter_tools/gradle/flutter.gradle</li>
-</ul>
-<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;之前在其他电脑上其实配置过一次Flutter（然后电脑送人了…），当时选择的是翻墙，一切过程走的很流畅，没啥坎坷的——我根本不觉得需要写个笔记记录。<br>&emsp;&emsp;这次在集团里想重新配置下，也不知道是不是Win10的锅（肯定不是），还是集团网络太差（不可能），也可能是命运吧总是颠沛流离…（手动滑稽）没翻墙真的是太难了！——集团翻墙会被网络安全部门警告！<br>&emsp;&emsp;玩Flutter的可能大概都是墙外生活的人，<code>maven { url &#39;http://download.flutter.io&#39; }</code>这句话真的是在度娘身上一阵猛翻才搜出来的。<br>&emsp;&emsp;如果有其他问题，欢迎评论区留言。</p>
-]]></content>
-      <categories>
-        <category>想丶把代码写出诗意</category>
-      </categories>
-      <tags>
-        <tag>Dev</tag>
-        <tag>Flutter</tag>
-        <tag>Dart</tag>
       </tags>
   </entry>
   <entry>
@@ -670,68 +670,6 @@
       <tags>
         <tag>Study</tag>
         <tag>Web</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>鹭岛游记</title>
-    <url>/travel/190508-travels-Xiamen.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="题记-——-写东西前不先骚一下怎么像样"><a href="#题记-——-写东西前不先骚一下怎么像样" class="headerlink" title="题记 —— 写东西前不先骚一下怎么像样"></a>题记 <font size=1>—— 写东西前不先骚一下怎么像样</font></h1><ul>
-<li>游玩是，和什么样的人、看什么样的风景、谈什么样的话。当人不差而话投机，于是旅途愉快。</li>
-<li>与风雨来，与风雨去。待时心潮澎湃忆往昔，见时平静泰然似昨日，去时不留，风雨相送。</li>
-<li>有朋自吴地来，自榕城至鹭岛以待，当把酒言欢叙多年未见之情。</li>
-<li>居狼外婆家而望山水，踏环岛南路以观海波</li>
-<li>轻踩细沙不胜惬意，畅聊古今不胜欢喜</li>
-<li>纵览厦大观其美，漫步芙蓉知其盛  <a id="more"></a></li>
-</ul>
-<h1 id="正文-——-想骚但是怎么也骚不动毕竟腿断了"><a href="#正文-——-想骚但是怎么也骚不动毕竟腿断了" class="headerlink" title="正文 —— 想骚但是怎么也骚不动毕竟腿断了"></a>正文 <font size=1>—— 想骚但是怎么也骚不动毕竟腿断了</font></h1><h2 id="Day1-2019-04-30"><a href="#Day1-2019-04-30" class="headerlink" title="Day1 2019.04.30"></a>Day1 2019.04.30</h2><p><strong>&emsp;天气：</strong> 雨<br><strong>&emsp;心情：</strong> 有那么点小激动</p>
-<p>&emsp;&emsp;每一个故事的开端都是一波然后一折，然后两折，然后三四五六七八九折的，这个故事也没有例外。比如放假的前一天啊，就发生了那么一点波折——<br>&emsp;&emsp;老大：小黄啊，放假有什么计划没有？<br>&emsp;&emsp;我：世界那么大，我想去看看。<br>&emsp;&emsp;老大：世界那么大，我这有个大世面要让你见见呢！<br>&emsp;&emsp;我：老大，我有约了！<br>&emsp;&emsp;老大：那真是太可惜了，我们公司将要参加今年的“数字峰会”展览，能看到马化腾、李彦宏、张一鸣等等，算了，你走吧，出门记得带上电脑！<br>&emsp;&emsp;我：行吧。  </p>
-<h2 id="Day2-2019-05-01"><a href="#Day2-2019-05-01" class="headerlink" title="Day2 2019.05.01"></a>Day2 2019.05.01</h2><p><strong>&emsp;天气：</strong> 大雨<br><strong>&emsp;心情：</strong> 极差</p>
-<p>&emsp;&emsp;今日加班，并没有见到马李张。</p>
-<h2 id="Day3-2019-05-02"><a href="#Day3-2019-05-02" class="headerlink" title="Day3 2019.05.02"></a>Day3 2019.05.02</h2><p><strong>&emsp;天气：</strong> <del>&emsp;小雨&emsp;</del>特大雨<br><strong>&emsp;心情：</strong> 懵批&gt;&gt;惬意</p>
-<p>&emsp;&emsp;——不管怎么样，故事的小黄花总算开始飘动，虽然不是从出生那年就飘着，童年的荡秋千也没荡过，但是故事好歹有了开端，一切都是美好的，除了，（望天）雨水。<br>&emsp;&emsp;——我是大黄，现在是早上六点整，虽然天是灰蒙蒙的天，但我的心还是向着阳光，我相信我的诗与远方，面朝大海春暖花开！<br>&emsp;&emsp;——现在是早上十点二十分，动车还没开始开动，而我还没吃早餐，虽然已经晚点了，但这不重要，重要的是我向着我的目的地又前进了一步。<br>&emsp;&emsp;——中午十二点半，我已经到站了，虽然诗和远方依然飘着雨，但没事，我相信等会就会雨过天晴了，我看过天气预报了，有雨。但这不重要，重要的是我在金拱门吃上了金拱门套餐，虽然我不喜欢快餐，emmm…真香！<br>&emsp;&emsp;——下午一点半，抵达狼外婆啊不，小外婆的狼不是，小红帽的狼外婆家客栈ヽ(o_ _)o，咳，总之我到了。——雨未停，朋友未至，静坐喝茶，惬意。<br>&emsp;&emsp;时间煮净了雨水，朋友也到了。经年未见，杨先生依旧是一人一包一相机一个大肚便便。互相挥手招呼，上了楼，放了包，辞别房东，开始漫步环岛路，我，大黄，今天要走两万步！  </p>
-<p>打卡：环岛南路 曾山10号 二分之一咖啡，的门口。<br>队如龙，人似蚁，我不挤！<br>即使坐山望海煮咖啡十分的惬意，emmm…我也不挤。<br>拍几张照片到此一游足矣。</p>
-<pre><code>打卡：环岛南路 曾山10号 二分之一咖啡，的门口。
-队如龙，人似蚁，我不挤！
-即使坐山望海煮咖啡十分的惬意，emmm...我也不挤。
-拍几张照片到此一游足矣。  </code></pre><p>&emsp;&emsp;“山间风情，隐有脱尘之意，终不如凡间烟火，吾不屑。不远便是曾厝垵，那里尽是人间繁华，当去品尝。”  </p>
-<pre><code>打卡：曾厝垵
-垵内熙熙车马喧，硬着头皮往里钻。
-如果咖啡馆门口的队伍能称为长龙，那这里就是群龙乱舞了！
-初来乍到可能是热闹、新鲜，可走了两步之后，就只剩热闹了。</code></pre><p>&emsp;&emsp;“此间风情虽有烟火味，但过于浓郁、也过于嘈乱，不如离去，前方便是沙滩，轻踩细沙看海，应该别有一番风味。”<br>&emsp;&emsp;于是顺着人行道向着海边走去，随意聊着与景致无关的话题，时而看看左右的风景——有人、有自然、有车流，没有旅游的意思，却有生活的淡雅。走至海边，入目的是：自行车道、步行道、小亭子、沿海沙滩，你希望的样子她都有。在这里，可以是三三两两的人聚在一起聊天看海、可以是小情侣挑个石头相互依偎互诉衷情、也可以是走累的行人坐在亭子下喝口椰汁缓口气、还可以是沙滩上挖土垒沙雕的少年郎，你能想到的样子她都有。惬意吧。也许是过于惬意了，调皮的天公吹起了风，降下了下雨，于是安静祥和的海滩添上了五颜六色的伞，依然惬意。五颜六色的伞下是形形色色的人，是依旧依偎的小情侣，是依旧沿海而行的路人，是为了建造城堡而不惧风雨的小孩，还有快步走去亭下躲雨的我们。依然看海，依然惬意，风雨下的海边并不会因为风雨而有变换。任性的厦门和任性的游客，不论天晴、不论下雨，都是一样的把握着原有的节奏。你能想到的浪漫，依然没少。<br>&emsp;&emsp;时间不等风雨停，而肚子不等我吃饭。细雨下，走回曾厝垵，点上沙茶面、烧肉粽，再来个海蛎煎，尝尝闽南的另一道风景——美食，这也是旅行的应有之意。<br>&emsp;&emsp;吃也饱了，天也黑了，环岛路的灯也亮起来了，夜间的海滩，应该会有另一种美景吧。emmm…没有，你想多了，就是在步行道上行走，就是去夜拍海浪，就是在沙滩上按摩脚底，就是为了凑够两万步，没错，我，大黄，今天走了两万四千一百五十步！<br>&emsp;<strong>后记：</strong></p>
-<p>&emsp;&emsp;夜渐渐深，本以为一天的行程便结束了…脚上的历程是结束了，但民宿的特色却正在为我们展开，是的，独有的、与酒店不同的风味。进门后，房东便邀请我们一起吃茶，客随主便，咳，我先去洗个澡。<br>&emsp;&emsp;坐在茶桌前，自然是畅聊古今，互相吹牛捧场了。我们争论着诸如什么“人先是情感的动物，而后是高于动物的理性”、“思想究竟源于心，还是源于脑”等等发乎于生命的哲学，并在此过程中认识了来自江西的“警察蜀黍”沈娟和“霸气少女”龙莹晶。咳（正经脸），不出去走走，你永远认识不到新的女生的。  </p>
-<h2 id="Day4-2019-05-03"><a href="#Day4-2019-05-03" class="headerlink" title="Day4 2019.05.03"></a>Day4 2019.05.03</h2><p><strong>&emsp;天气：</strong> 多云<br><strong>&emsp;心情：</strong> 不要问我心情，问就是腿断了</p>
-<p>&emsp;&emsp;“昨日晡时出门，人定而歇，行有二万步，今日食时而出，当行四万步！”<br>&emsp;&emsp;雨后朝阳、微风，清新的气息扑面而来，这样的早晨就应该来上一碗豆浆、再配根油条、最好再有笼热乎的小笼包，然后斗个嘴，争执下“吃咸豆腐脑的都是异类”，舒坦。<br>&emsp;&emsp;昨天的环岛路毕竟风雨，没有伞的我们只能在亭下可怜巴巴的看着别人的惬意，心里终归有些不甘。于是人字拖、花裤衩，这样的沙滩才够味。抱歉，我忘了我没有人字拖，也没有花裤衩。于是拖孩、长裤，卷起裤腿，生活总要有仪式感。就这样，走上弯路的一天开始了。  </p>
-<pre><code>打卡：塔头公交站延环岛南路步行至白城沙滩（预计三小时）</code></pre><p>&emsp;&emsp;路上的吹牛打屁、瞎谈乱说、以及规划下午的厦大攻略自不消多说。沿途风光和昨天白日差别也不大，就是“走在风中今天阳光，突然好温柔”，就是沙滩上的人更少了，“天的风光地的风光，尽在我眼中”——而这片风光就我们欣赏，我的相机里不会有奇奇怪怪的人了，emmm…舒坦。<br>&emsp;&emsp;行至白城沙滩附近，时间已经将近十一点，环岛路上的人越来越多，各种各样的贩夫走卒都在这里汇聚，嘈乱的画面定格下来是充满生活气息的风景。<br>&emsp;&emsp;瞧，打南面来了个喇嘛，啊不是，是俩带发修行的行脚僧，手里提了五串佛珠，腰里别着个二维码，见面就是“好久不见”——并伸出了手。我是一头雾水不得不伸手握上去，还不敢崩出一句：“你谁？”，只担心这人老了记忆衰退了，多伤人？嘿，谁曾想：“前世我们见过”。我却是不信前世，毕竟我今生的幸运怕是要百世修行、万载难得，而中华也就五千年。虽然个中想法万千，也只是崩出个“哦~？”，示意他继续表演，都是为了生存，大家都不容易。他看得出我的敷衍，但也不介意，出来混的，什么样人他肯定都遇到过，反正套路还是要继续的，“我是九华山的修行者，来自xxx寺，我看你面善，是我前世的有缘人，我记得你心肠软，优柔寡断，遇到事情难以决断”，听到这里，脑子里不自觉的浮现出曾经遇到过的抉择，啧啧，有点东西啊？姑且继续听听。没曾想“你今后做事应该果决一些，勇敢一些，不要怕，你眉上有痔，这是珍珠痔，一定会成才的，五年内，如果你能够坚持自己，做事果决，一定会有所成就的。但你心肠软，性淳朴，容易遇到有心计的人，千万要小心…”，就这么点？就开始灌鸡汤了？图就穷了？那亮匕首呢？果不其然，只见他从袖子里取出一串佛珠，“你我有缘，这是我在九华山开过光的，送给你了。我们呢是修行人，也借此向你讨个缘”。我：“告辞”！<br>&emsp;&emsp;在这位“修行者”拦住我的时候，他的同伴也拦住了杨先生，并成功向杨先生推了一串佛珠，杨先生为此支付了10块钱的缘分…emmm…他才是性淳朴的人。与杨先生探讨了下那位“修行者”为他面的相，与我颇为吻合，可见人以群分物以类聚？非也，可见所有的人，面对重大抉择的时候，终究畏畏缩缩，故而他们的套路才会更多的针对于所谓优柔寡断上。自我攻略，最为致命。<br>&emsp;&emsp;边走边逛边拍照，穿过白城沙滩，来到世贸大厦。于是饿了，觅食于小郡肝串串香。<br>&emsp;&emsp;(2019-07-18)忙碌了两个月，大黄终于想起了他的游记，他下定决心不鸽了。<br>&emsp;&emsp;(2019-08-02)又鸽了半个月…<br>&emsp;&emsp;时间也是匆匆，快节奏的生活基本找不到停留，即使有了停留，也不愿意留下回忆。我想：再不趁着有心，再不趁着有闲，将这篇文章写尽，我是真要忘了那位热心的学姐了。</p>
-<pre><code>时间应退回五月二号，作为一个实际工作地址在厦门的人，对厦门如此不了解实属“可恶”
-——我居然没有提早预订厦门大学的入场资格？
-对厦门大学的印象依然固化在2013年的春天，那是...那说来话就长了。
-言归正传，遇到问题解决问题，于是call了我的发小（厦大研究生）的电话：
-“娃啊，这是你最后的几个月，哥哥来看你了...”
-“我不在,我在梅山”
-“明天喊个人接我进去”
-“哦”
-发小经过几番波折，请来了一位学姐（厦大博士）作为引路人，大致就这样。</code></pre><p>&emsp;&emsp;吃过午饭，拨通学姐电话，学姐是个急性子，标标准准东北人，性子直，说话也直，做事也直。</p>
-<pre><code>学姐她：
-言语间总是我发小这人...怎怎怎，却又不乏温柔。
-嘴里总是忙忙忙，却也尽职尽责带我们游览厦大。
-话里话外都是不情愿，热情起来却是道不尽。
-一个有趣的人。</code></pre><p>&emsp;&emsp;厦大往哪走？事实上，时隔两个半月，我只还能记住天鹅湖与芙蓉隧道，天鹅湖得益于厦大黑天鹅，而芙蓉隧道因为美。长廊如画，画尽长廊。文艺范这里有，清新气息这里也不会少，汇集一个学校的浪漫，一笔笔竞赋于墙，静待观赏。<br>&emsp;&emsp;隧道尽头，道别厦大。<br>&emsp;&emsp;走罢厦大，已是人疲力乏，吃个沙茶面继续呀。——目标中山路<br>&emsp;&emsp;中山路就是一个颇具民国风情的商业街。月缓升，日渐落，红霞落满街，而流光追溢彩。下午五六点，应是最美时分。</p>
-<pre><code>中山路是厦门现已保留较完整的展现近代历史风貌的旧城街区，
-拥有小走马路、陈化成故居、中华第一圣堂等众多人文古迹。
-南洋骑楼建筑、流光溢彩的LED夜景、琳琅满目的各色闽台特色小吃
-和回响在小巷街坊间的古老南音，构成其与众不同的风格特色。
-——源自百度百科</code></pre><p>&emsp;&emsp;游完中山路，已是夜深。掏出手机——40738步，目标达成，瘸。<br>&emsp;<strong>后记：</strong><br>&emsp;&emsp;不要问，问就是已经忘了…</p>
-<pre><code>小黄笔记：
-厦门大学需要提前2天在【U厦大】公众号上预订
-节假日招待人数每日一万，分上午和下午两批
-另：厦大学生可以带亲朋进入</code></pre><h2 id="Day5-2019-05-04"><a href="#Day5-2019-05-04" class="headerlink" title="Day5 2019.05.04"></a>Day5 2019.05.04</h2><p><strong>&emsp;天气：</strong> 阳光正好&emsp;<br><strong>&emsp;心情：</strong> 估计很心疼自己的jio </p>
-<p>&emsp;&emsp;早早就抢了个鼓浪屿14点的船票、五大景点套票。（作为一个前一天已经磨破脚的我，也不知道哪里来的勇气敢再战鼓浪屿？？？）<br>&emsp;&emsp;早晨10点左右，早早就起了床，出门吃了个早饭。<br>&emsp;&emsp;早早就拿出扑克打了起来。——早？<br>&emsp;&emsp;消磨时间到12点，出门——厦门轮渡码头——建议上船后直奔二楼进vip间，抢个位置看风景。<br>&emsp;&emsp;入岛后，瞎逛，等本地居民刘同学来当导游。至16点，到某码头，等同旅店俩女生。继续瞎逛。入夜，回旅店，蹭房东的大餐。<br>&emsp;&emsp;全篇完…（极其敷衍）<br>&emsp;<strong>后记：</strong><br>&emsp;&emsp;写游记千万不要几个月后再写，记不住的！</p>
-]]></content>
-      <categories>
-        <category>想丶把旅途画成色彩</category>
-      </categories>
-      <tags>
-        <tag>Travels</tag>
       </tags>
   </entry>
   <entry>
@@ -910,6 +848,68 @@ recyclerview: [BRVAH](http://www.recyclerview.org/)
         <tag>Dev</tag>
         <tag>Dart</tag>
         <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鹭岛游记</title>
+    <url>/travel/190508-travels-Xiamen.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="题记-——-写东西前不先骚一下怎么像样"><a href="#题记-——-写东西前不先骚一下怎么像样" class="headerlink" title="题记 —— 写东西前不先骚一下怎么像样"></a>题记 <font size=1>—— 写东西前不先骚一下怎么像样</font></h1><ul>
+<li>游玩是，和什么样的人、看什么样的风景、谈什么样的话。当人不差而话投机，于是旅途愉快。</li>
+<li>与风雨来，与风雨去。待时心潮澎湃忆往昔，见时平静泰然似昨日，去时不留，风雨相送。</li>
+<li>有朋自吴地来，自榕城至鹭岛以待，当把酒言欢叙多年未见之情。</li>
+<li>居狼外婆家而望山水，踏环岛南路以观海波</li>
+<li>轻踩细沙不胜惬意，畅聊古今不胜欢喜</li>
+<li>纵览厦大观其美，漫步芙蓉知其盛  <a id="more"></a></li>
+</ul>
+<h1 id="正文-——-想骚但是怎么也骚不动毕竟腿断了"><a href="#正文-——-想骚但是怎么也骚不动毕竟腿断了" class="headerlink" title="正文 —— 想骚但是怎么也骚不动毕竟腿断了"></a>正文 <font size=1>—— 想骚但是怎么也骚不动毕竟腿断了</font></h1><h2 id="Day1-2019-04-30"><a href="#Day1-2019-04-30" class="headerlink" title="Day1 2019.04.30"></a>Day1 2019.04.30</h2><p><strong>&emsp;天气：</strong> 雨<br><strong>&emsp;心情：</strong> 有那么点小激动</p>
+<p>&emsp;&emsp;每一个故事的开端都是一波然后一折，然后两折，然后三四五六七八九折的，这个故事也没有例外。比如放假的前一天啊，就发生了那么一点波折——<br>&emsp;&emsp;老大：小黄啊，放假有什么计划没有？<br>&emsp;&emsp;我：世界那么大，我想去看看。<br>&emsp;&emsp;老大：世界那么大，我这有个大世面要让你见见呢！<br>&emsp;&emsp;我：老大，我有约了！<br>&emsp;&emsp;老大：那真是太可惜了，我们公司将要参加今年的“数字峰会”展览，能看到马化腾、李彦宏、张一鸣等等，算了，你走吧，出门记得带上电脑！<br>&emsp;&emsp;我：行吧。  </p>
+<h2 id="Day2-2019-05-01"><a href="#Day2-2019-05-01" class="headerlink" title="Day2 2019.05.01"></a>Day2 2019.05.01</h2><p><strong>&emsp;天气：</strong> 大雨<br><strong>&emsp;心情：</strong> 极差</p>
+<p>&emsp;&emsp;今日加班，并没有见到马李张。</p>
+<h2 id="Day3-2019-05-02"><a href="#Day3-2019-05-02" class="headerlink" title="Day3 2019.05.02"></a>Day3 2019.05.02</h2><p><strong>&emsp;天气：</strong> <del>&emsp;小雨&emsp;</del>特大雨<br><strong>&emsp;心情：</strong> 懵批&gt;&gt;惬意</p>
+<p>&emsp;&emsp;——不管怎么样，故事的小黄花总算开始飘动，虽然不是从出生那年就飘着，童年的荡秋千也没荡过，但是故事好歹有了开端，一切都是美好的，除了，（望天）雨水。<br>&emsp;&emsp;——我是大黄，现在是早上六点整，虽然天是灰蒙蒙的天，但我的心还是向着阳光，我相信我的诗与远方，面朝大海春暖花开！<br>&emsp;&emsp;——现在是早上十点二十分，动车还没开始开动，而我还没吃早餐，虽然已经晚点了，但这不重要，重要的是我向着我的目的地又前进了一步。<br>&emsp;&emsp;——中午十二点半，我已经到站了，虽然诗和远方依然飘着雨，但没事，我相信等会就会雨过天晴了，我看过天气预报了，有雨。但这不重要，重要的是我在金拱门吃上了金拱门套餐，虽然我不喜欢快餐，emmm…真香！<br>&emsp;&emsp;——下午一点半，抵达狼外婆啊不，小外婆的狼不是，小红帽的狼外婆家客栈ヽ(o_ _)o，咳，总之我到了。——雨未停，朋友未至，静坐喝茶，惬意。<br>&emsp;&emsp;时间煮净了雨水，朋友也到了。经年未见，杨先生依旧是一人一包一相机一个大肚便便。互相挥手招呼，上了楼，放了包，辞别房东，开始漫步环岛路，我，大黄，今天要走两万步！  </p>
+<p>打卡：环岛南路 曾山10号 二分之一咖啡，的门口。<br>队如龙，人似蚁，我不挤！<br>即使坐山望海煮咖啡十分的惬意，emmm…我也不挤。<br>拍几张照片到此一游足矣。</p>
+<pre><code>打卡：环岛南路 曾山10号 二分之一咖啡，的门口。
+队如龙，人似蚁，我不挤！
+即使坐山望海煮咖啡十分的惬意，emmm...我也不挤。
+拍几张照片到此一游足矣。  </code></pre><p>&emsp;&emsp;“山间风情，隐有脱尘之意，终不如凡间烟火，吾不屑。不远便是曾厝垵，那里尽是人间繁华，当去品尝。”  </p>
+<pre><code>打卡：曾厝垵
+垵内熙熙车马喧，硬着头皮往里钻。
+如果咖啡馆门口的队伍能称为长龙，那这里就是群龙乱舞了！
+初来乍到可能是热闹、新鲜，可走了两步之后，就只剩热闹了。</code></pre><p>&emsp;&emsp;“此间风情虽有烟火味，但过于浓郁、也过于嘈乱，不如离去，前方便是沙滩，轻踩细沙看海，应该别有一番风味。”<br>&emsp;&emsp;于是顺着人行道向着海边走去，随意聊着与景致无关的话题，时而看看左右的风景——有人、有自然、有车流，没有旅游的意思，却有生活的淡雅。走至海边，入目的是：自行车道、步行道、小亭子、沿海沙滩，你希望的样子她都有。在这里，可以是三三两两的人聚在一起聊天看海、可以是小情侣挑个石头相互依偎互诉衷情、也可以是走累的行人坐在亭子下喝口椰汁缓口气、还可以是沙滩上挖土垒沙雕的少年郎，你能想到的样子她都有。惬意吧。也许是过于惬意了，调皮的天公吹起了风，降下了下雨，于是安静祥和的海滩添上了五颜六色的伞，依然惬意。五颜六色的伞下是形形色色的人，是依旧依偎的小情侣，是依旧沿海而行的路人，是为了建造城堡而不惧风雨的小孩，还有快步走去亭下躲雨的我们。依然看海，依然惬意，风雨下的海边并不会因为风雨而有变换。任性的厦门和任性的游客，不论天晴、不论下雨，都是一样的把握着原有的节奏。你能想到的浪漫，依然没少。<br>&emsp;&emsp;时间不等风雨停，而肚子不等我吃饭。细雨下，走回曾厝垵，点上沙茶面、烧肉粽，再来个海蛎煎，尝尝闽南的另一道风景——美食，这也是旅行的应有之意。<br>&emsp;&emsp;吃也饱了，天也黑了，环岛路的灯也亮起来了，夜间的海滩，应该会有另一种美景吧。emmm…没有，你想多了，就是在步行道上行走，就是去夜拍海浪，就是在沙滩上按摩脚底，就是为了凑够两万步，没错，我，大黄，今天走了两万四千一百五十步！<br>&emsp;<strong>后记：</strong></p>
+<p>&emsp;&emsp;夜渐渐深，本以为一天的行程便结束了…脚上的历程是结束了，但民宿的特色却正在为我们展开，是的，独有的、与酒店不同的风味。进门后，房东便邀请我们一起吃茶，客随主便，咳，我先去洗个澡。<br>&emsp;&emsp;坐在茶桌前，自然是畅聊古今，互相吹牛捧场了。我们争论着诸如什么“人先是情感的动物，而后是高于动物的理性”、“思想究竟源于心，还是源于脑”等等发乎于生命的哲学，并在此过程中认识了来自江西的“警察蜀黍”沈娟和“霸气少女”龙莹晶。咳（正经脸），不出去走走，你永远认识不到新的女生的。  </p>
+<h2 id="Day4-2019-05-03"><a href="#Day4-2019-05-03" class="headerlink" title="Day4 2019.05.03"></a>Day4 2019.05.03</h2><p><strong>&emsp;天气：</strong> 多云<br><strong>&emsp;心情：</strong> 不要问我心情，问就是腿断了</p>
+<p>&emsp;&emsp;“昨日晡时出门，人定而歇，行有二万步，今日食时而出，当行四万步！”<br>&emsp;&emsp;雨后朝阳、微风，清新的气息扑面而来，这样的早晨就应该来上一碗豆浆、再配根油条、最好再有笼热乎的小笼包，然后斗个嘴，争执下“吃咸豆腐脑的都是异类”，舒坦。<br>&emsp;&emsp;昨天的环岛路毕竟风雨，没有伞的我们只能在亭下可怜巴巴的看着别人的惬意，心里终归有些不甘。于是人字拖、花裤衩，这样的沙滩才够味。抱歉，我忘了我没有人字拖，也没有花裤衩。于是拖孩、长裤，卷起裤腿，生活总要有仪式感。就这样，走上弯路的一天开始了。  </p>
+<pre><code>打卡：塔头公交站延环岛南路步行至白城沙滩（预计三小时）</code></pre><p>&emsp;&emsp;路上的吹牛打屁、瞎谈乱说、以及规划下午的厦大攻略自不消多说。沿途风光和昨天白日差别也不大，就是“走在风中今天阳光，突然好温柔”，就是沙滩上的人更少了，“天的风光地的风光，尽在我眼中”——而这片风光就我们欣赏，我的相机里不会有奇奇怪怪的人了，emmm…舒坦。<br>&emsp;&emsp;行至白城沙滩附近，时间已经将近十一点，环岛路上的人越来越多，各种各样的贩夫走卒都在这里汇聚，嘈乱的画面定格下来是充满生活气息的风景。<br>&emsp;&emsp;瞧，打南面来了个喇嘛，啊不是，是俩带发修行的行脚僧，手里提了五串佛珠，腰里别着个二维码，见面就是“好久不见”——并伸出了手。我是一头雾水不得不伸手握上去，还不敢崩出一句：“你谁？”，只担心这人老了记忆衰退了，多伤人？嘿，谁曾想：“前世我们见过”。我却是不信前世，毕竟我今生的幸运怕是要百世修行、万载难得，而中华也就五千年。虽然个中想法万千，也只是崩出个“哦~？”，示意他继续表演，都是为了生存，大家都不容易。他看得出我的敷衍，但也不介意，出来混的，什么样人他肯定都遇到过，反正套路还是要继续的，“我是九华山的修行者，来自xxx寺，我看你面善，是我前世的有缘人，我记得你心肠软，优柔寡断，遇到事情难以决断”，听到这里，脑子里不自觉的浮现出曾经遇到过的抉择，啧啧，有点东西啊？姑且继续听听。没曾想“你今后做事应该果决一些，勇敢一些，不要怕，你眉上有痔，这是珍珠痔，一定会成才的，五年内，如果你能够坚持自己，做事果决，一定会有所成就的。但你心肠软，性淳朴，容易遇到有心计的人，千万要小心…”，就这么点？就开始灌鸡汤了？图就穷了？那亮匕首呢？果不其然，只见他从袖子里取出一串佛珠，“你我有缘，这是我在九华山开过光的，送给你了。我们呢是修行人，也借此向你讨个缘”。我：“告辞”！<br>&emsp;&emsp;在这位“修行者”拦住我的时候，他的同伴也拦住了杨先生，并成功向杨先生推了一串佛珠，杨先生为此支付了10块钱的缘分…emmm…他才是性淳朴的人。与杨先生探讨了下那位“修行者”为他面的相，与我颇为吻合，可见人以群分物以类聚？非也，可见所有的人，面对重大抉择的时候，终究畏畏缩缩，故而他们的套路才会更多的针对于所谓优柔寡断上。自我攻略，最为致命。<br>&emsp;&emsp;边走边逛边拍照，穿过白城沙滩，来到世贸大厦。于是饿了，觅食于小郡肝串串香。<br>&emsp;&emsp;(2019-07-18)忙碌了两个月，大黄终于想起了他的游记，他下定决心不鸽了。<br>&emsp;&emsp;(2019-08-02)又鸽了半个月…<br>&emsp;&emsp;时间也是匆匆，快节奏的生活基本找不到停留，即使有了停留，也不愿意留下回忆。我想：再不趁着有心，再不趁着有闲，将这篇文章写尽，我是真要忘了那位热心的学姐了。</p>
+<pre><code>时间应退回五月二号，作为一个实际工作地址在厦门的人，对厦门如此不了解实属“可恶”
+——我居然没有提早预订厦门大学的入场资格？
+对厦门大学的印象依然固化在2013年的春天，那是...那说来话就长了。
+言归正传，遇到问题解决问题，于是call了我的发小（厦大研究生）的电话：
+“娃啊，这是你最后的几个月，哥哥来看你了...”
+“我不在,我在梅山”
+“明天喊个人接我进去”
+“哦”
+发小经过几番波折，请来了一位学姐（厦大博士）作为引路人，大致就这样。</code></pre><p>&emsp;&emsp;吃过午饭，拨通学姐电话，学姐是个急性子，标标准准东北人，性子直，说话也直，做事也直。</p>
+<pre><code>学姐她：
+言语间总是我发小这人...怎怎怎，却又不乏温柔。
+嘴里总是忙忙忙，却也尽职尽责带我们游览厦大。
+话里话外都是不情愿，热情起来却是道不尽。
+一个有趣的人。</code></pre><p>&emsp;&emsp;厦大往哪走？事实上，时隔两个半月，我只还能记住天鹅湖与芙蓉隧道，天鹅湖得益于厦大黑天鹅，而芙蓉隧道因为美。长廊如画，画尽长廊。文艺范这里有，清新气息这里也不会少，汇集一个学校的浪漫，一笔笔竞赋于墙，静待观赏。<br>&emsp;&emsp;隧道尽头，道别厦大。<br>&emsp;&emsp;走罢厦大，已是人疲力乏，吃个沙茶面继续呀。——目标中山路<br>&emsp;&emsp;中山路就是一个颇具民国风情的商业街。月缓升，日渐落，红霞落满街，而流光追溢彩。下午五六点，应是最美时分。</p>
+<pre><code>中山路是厦门现已保留较完整的展现近代历史风貌的旧城街区，
+拥有小走马路、陈化成故居、中华第一圣堂等众多人文古迹。
+南洋骑楼建筑、流光溢彩的LED夜景、琳琅满目的各色闽台特色小吃
+和回响在小巷街坊间的古老南音，构成其与众不同的风格特色。
+——源自百度百科</code></pre><p>&emsp;&emsp;游完中山路，已是夜深。掏出手机——40738步，目标达成，瘸。<br>&emsp;<strong>后记：</strong><br>&emsp;&emsp;不要问，问就是已经忘了…</p>
+<pre><code>小黄笔记：
+厦门大学需要提前2天在【U厦大】公众号上预订
+节假日招待人数每日一万，分上午和下午两批
+另：厦大学生可以带亲朋进入</code></pre><h2 id="Day5-2019-05-04"><a href="#Day5-2019-05-04" class="headerlink" title="Day5 2019.05.04"></a>Day5 2019.05.04</h2><p><strong>&emsp;天气：</strong> 阳光正好&emsp;<br><strong>&emsp;心情：</strong> 估计很心疼自己的jio </p>
+<p>&emsp;&emsp;早早就抢了个鼓浪屿14点的船票、五大景点套票。（作为一个前一天已经磨破脚的我，也不知道哪里来的勇气敢再战鼓浪屿？？？）<br>&emsp;&emsp;早晨10点左右，早早就起了床，出门吃了个早饭。<br>&emsp;&emsp;早早就拿出扑克打了起来。——早？<br>&emsp;&emsp;消磨时间到12点，出门——厦门轮渡码头——建议上船后直奔二楼进vip间，抢个位置看风景。<br>&emsp;&emsp;入岛后，瞎逛，等本地居民刘同学来当导游。至16点，到某码头，等同旅店俩女生。继续瞎逛。入夜，回旅店，蹭房东的大餐。<br>&emsp;&emsp;全篇完…（极其敷衍）<br>&emsp;<strong>后记：</strong><br>&emsp;&emsp;写游记千万不要几个月后再写，记不住的！</p>
+]]></content>
+      <categories>
+        <category>想丶把旅途画成色彩</category>
+      </categories>
+      <tags>
+        <tag>Travels</tag>
       </tags>
   </entry>
 </search>
