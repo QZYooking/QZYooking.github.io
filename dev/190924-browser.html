@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="五大浏览器浏览器发展史上越不过的五座大山：IE、Opera、Safari、Firefox、Chrome">
+<meta property="og:type" content="article">
+<meta property="og:title" content="五大浏览器与四大内核">
+<meta property="og:url" content="https://blog.yookingh.cn/dev/190924-browser.html">
+<meta property="og:site_name" content="墨染青葱几许烟">
+<meta property="og:description" content="五大浏览器浏览器发展史上越不过的五座大山：IE、Opera、Safari、Firefox、Chrome">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-24T01:59:32.000Z">
+<meta property="article:modified_time" content="2020-05-09T05:40:27.804Z">
+<meta property="article:author" content="yooking">
+<meta property="article:tag" content="Study">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://blog.yookingh.cn/dev/190924-browser.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>五大浏览器与四大内核 | 墨染青葱几许烟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">墨染青葱几许烟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">yooking的个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-时间轴">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间轴</a>
+
+  </li>
+        <li class="menu-item menu-item-标签云">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-关于&留言">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于&留言</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/yooking-git" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.yookingh.cn/dev/190924-browser.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
+      <meta itemprop="name" content="yooking">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="墨染青葱几许烟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          五大浏览器与四大内核
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-24 09:59:32" itemprop="dateCreated datePublished" datetime="2019-09-24T09:59:32+08:00">2019-09-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶把代码写出诗意</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/dev/190924-browser.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/190924-browser.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="五大浏览器"><a href="#五大浏览器" class="headerlink" title="五大浏览器"></a>五大浏览器</h2><p>浏览器发展史上越不过的五座大山：IE、Opera、Safari、Firefox、Chrome<a id="more"></a></p>
+<h3 id="Internet-Explorer"><a href="#Internet-Explorer" class="headerlink" title="Internet Explorer"></a>Internet Explorer</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Internet_Explorer">Internet Explorer</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Internet Explorer（旧称 Microsoft Internet Explorer 和 Windows Internet Explorer，简称 IE 或 MSIE），是微软所开发的图形用户界面网页浏览器。自从1995年开始，内置在各个新版本的Windows作业系统作为默认的浏览器，也是微软Windows操作系统的一个组成部分。</p>
+<p>值得一提的是 Windows 10 目前的默认浏览器为<a href="https://en.wikipedia.org/wiki/Microsoft_Edge">Microsoft Edge</a>。</p>
+</li>
+</ul>
+<h3 id="Opera"><a href="#Opera" class="headerlink" title="Opera"></a>Opera</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Opera_(web_browser)">Opera</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Opera是由Opera软件为个人计算机推出的网页浏览器，用于Microsoft Windows、macOS和Linux操作系统。</p>
+<p>Opera软件为纳斯达克上市的挪威软件公司，其后被中国商人收购（2016年2月确定被奇虎360和昆仑万维收购），因此收购后出现许多信息安全争议，并在Opera 6.04之后的数个中文版，曾捆绑流氓软件3721上网助手。</p>
+<p>Opera浏览器2013以后采用Blink排版引擎。以往的Opera版本曾采用Presto排版引擎，曾在FreeBSD系统上运行。</p>
+<p>Opera的姊妹浏览器 – Opera Mobile、Opera Mini和Opera Coast – 可执行于Android、iOS、Windows Phone、Symbian、Maemo、Bada、BlackBerry和Windows Mobile等多种操作系统的设备，而Opera Mini可执行于支持Java ME功能的设备。</p>
+</li>
+</ul>
+<h3 id="Safari"><a href="#Safari" class="headerlink" title="Safari"></a>Safari</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Safari_(web_browser)">Safari</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Safari 浏览器是苹果公司所开发，并内置于macOS（前称OS X、Mac OS X）的网页浏览器。Safari 浏览器在2003年1月7日首度发行测试版，并从Mac OS X Panther开始成为Mac OS X的默认浏览器，也是iOS、iPadOS内置的默认浏览器。Windows版本的首个测试版在2007年6月11日推出，支持Windows XP、Windows Vista和Windows 7，并在2008年3月18日推出正式版，但苹果已于2012年7月25日停止开发Windows版的Safari 浏览器。</p>
+<p>Safari 浏览器发行后的市占率不断攀升。2008年2月，TheCounter.com报告指Safari 浏览器的市占率为3.34%，而Net Applications则指其市占率为2.63%。其后市占率再从2009年1月的3.62%爬升至2011年4月的7.1%。在移动裝置平台，Net Applications表示</p>
+<p>Safari 浏览器占有率为62.17%。</p>
+<p>safari在斯瓦希里语为旅行，字源来自阿拉伯语同意词 سفرة （safra）。</p>
+</li>
+</ul>
+<h3 id="Firefox"><a href="#Firefox" class="headerlink" title="Firefox"></a>Firefox</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Firefox">Firefox</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Mozilla Firefox，通称Firefox，中文也通称火狐，是一个自由及开源的网页浏览器，由Mozilla基金会及其子公司Mozilla公司开发。Firefox支持Windows、macOS及Linux，其移动版支持Android及Firefox OS，这些版本的Firefox使用Gecko来排版网页，Gecko是一个运行当前与预期之网页标准的排版引擎，而在2015年发布的Firefox for iOS则非使用Gecko。</p>
+<p>Firefox于2002年由Mozilla社群成员创建，当时叫做“Phoenix”，因为社群成员们想要一个独立的浏览器，而非Mozilla Application Suite这样的包。即使在测试阶段，Firefox也在测试者中颇为流行，并因其速度、安全性及扩展组件而受称赞。Firefox于2004年11月首次发布，并且9个月内下载量超过6000万，获取了巨大的成功，Internet Explorer的主导地位首次受到了挑战。Firefox被认为是Netscape Navigator的精神续作，因为Netscape于1998年被AOL收购前创建了Mozilla社群。</p>
+<p>Firefox全球市占率为35％至40%，为全球第二流行的网页浏览器。Firefox在某些国家还是最流行的网页浏览器，如在萨摩亚、德国、厄立特里亚及古巴，Firefox市占率分别为61.05%、38.36%、79.39%及85.93%。据Mozilla统计，截至2014年12月，Firefox在全世界拥有10亿用户[22]。</p>
+</li>
+</ul>
+<h3 id="Chrome"><a href="#Chrome" class="headerlink" title="Chrome"></a>Chrome</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Google_Chrome">Chrome</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Google Chrome是由Google开发的免费网页浏览器。Chrome是化学元素“铬”的英文名称，过去也用Chrome称呼浏览器的外框。Chrome相应的开放源代码计划名为Chromium，而Google Chrome本身是非自由软件，未开放全部源代码。</p>
+<p>Chrome代码是基于其他开放源代码软件所编写，包括Apple WebKit和Mozilla Firefox，并开发出称为“V8”的高性能JavaScript引擎。Google Chrome的整体发展目标是提升稳定性、速度和安全性，并创造出简单且有效率的用户界面。CNET旗下的Download.com网站评出的2008年6月最佳Windows应用程序，其中Google Chrome排名首位。</p>
+<p>据StatCounter统计，截至2018年第一季度，Google Chrome在全球桌面浏览器中有66%的占有率。</p>
+<p>Chrome 50结束了对Windows XP与Windows Vista系统的支持，这两个系统上的最后版本为49.0.2623.112。</p>
+</li>
+</ul>
+<h2 id="四大内核"><a href="#四大内核" class="headerlink" title="四大内核"></a>四大内核</h2><p>四大内核有五个是常识</p>
+<h3 id="Trident"><a href="#Trident" class="headerlink" title="Trident"></a>Trident</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Trident_(software)">Trident</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：IE</p>
+<p>Trident（又称为MSHTML、IE内核），是微软的视窗操作系统（Windows）搭载的网页浏览器—Internet Explorer的排版引擎的名称，它的第一个版本随着1997年10月Internet Explorer第四版发布，之后不断的加入新的技术并随着新版本的Internet Explorer发布。在Internet Explorer第七版中，微软对Trident排版引擎做了的重大的变动，除了加入新的技术之外，并增加对网页标准的支持。尽管这些变动已经在相当大的程度上落后了其它的排版引擎，如Gecko、KHTML、Webkit及Presto。</p>
+<p>除此之外，微软还有另一个网页浏览器排版引擎，称为Tasman，它是使用在“Internet Explorer for Mac”的排版引擎。相较于Trident，Tasman引擎对网页标准有较佳的支持。与普遍的看法相反的是，微软已经停止了Mac版本的Internet Explorer的开发，但Tasman的开发仍旧持续，新版本的Tasman引擎仍被应用在一些微软产品上，例如Office for Mac。</p>
+<p><em>——编者按：四大内核剩下三个也是常识</em></p>
+</li>
+</ul>
+<h3 id="Gecko"><a href="#Gecko" class="headerlink" title="Gecko"></a>Gecko</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Gecko_(software)">Gecko</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Firefox，即火狐浏览器。</p>
+<p>Gecko是一套自由及开放源代码、以C++编写的排版引擎，当前为Mozilla Firefox网页浏览器以及Mozilla Thunderbird电子邮件客户端等Mozilla基金会相关产品所使用。Gecko原本由网景通信公司开发，现在则由Mozilla基金会维护。</p>
+<p>这套排版引擎提供了一个丰富的应用程序接口以供互联网相关的应用程序使用，例如：网页浏览器、HTML编辑器、客户端／服务器等等。虽然最初的主要使用对象为Netscape和Mozilla Firefox网页浏览器，但现在已有很多其他软件在使用这个排版引擎。Gecko是跨平台的，能在Microsoft Windows、Linux和Mac OS X等主要操作系统上运行。</p>
+</li>
+</ul>
+<h3 id="Webkit"><a href="#Webkit" class="headerlink" title="Webkit"></a>Webkit</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/WebKit">Webkit</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Safari、Chrome</p>
+<p>WebKit是一种用来让网页浏览器绘制网页的排版引擎。它被用于Apple Safari。其分支Blink被用于基于Chromium的网页浏览器，如：Opera与Google Chrome。</p>
+<p>Webkit亦使用于Apple iOS、BlackBerry Tablet OS、Tizen及Amazon Kindle的默认浏览器。WebKit的C++应用程序接口提供了一系列的Class以在视窗上显示网页内容，并且实现了一些浏览器的特色，如用户链接点击、管理前后页面列表及近期历史页面等等。</p>
+<p>WebKit的HTML及JavaScript代码源自KDE的KHTML及KJS库的一个分支，现已由KDE、Apple、Google、Nokia、Bitstream、BlackBerry及Igalia等独立开发。OS X、Windows、GNU/Linux以及其他类Unix系统操作系统，皆支持这个项目。2013年4月3日，Google宣布它创建了WebKit中WebCore组件的分支——Blink，Blink将用于新版Google Chrome与Opera。</p>
+<p>WebKit的WebCore及JavaScriptCore组件使用GNU宽通用公共许可证，其他组件则采用BSD许可证。</p>
+<p>截至2013年3月7日，Webkit商标已被苹果公司在美国专利及商标局注册为其商标。</p>
+</li>
+</ul>
+<h3 id="Presto"><a href="#Presto" class="headerlink" title="Presto"></a><del>Presto</del></h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Presto_(browser_engine)">Presto</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Opera</p>
+<p>Presto是一个由Opera Software开发的网页浏览器排版引擎，由Opera 7.0至12.18版本所使用。</p>
+<p>Presto取代了旧版Opera 4至6版本使用的Elektra排版引擎，包括加入动态功能，例如网页或其部分可随着DOM及Script语法的事件而重新排版。Presto在推出后不断有更新版本推出，使不少错误得以修正，以及阅读JavaScript性能得以最优化。</p>
+<p>2013年2月12日，Opera宣布将结束Presto引擎的开发，未来将以Webkit引擎为主。</p>
+<p>2016年2月15日，传出Opera被收购的消息，同日Presto内核版Opera更新到12.18。</p>
+</li>
+</ul>
+<h3 id="Blink"><a href="#Blink" class="headerlink" title="Blink"></a>Blink</h3><ul>
+<li><p><a href="https://zh.wikipedia.org/wiki/Blink">Blink</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Chrome、Opera、Microsoft Edge</p>
+<p>Blink是一个由Google主导开发的开源浏览器排版引擎，Google计划将这个渲染引擎作为Chromium计划的一部分，并且在2013年4月的时候公布了这一消息。</p>
+<p>这一渲染引擎是开源引擎WebKit中WebCore组件的一个分支，并且在Chrome（28及往后版本）、Opera（15及往后版本）、Yandex、Vivaldi等诸多浏览器中使用。Chrome的开发者由于希望在浏览器的开发上拥有更大的自由度，同时避免与上游冲突，更可透过移除Chrome没有使用的组件而简化自己的程序库，所以决定开发WebKit的分支版本。根据提交统计，Google自2009年年底以来一直是WebKit代码库的最大贡献者。</p>
+<p>Blink的命名受到Netscape Navigator引入的Blink非标准元素启发。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div><font color="#FF0000">------------本文结束<i class="fa fa-paw"></i>感谢您的阅读------------</font><br/><br/>Thank you for your accept！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_wechat.png" alt="yooking 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_ali.png" alt="yooking 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+	  
+
+      <footer class="post-footer">
+		<div>
+			
+				
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+
+  <p><span>本文标题:</span>五大浏览器与四大内核</a></p>
+  <p><span>文章作者:</span>yooking</a></p>
+  <p><span>发布时间:</span>2019年09月24日 - 09:59:32</p>
+  <p><span>最后更新:</span>2020年05月09日 - 13:40:27</p>
+  <p><span>原始链接:</span><a href="/dev/190924-browser.html" title="五大浏览器与四大内核">https://blog.yookingh.cn/dev/190924-browser.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://blog.yookingh.cn/dev/190924-browser.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+			
+		</div>
+          
+          <div class="post-tags">
+              <a href="/tags/Study/" rel="tag"><i class="fa fa-tag"></i> Study</a>
+              <a href="/tags/Web/" rel="tag"><i class="fa fa-tag"></i> Web</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dev/190809-webSocket.html" rel="prev" title="Kotlin-webSocket的基本封装">
+      <i class="fa fa-chevron-left"></i> Kotlin-webSocket的基本封装
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dev/190924-hotfix.html" rel="next" title="Android热补丁技术初探">
+      Android热补丁技术初探 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#五大浏览器"><span class="nav-number">1.</span> <span class="nav-text">五大浏览器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Internet-Explorer"><span class="nav-number">1.1.</span> <span class="nav-text">Internet Explorer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Opera"><span class="nav-number">1.2.</span> <span class="nav-text">Opera</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Safari"><span class="nav-number">1.3.</span> <span class="nav-text">Safari</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Firefox"><span class="nav-number">1.4.</span> <span class="nav-text">Firefox</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chrome"><span class="nav-number">1.5.</span> <span class="nav-text">Chrome</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四大内核"><span class="nav-number">2.</span> <span class="nav-text">四大内核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Trident"><span class="nav-number">2.1.</span> <span class="nav-text">Trident</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gecko"><span class="nav-number">2.2.</span> <span class="nav-text">Gecko</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Webkit"><span class="nav-number">2.3.</span> <span class="nav-text">Webkit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Presto"><span class="nav-number">2.4.</span> <span class="nav-text">Presto</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Blink"><span class="nav-number">2.5.</span> <span class="nav-text">Blink</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yooking"
+      src="/imgs/a_icon_head.jpg">
+  <p class="site-author-name" itemprop="name">yooking</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+
+<div id="music_163">
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" height=86 src="//music.163.com/outchain/player?type=2&id=1417959188&auto=1&height=66"></iframe>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yooking-git" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yooking-git" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:android_yoo@126.com" title="E-Mail → mailto:android_yoo@126.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chensheng.group/" title="https:&#x2F;&#x2F;www.chensheng.group&#x2F;" rel="noopener" target="_blank">陈先生的小前端</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/theme-next" title="https:&#x2F;&#x2F;github.com&#x2F;theme-next" rel="noopener" target="_blank">NexT主题</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yooking</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">62k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">57 分钟</span>
+</div>
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("04/07/2019 00:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,0' opacity='0.7' zIndex='-1' count='140' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.1" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uutufTwYVUeCtemIaV78RUzY-gzGzoHsz',
+      appKey     : 'EWtCrVS44F22gkjWkQ15x4lx',
+      placeholder: "恭迎评论指教（Your comments and criticisms are always welcome.）",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
