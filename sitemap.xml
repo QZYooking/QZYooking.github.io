@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.yookingh.cn/dev/200601-wheelview.html</loc>
+    
+    <lastmod>2020-06-02T09:03:59.543Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://blog.yookingh.cn/dev/200521-package.html</loc>
+    
+    <lastmod>2020-05-26T11:31:22.242Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.yookingh.cn/blog/200512-hexo.html</loc>
     
     <lastmod>2020-05-14T11:26:05.490Z</lastmod>
