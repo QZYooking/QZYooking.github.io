@@ -30,9 +30,9 @@
 <meta property="og:description" content="前言网上找的日历选择器一直不太满意，所以想着自己造个轮子">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://i.loli.net/2020/06/16/2SOCiyDmu3k8Mtx.png">
-<meta property="og:image" content="https://i.loli.net/2020/06/16/vyT7iE6rABtwbgf.png">
+<meta property="og:image" content="https://i.loli.net/2020/06/16/GQioClLAaF9fcT7.png">
 <meta property="article:published_time" content="2020-06-16T06:22:57.000Z">
-<meta property="article:modified_time" content="2020-06-16T09:10:36.243Z">
+<meta property="article:modified_time" content="2020-06-16T10:47:50.858Z">
 <meta property="article:author" content="yooking">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -288,7 +288,11 @@
 <p>记录完选中区，应该重新绘制界面</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (selectedType == TYPE_RANGE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelectedStart != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (calSelectedEnd == <span class="keyword">null</span>) &#123;</span><br><span class="line">            dateEntity.setSelected(calSelectedStart.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dateEntity.setSelected(!dateEntity.getCalendar().before(calSelectedStart) &amp;&amp; !dateEntity.getCalendar().after(calSelectedEnd));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (selectedType == TYPE_SINGLE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelected != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dateEntity.setSelected(calSelected.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (dateEntity.isSelected()) &#123;</span><br><span class="line">    canvas.drawLine(baseX - textWidth / <span class="number">2f</span>, baseY, baseX + textWidth / <span class="number">2f</span>, baseY, selectedPaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>最终呈现<img src="https://i.loli.net/2020/06/16/vyT7iE6rABtwbgf.png" alt="最终预览"></p>
+<p>最终呈现：</p>
+<p><img src="https://i.loli.net/2020/06/16/GQioClLAaF9fcT7.png" alt="最终预览"></p>
+<p>引用：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.yooking.tools.calendarview.CalendarPickerView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:background</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag"></span></span><br><span class="line"><span class="tag">    <span class="attr">app:hintColor</span>=<span class="string">"@color/color_text_999999"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:maskColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedColor</span>=<span class="string">"#0000ff"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedTextColor</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:textColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedType</span>=<span class="string">"range"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>源码：<a href="https://github.com/yooking-git/Utils/tree/master/timepicker">源码-Github</a></p>
 <p>Demo：<a href="https://github.com/yooking-git/Utils/blob/master/app/src/main/java/com/yooking/test/activity/TestActivity.java">Demo-Github</a></p>
 
@@ -334,7 +338,7 @@
   <p><span>本文标题:</span>自定义日历选择器</a></p>
   <p><span>文章作者:</span>yooking</a></p>
   <p><span>发布时间:</span>2020年06月16日 - 14:22:57</p>
-  <p><span>最后更新:</span>2020年06月16日 - 17:10:36</p>
+  <p><span>最后更新:</span>2020年06月16日 - 18:47:50</p>
   <p><span>原始链接:</span><a href="/dev/200616-calendarView.html" title="自定义日历选择器">http://blog.yookingh.cn/dev/200616-calendarView.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200616-calendarView.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -521,13 +525,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">101k</span>
+    <span title="站点总字数">102k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:32</span>
+    <span title="站点阅读时长">1:33</span>
 </div>
 <div>
 <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
