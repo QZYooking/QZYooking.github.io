@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.yookingh.cn/404/index.html</loc>
+    
+    <lastmod>2020-06-18T01:46:51.720Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.yookingh.cn/dev/200616-calendarView.html</loc>
     
     <lastmod>2020-06-16T10:47:50.858Z</lastmod>
@@ -131,13 +138,6 @@
     <loc>http://blog.yookingh.cn/about/index.html</loc>
     
     <lastmod>2020-04-29T02:49:19.383Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://blog.yookingh.cn/404/index.html</loc>
-    
-    <lastmod>2019-11-18T08:12:01.490Z</lastmod>
     
   </url>
   
