@@ -646,7 +646,8 @@
     <title>自定义二维码扫描</title>
     <url>/dev/200709-ScanQRCode.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>项目中需要对二维码进行扫描，第一个想到的自然就是Zxing。于是去查看了Google的官方Demo：<a href="https://github.com/zxing/zxing">Github：Zxing Demo</a></p>
-<p>发现Demo中包含的元素实在是过多，于是决定自己搭建一个简易的二维码扫描工具，方便实现自己的需求，可能其中很多优化都没有去做，但是胜在简和易。</p>
+<p>发现Demo中包含的元素实在是过多，于是决定自己搭建一个简易的二维码扫描工具，方便实现自己的需求，可能其中很多优化都没有去做，但是胜在简和易。<a id="more"></a></p>
+<p>多简易？直接拉到最底部，看下使用文档吧。</p>
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>二维码扫描的逻辑应当是：</p>
 <ol>
 <li>打开摄像头并获取摄像头加载的图像流数据</li>
