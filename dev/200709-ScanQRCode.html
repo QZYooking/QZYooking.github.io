@@ -22,15 +22,20 @@
     var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="墨染青葱几许烟">
-<meta property="og:url" content="http://blog.yookingh.cn/index.html">
+  <meta name="description" content="前言项目中需要对二维码进行扫描，第一个想到的自然就是Zxing。于是去查看了Google的官方Demo：Github：Zxing Demo 发现Demo中包含的元素实在是过多，于是决定自己搭建一个简易的二维码扫描工具，方便实现自己的需求，可能其中很多优化都没有去做，但是胜在简和易。 正文二维码扫描的逻辑应当是：  打开摄像头并获取摄像头加载的图像流数据 不断的截取图像中扫描框内的数据（扫描框其实是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义二维码扫描">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/200709-ScanQRCode.html">
 <meta property="og:site_name" content="墨染青葱几许烟">
+<meta property="og:description" content="前言项目中需要对二维码进行扫描，第一个想到的自然就是Zxing。于是去查看了Google的官方Demo：Github：Zxing Demo 发现Demo中包含的元素实在是过多，于是决定自己搭建一个简易的二维码扫描工具，方便实现自己的需求，可能其中很多优化都没有去做，但是胜在简和易。 正文二维码扫描的逻辑应当是：  打开摄像头并获取摄像头加载的图像流数据 不断的截取图像中扫描框内的数据（扫描框其实是">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-09T00:55:09.000Z">
+<meta property="article:modified_time" content="2020-07-09T08:31:40.530Z">
 <meta property="article:author" content="yooking">
+<meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://blog.yookingh.cn/">
+<link rel="canonical" href="http://blog.yookingh.cn/dev/200709-ScanQRCode.html">
 
 
 <script id="page-configurations">
@@ -38,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>墨染青葱几许烟</title>
+  <title>自定义二维码扫描 | 墨染青葱几许烟</title>
   
 
 
@@ -183,9 +188,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -201,10 +207,9 @@
       <meta itemprop="name" content="墨染青葱几许烟">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200709-ScanQRCode.html" class="post-title-link" itemprop="url">自定义二维码扫描</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          自定义二维码扫描
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -227,6 +232,18 @@
 
           
   
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/dev/200709-ScanQRCode.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/200709-ScanQRCode.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
   
 
         </div>
@@ -238,7 +255,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>项目中需要对二维码进行扫描，第一个想到的自然就是Zxing。于是去查看了Google的官方Demo：<a href="https://github.com/zxing/zxing">Github：Zxing Demo</a></p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>项目中需要对二维码进行扫描，第一个想到的自然就是Zxing。于是去查看了Google的官方Demo：<a href="https://github.com/zxing/zxing">Github：Zxing Demo</a></p>
 <p>发现Demo中包含的元素实在是过多，于是决定自己搭建一个简易的二维码扫描工具，方便实现自己的需求，可能其中很多优化都没有去做，但是胜在简和易。</p>
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>二维码扫描的逻辑应当是：</p>
 <ol>
@@ -298,742 +315,99 @@
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>余下代码请在Demo中查阅，如有疑问，欢迎留言，使用方法请查看github：ReadMe</p>
 <p>Github：<a href="https://github.com/yooking-git/Utils/tree/master/zxing">Zxing Demo By yooking</a></p>
 
-      
     </div>
 
     
     
     
+        <div class="reward-container">
+  <div><font color="#FF0000">------------本文结束<i class="fa fa-paw"></i>感谢您的阅读------------</font><br/><br/>Thank you for your accept！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_wechat.png" alt="yooking 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_ali.png" alt="yooking 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+	  
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
+		<div>
+			
+				
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
   
-  
-  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200616-calendarView.html">
+  <p><span>本文标题:</span>自定义二维码扫描</a></p>
+  <p><span>文章作者:</span>yooking</a></p>
+  <p><span>发布时间:</span>2020年07月09日 - 08:55:09</p>
+  <p><span>最后更新:</span>2020年07月09日 - 16:31:40</p>
+  <p><span>原始链接:</span><a href="/dev/200709-ScanQRCode.html" title="自定义二维码扫描">http://blog.yookingh.cn/dev/200709-ScanQRCode.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200709-ScanQRCode.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
+			
+		</div>
           
-            <a href="/dev/200616-calendarView.html" class="post-title-link" itemprop="url">自定义日历选择器</a>
-        </h2>
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          </div>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-16 14:22:57" itemprop="dateCreated datePublished" datetime="2020-06-16T14:22:57+08:00">2020-06-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上找的日历选择器一直不太满意，所以想着自己造个轮子
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200616-calendarView.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200601-wheelview.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200601-wheelview.html" class="post-title-link" itemprop="url">自定义WheelView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-01 15:10:30" itemprop="dateCreated datePublished" datetime="2020-06-01T15:10:30+08:00">2020-06-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>儿童节快乐！！！</p>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目中使用了时间选择器，原先使用的时间选择器控件无法满足我的需求，于是选择自己造（抄）个轮子。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200601-wheelview.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dev/200616-calendarView.html" rel="prev" title="自定义日历选择器">
+      <i class="fa fa-chevron-left"></i> 自定义日历选择器
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200521-package.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200521-package.html" class="post-title-link" itemprop="url">Android封装之路系列—MVP模式架构</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-21 14:55:57" itemprop="dateCreated datePublished" datetime="2020-05-21T14:55:57+08:00">2020-05-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="总续"><a href="#总续" class="headerlink" title="总续"></a>总续</h1><ul>
-<li>你是否常常感觉代码冗余杂陈</li>
-<li>你是否常常感觉代码复杂难懂</li>
-<li>你是否常常感觉…</li>
-<li>那就开启你的代码封装之路吧~</li>
-</ul>
-<ol>
-<li>面向对象程序设计有三个特征：封装、继承、多态，这三个特征即是语法也是手段，23种设计模板其实就是对这三种手段的灵活应用，今天<del>不谈</del>（还是得谈）任何高大上的设计模式，<del>仅仅</del>（不仅仅）谈谈代码封装。</li>
-<li>封装代码需要先做到的是：
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200521-package.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200514-bug-flash.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200514-bug-flash.html" class="post-title-link" itemprop="url">Android页面跳转时前一个页面闪现问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-14 17:00:13" itemprop="dateCreated datePublished" datetime="2020-05-14T17:00:13+08:00">2020-05-14</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><strong>公司项目</strong>：页面跳转 - 转场动画为默认动画<br><strong>情况介绍</strong>：从A页面跳转B页面后，B页面做了网络请求，请求过程会弹出LoadingDialog，请求结束关闭LoadingDialog并根据请求结果刷新当前界面。<br><strong>异常情况</strong>：A页面跳转B页面，B页面网络请求成功时，会频繁偶现A页面闪现的情况。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200514-bug-flash.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/blog/200512-hexo.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/200512-hexo.html" class="post-title-link" itemprop="url">开启Hexo之路</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-13 08:59:01" itemprop="dateCreated datePublished" datetime="2020-05-13T08:59:01+08:00">2020-05-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/blog/" itemprop="url" rel="index"><span itemprop="name">想丶将博客写出精彩</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
-<li><p><strong>关于Hexo</strong></p>
-<p><a style="color:#1196EE" href="https://hexo.io/zh-cn/docs/" target="view_window">Hexo文档</a>（本文或许有大量文档引用此处）</p>
-</li>
-<li><p><strong>什么是Hexo</strong></p>
-<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 <a style="color:#1196EE" href="http://daringfireball.net/projects/markdown/" target="view_window">Markdown</a>（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/200512-hexo.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200512-flutter.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200512-flutter.html" class="post-title-link" itemprop="url">Flutter踩坑日记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-12 09:52:33" itemprop="dateCreated datePublished" datetime="2020-05-12T09:52:33+08:00">2020-05-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
-<li><p>什么是Flutter</p>
-<p>Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200512-flutter.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200509-audioManager.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200509-audioManager.html" class="post-title-link" itemprop="url">Android 音量控制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-09 11:30:30" itemprop="dateCreated datePublished" datetime="2020-05-09T11:30:30+08:00">2020-05-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200509-audioManager.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200424-accessibilityService.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/200424-accessibilityService.html" class="post-title-link" itemprop="url">Android辅助功能开发-一键优化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-24 13:29:35" itemprop="dateCreated datePublished" datetime="2020-04-24T13:29:35+08:00">2020-04-24</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目需求：为App提供一键优化功能（一键获取相关所有权限），确保App在优化过后能够常驻手机，为用户提供服务。——商户类App，用户非主动关闭时常驻手机合情合理
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/200424-accessibilityService.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/191118-bookkeeping.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
-      <meta itemprop="name" content="yooking">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="墨染青葱几许烟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dev/191118-bookkeeping.html" class="post-title-link" itemprop="url">项目开发-从零开始记账本</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-18 11:25:39" itemprop="dateCreated datePublished" datetime="2019-11-18T11:25:39+08:00">2019-11-18</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
-                </span>
-            </span>
-
-          
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="大事记"><a href="#大事记" class="headerlink" title="大事记"></a>大事记</h1><h2 id="公司大事件"><a href="#公司大事件" class="headerlink" title="公司大事件"></a>公司大事件</h2><pre class='mermaid'>
-    graph TB
-    Company(甲方-乙方公司) -- 2019.11.11 --> 成立
-    Company --- Project(项目)
-    Company --- Human(人员)
-    Human -- 2019.11.11 --> 任命
-    Appoint[人员任命] --> PartyA(甲方) 
-    PartyA --> All(全体成员)
-    Appoint[人员任命] --> PartyB(乙方)
-    PartyB -- PM --> PM(胖子)
-    PartyB -- UI --> UI(花花)
-    PartyB -- RD --> RD(yooking)
-</pre>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dev/191118-bookkeeping.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -1079,6 +453,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制扫描框"><span class="nav-number">2.1.</span> <span class="nav-text">绘制扫描框</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打造Activity"><span class="nav-number">2.2.</span> <span class="nav-text">打造Activity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
