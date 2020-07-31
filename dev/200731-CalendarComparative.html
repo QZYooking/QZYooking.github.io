@@ -22,22 +22,22 @@
     var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言公司项目——沉浸式布局沉浸式方案：全屏+透明状态栏问题：键盘遮挡输入框">
+  <meta name="description" content="发现Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android沉浸式布局导致的键盘遮挡问题处理方案">
-<meta property="og:url" content="http://blog.yookingh.cn/dev/190808-virtual-Keyboard.html">
+<meta property="og:title" content="Calendar的时间比对问题">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/200731-CalendarComparative.html">
 <meta property="og:site_name" content="墨染青葱几许烟">
-<meta property="og:description" content="前言公司项目——沉浸式布局沉浸式方案：全屏+透明状态栏问题：键盘遮挡输入框">
+<meta property="og:description" content="发现Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-08-08T09:09:23.000Z">
-<meta property="article:modified_time" content="2020-05-13T01:19:15.540Z">
+<meta property="article:published_time" content="2020-07-31T00:41:00.000Z">
+<meta property="article:modified_time" content="2020-07-31T02:06:58.230Z">
 <meta property="article:author" content="yooking">
+<meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="Java">
-<meta property="article:tag" content="Bug">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://blog.yookingh.cn/dev/190808-virtual-Keyboard.html">
+<link rel="canonical" href="http://blog.yookingh.cn/dev/200731-CalendarComparative.html">
 
 
 <script id="page-configurations">
@@ -50,7 +50,7 @@
   };
 </script>
 
-  <title>Android沉浸式布局导致的键盘遮挡问题处理方案 | 墨染青葱几许烟</title>
+  <title>Calendar的时间比对问题 | 墨染青葱几许烟</title>
   
 
 
@@ -197,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/190808-virtual-Keyboard.html">
+    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200731-CalendarComparative.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/imgs/a_icon_head.jpg">
@@ -210,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Android沉浸式布局导致的键盘遮挡问题处理方案
+          Calendar的时间比对问题
         </h1>
 
         <div class="post-meta">
@@ -220,7 +220,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-08-08 17:09:23" itemprop="dateCreated datePublished" datetime="2019-08-08T17:09:23+08:00">2019-08-08</time>
+              <time title="创建时间：2020-07-31 08:41:00" itemprop="dateCreated datePublished" datetime="2020-07-31T08:41:00+08:00">2020-07-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,8 +241,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/dev/190808-virtual-Keyboard.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/dev/190808-virtual-Keyboard.html" itemprop="commentCount"></span>
+    <a title="valine" href="/dev/200731-CalendarComparative.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/200731-CalendarComparative.html" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -257,10 +257,37 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目——沉浸式布局<br>沉浸式方案：全屏+透明状态栏<br>问题：键盘遮挡输入框<a id="more"></a><br>解决思路：检测键盘是否弹起，根据键盘的弹起与回收，重新绘制界面<br>解决方案：AndroidBug5497Workaround</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AndroidBug5497Workaround</span> </span>&#123;</span><br><span class="line">    <span class="comment">//该解决方案用于处理 全屏下键盘 问题 :</span></span><br><span class="line">    <span class="comment">//当Theme为 @android:style/Theme.Light.NoTitleBar.Fullscreen 时</span></span><br><span class="line">    <span class="comment">//android:windowSoftInputMode="adjustResize" 无效</span></span><br><span class="line">    <span class="comment">// For more information, see https://code.google.com/p/android/issues/detail?id=5497</span></span><br><span class="line">    <span class="comment">// To use this class, simply invoke assistActivity() on an Activity that already has its content view set.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//紧随setContentView之后调用</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">assistActivity</span> <span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> AndroidBug5497Workaround(activity);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> View mChildOfContent;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> usableHeightPrevious;</span><br><span class="line">    <span class="keyword">private</span> FrameLayout.LayoutParams frameLayoutParams;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">AndroidBug5497Workaround</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//获取Activity的最外层布局</span></span><br><span class="line">        FrameLayout content = (FrameLayout) activity.findViewById(android.R.id.content);</span><br><span class="line">        mChildOfContent = content.getChildAt(<span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//监听键盘弹起与收回</span></span><br><span class="line">        mChildOfContent.getViewTreeObserver().addOnGlobalLayoutListener(</span><br><span class="line">            <span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    possiblyResizeChildOfContent();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">//重置页面属性</span></span><br><span class="line">        frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 获取界面可用高度，如果软键盘弹起后，Activity的xml布局可用高度需要减去键盘高度 </span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">possiblyResizeChildOfContent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> usableHeightNow = computeUsableHeight();</span><br><span class="line">		</span><br><span class="line">        <span class="comment">//判断 当前可用高度和 历史可用高度不同 （即键盘状态发生变化） 时，调整界面高度</span></span><br><span class="line">        <span class="keyword">if</span> (usableHeightNow != usableHeightPrevious) &#123;</span><br><span class="line">            <span class="keyword">int</span> usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();</span><br><span class="line">            <span class="keyword">int</span> heightDifference = usableHeightSansKeyboard - usableHeightNow;</span><br><span class="line">            <span class="comment">//将 可用高度的1/4视为键盘高度</span></span><br><span class="line">            <span class="keyword">if</span> (heightDifference &gt; (usableHeightSansKeyboard/<span class="number">4</span>)) &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became visible</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard - heightDifference;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became hidden</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard;</span><br><span class="line">            &#125;</span><br><span class="line">            mChildOfContent.requestLayout();</span><br><span class="line">            usableHeightPrevious = usableHeightNow;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//获取页面可用高度</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">computeUsableHeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Rect r = <span class="keyword">new</span> Rect();</span><br><span class="line">        mChildOfContent.getWindowVisibleDisplayFrame(r);</span><br><span class="line">        <span class="comment">//全屏应用 不需要减去 top , r.top 为状态栏高度，r.bottom 为屏幕可用最底部高度</span></span><br><span class="line">        <span class="comment">//return r.bottom;</span></span><br><span class="line">        <span class="keyword">return</span> (r.bottom - r.top);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h1 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h1><p>Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…<a id="more"></a></p>
+<p>会有如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"MainActivity"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        </span><br><span class="line">        Calendar calStart = Calendar.getInstance();</span><br><span class="line">        calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">        </span><br><span class="line">        setOnClickListener(v-&gt;&#123;</span><br><span class="line">            Calendar calEnd = Calendar.getInstance();</span><br><span class="line">            calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">            Log.i(TAG,<span class="string">"is startTime before endTime?"</span>+isNotBefore(calStart,calEnd));</span><br><span class="line">        &#125;,R.id.tv_main_comparative)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart,Calendar calEnd)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !calStart.before(calEnd);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setOnClickListener</span><span class="params">(OnClickListener listener,@ResId <span class="keyword">int</span> ... ids)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> id:ids)&#123;</span><br><span class="line">            findViewById(id).setOnClickListener(listener)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//日志结果</span></span><br><span class="line"><span class="comment">//首次点击：MainActivity:is startTime before endTime?false</span></span><br><span class="line"><span class="comment">//再次点击：MainActivity:is startTime before endTime?true</span></span><br><span class="line"><span class="comment">//多次点击：...或false或true</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p><a href="https://code.google.com/p/android/issues/detail?id=5497">google-issues-5497</a>（code.google.com）<br><a href="https://github.com/madebycm/AndroidBug5497Workaround">Android-5497问题解决方案</a>（github.com）<br><a href="https://www.jianshu.com/p/a95a1b84da11">据说能解决5497方案的兼容问题</a>（jianshu.com）</p>
+<p>每次点击时的结果都是不尽相同的。为什么？</p>
+<h1 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h1><p>我们尝试新增如下日志</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    setOnClickListener(v-&gt;&#123;</span><br><span class="line">        ...</span><br><span class="line">        Log.i(TAG,<span class="string">"startTime.getTimeInMillis():"</span>+calStart.getTimeInMillis()+<span class="string">"---&gt;endTime.getTimeInMillis():"</span>+calEnd.getTimeInMillis());</span><br><span class="line">    &#125;,R.id.tv_main_comparative);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到打出的日志（这里就不贴日志了，可以自行尝试）有毫秒级的差别，也就是：</p>
+<ol>
+<li>calStart的真实时间是2008.01.01 00:00:00.xxx<br>（注：xxx是<code>Calendar calStart = Calendar.getInstance();</code>时的毫秒数）</li>
+<li>calEnd的真实时间的毫秒数则是点击瞬间的毫秒数</li>
+<li>由于毫秒数的不确定性，导致时而calStart大于、时而小于、时而等于calEnd</li>
+</ol>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>解决方案有两种：</p>
+<ol>
+<li><p>在使用到Calendar的类中定义一个基础Calendar</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Calendar calBase = Calendar.getInstance();</span><br><span class="line"></span><br><span class="line">Calendar calStart = Calendar.getInstance();</span><br><span class="line">calStart.setTime(calBase.getTime());</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = Calendar.getInstance();</span><br><span class="line">calEnd.setTime(calBase.getTime());</span><br><span class="line">calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>千万别写成如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//那我还得和你解释数据是怎么存储在堆和栈中... pass</span></span><br><span class="line">Calendar calStart = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这种写法其实都是在操作calBase，都不能算是另外操作calStart和calEnd.可尝试如下代码看看效果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initTry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Calendar calBase = Calendar.getInstance();</span><br><span class="line">    Calendar calStart = calBase;</span><br><span class="line">    calBase.set(<span class="number">2008</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Calendar calEnd = calBase;</span><br><span class="line">    calEnd.set(<span class="number">2009</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Log.i(TAG,<span class="string">"log\nCalendar0--&gt;"</span>+calStart.getTime().toString()+<span class="string">"\nCalendar1--&gt;"</span>+calEnd.getTime().toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//日志</span></span><br><span class="line"><span class="comment">//log</span></span><br><span class="line"><span class="comment">//    Calendar0--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br><span class="line"><span class="comment">//    Calendar1--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>比较时根据精确度进行比较：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalendarUtils</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart, Calendar calEnd, @NotNull CalendarType type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> startYear = calStart.get(Calendar.YEAR);</span><br><span class="line">        <span class="keyword">int</span> endYear = calEnd.get(Calendar.YEAR);</span><br><span class="line">        <span class="keyword">if</span> (startYear &lt; endYear) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.YEAR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> startMonth = calStart.get(Calendar.MONTH);</span><br><span class="line">        <span class="keyword">int</span> endMonth = calEnd.get(Calendar.MONTH);</span><br><span class="line">        <span class="keyword">if</span> (startMonth &lt; endMonth) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MONTH == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> startDay = calStart.get(Calendar.DAY_OF_MONTH);</span><br><span class="line">        <span class="keyword">int</span> endDay = calEnd.get(Calendar.DAY_OF_MONTH);</span><br><span class="line">        <span class="keyword">if</span> (startDay &lt; endDay) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.DAY == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> startHour = calStart.get(Calendar.HOUR_OF_DAY);</span><br><span class="line">        <span class="keyword">int</span> endHour = calEnd.get(Calendar.HOUR_OF_DAY);</span><br><span class="line">        <span class="keyword">if</span> (startHour &lt; endHour) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.HOUR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> startMinute = calStart.get(Calendar.MINUTE);</span><br><span class="line">        <span class="keyword">int</span> endMinute = calEnd.get(Calendar.MINUTE);</span><br><span class="line">        <span class="keyword">if</span> (startMinute &lt; endMinute) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MINUTE == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> startSecond = calStart.get(Calendar.SECOND);</span><br><span class="line">        <span class="keyword">int</span> endSecond = calEnd.get(Calendar.SECOND);</span><br><span class="line">        <span class="keyword">if</span> (startSecond &lt; endSecond) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.SECOND == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> calStart.getTimeInMillis() &gt;= calEnd.getTimeInMillis();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> CalendarType &#123;</span><br><span class="line">        YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLIS_SECOND</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><strong>写代码时务必要注重细节~</strong><br>另：<del>（免责声明）</del>以上代码未在编辑器上校验过，纯手打<del>如有问题，请根据实际情况修改代码<br>如有疑问，评论区见</del></p>
 
     </div>
 
@@ -301,12 +328,12 @@
   <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
 
-  <p><span>本文标题:</span>Android沉浸式布局导致的键盘遮挡问题处理方案</a></p>
+  <p><span>本文标题:</span>Calendar的时间比对问题</a></p>
   <p><span>文章作者:</span>yooking</a></p>
-  <p><span>发布时间:</span>2019年08月08日 - 17:09:23</p>
-  <p><span>最后更新:</span>2020年05月13日 - 09:19:15</p>
-  <p><span>原始链接:</span><a href="/dev/190808-virtual-Keyboard.html" title="Android沉浸式布局导致的键盘遮挡问题处理方案">http://blog.yookingh.cn/dev/190808-virtual-Keyboard.html</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/190808-virtual-Keyboard.html"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2020年07月31日 - 08:41:00</p>
+  <p><span>最后更新:</span>2020年07月31日 - 10:06:58</p>
+  <p><span>原始链接:</span><a href="/dev/200731-CalendarComparative.html" title="Calendar的时间比对问题">http://blog.yookingh.cn/dev/200731-CalendarComparative.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200731-CalendarComparative.html"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -329,9 +356,9 @@
 		</div>
           
           <div class="post-tags">
+              <a href="/tags/study/" rel="tag"><i class="fa fa-tag"></i> 学习笔记</a>
               <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
               <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
-              <a href="/tags/Bug/" rel="tag"><i class="fa fa-tag"></i> Bug</a>
           </div>
 
         
@@ -340,13 +367,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dev/190806-home-Restart.html" rel="prev" title="Android release包Home键重启问题">
-      <i class="fa fa-chevron-left"></i> Android release包Home键重启问题
+    <a href="/dev/200709-ScanQRCode.html" rel="prev" title="自定义二维码扫描">
+      <i class="fa fa-chevron-left"></i> 自定义二维码扫描
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dev/190809-kotlin-IM.html" rel="next" title="Kotlin初体验：IM项目体验">
-      Kotlin初体验：IM项目体验 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -405,7 +429,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文档"><span class="nav-number">3.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#发现"><span class="nav-number">1.</span> <span class="nav-text">发现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#探索"><span class="nav-number">2.</span> <span class="nav-text">探索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
