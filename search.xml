@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Android release包Home键重启问题</title>
+    <url>/dev/190806-home-Restart.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="BUG描述"><a href="#BUG描述" class="headerlink" title="BUG描述"></a>BUG描述</h1><ol>
+<li><p><strong>操作流程</strong>：打release包——安装apk——点选“打开”按钮——点Home键——点桌面图标</p>
+</li>
+<li><p><strong>现象</strong>：App重启<a id="more"></a></p>
+</li>
+<li><p><strong>原理分析及分析过程</strong>：</p>
+<ul>
+<li><p><strong>比较</strong>【安装apk直接打开】时的intent和【桌面图标打开】的intent的区别</p>
+<p><strong>直接打开：</strong>（Logcat直接搜索<code>I/ActivityManager: START u0</code>）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">I/ActivityManager: START u0 </span><br><span class="line">&#123;</span><br><span class="line">  act=android.intent.action.MAIN</span><br><span class="line">  cat=[android.intent.category.LAUNCHER]</span><br><span class="line">  flg=0x10000000</span><br><span class="line">  pkg=com.yooking.test</span><br><span class="line">  cmp=com.yooking.test/.SplashActivity</span><br><span class="line">&#125;</span><br><span class="line">from uid 10039</span><br></pre></td></tr></table></figure>
+
+<p><strong>桌面图标打开：</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">I/ActivityManager: START u0 </span><br><span class="line">&#123;</span><br><span class="line">  act=android.intent.action.MAIN</span><br><span class="line">  cat=[android.intent.category.LAUNCHER]</span><br><span class="line">  flg=0x10200000</span><br><span class="line">  cmp=com.yooking.test/.SplashActivity</span><br><span class="line">  bnds=[856,662][1067,951]</span><br><span class="line">&#125;</span><br><span class="line">from uid 10068</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>对比结果：</strong>显然【桌面图标打开】时比【安装apk直接打开】少了一条pkg，多了一条bnds（pkg即Package，bnds即SourceBounds）</p>
+</li>
+<li><p><strong>猜测：</strong>怀疑bug的原因是pkg导致，那就模拟下呗：（红波浪线是因为@IntDef）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">setClickListener(findViewById(R.id.button),(view)-&gt;&#123;<span class="comment">//模拟直接打开</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);<span class="comment">//act</span></span><br><span class="line">    intent.addCategory(Intent.CATEGORY_LAUNCHER);<span class="comment">//cat</span></span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));<span class="comment">//flg 0x10000000</span></span><br><span class="line">    intent.setPackage(<span class="string">"com.yooking.test"</span>);<span class="comment">//pkg</span></span><br><span class="line">    ComponentName cmp = ComponentName.unflattenFromString(<span class="string">"com.yooking.test/.SplashActivity"</span>);</span><br><span class="line">    intent.setComponent(<span class="keyword">new</span> ComponentName());<span class="comment">//cmp</span></span><br><span class="line">    startActivity(intent);</span><br><span class="line">&#125;) </span><br><span class="line"></span><br><span class="line">setClickListener(findViewById(R.id.button),(view)-&gt;&#123;<span class="comment">//模拟桌面打开</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);<span class="comment">//act</span></span><br><span class="line">    intent.addCategory(Intent.CATEGORY_LAUNCHER);<span class="comment">//cat</span></span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));<span class="comment">//flg 0x10200000</span></span><br><span class="line">    ComponentName cmp = ComponentName.unflattenFromString(<span class="string">"com.yooking.test/.SplashActivity"</span>);</span><br><span class="line">    intent.setComponent(<span class="keyword">new</span> ComponentName());<span class="comment">//cmp</span></span><br><span class="line">    startActivity(intent);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>结论：</strong>模拟结果与猜测一致，带有pkg参数的意图跳转时，点home键确实会出现app重启现象</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="解决BUG"><a href="#解决BUG" class="headerlink" title="解决BUG"></a>解决BUG</h1><ol>
+<li><p>bug的成因分析出来了，如何解决？</p>
+<p>根据前述分析，我们认为BUG出现的原因是Android手机下载app后直接打开时所传参数比桌面图标打开多了一个pkg导致的。</p>
+</li>
+<li><p><strong>解决方案1：</strong>莽过去！<br>什么叫莽过去？就是直截了当，干脆利落，你不是多传了个pkg吗，那我<em>把你关了，再自己启动一个</em>不就行了？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">boolean</span> firstStart</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(firstStart)&#123;</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);</span><br><span class="line">        intent.addCategory(Intent.CATEGORY_LAUNCHER);</span><br><span class="line">        intent.setComponent(<span class="keyword">new</span> ComponentName(BuildConfig.APPLICATION_ID,SplashActivity<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        intent.addFlags(<span class="number">0x10200000</span>);</span><br><span class="line">        startActivity(intent);</span><br><span class="line">        finish();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>just look 挺 perfect 的…事实上嘛…<strong>就当无事发生好了…</strong><br>原因：带pkg和不带pkg被认为非同一应用，故而继续启动了Splash页面</p>
+</li>
+<li><p><strong>解决方案2：</strong>分析BUG现象，根据现象解决问题<br>目标是什么：App启动不重启<br>不重启意味着什么：点击Home键时的Activity回归任务栈顶部</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">任务栈：GET_TASKS权限于Android L废弃，REAL_GET_TASKS权限仅限系统应用有效！！！</span><br><span class="line">因此，无法在App日志中查看任务栈信息。</span><br><span class="line">任务栈查看方法：Android Studio 中 Terminal 输入 adb shell dumpsys activity activities</span><br></pre></td></tr></table></figure>
+
+<p>由于我在SplashActivity中写了finish方法，可以分别看到:<br><strong>#0</strong>直接启动：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">Running activities (most recent first):</span><br><span class="line">TaskRecord&#123;ea096c0 #1597 A=[packageName] U=0 StackId=1604 sz=1&#125;</span><br><span class="line">Run #0: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br><span class="line">mResumedActivity: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br><span class="line">mLastPausedActivity: ActivityRecord&#123;f68c709 u0 [packageName]/[packageName].activity.SplashActivity t-1f&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>#1</strong>点击Home键后，再次打开，在Splash页面时的任务栈：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">Running activities (most recent first):</span><br><span class="line">TaskRecord&#123;ea096c0 #1597 A=[packageName] U=0 StackId=1604 sz=2&#125;</span><br><span class="line">Run #1: ActivityRecord&#123;433989 u0 [packageName]/[packageName].activity.SplashActivity t1597&#125;</span><br><span class="line">Run #0: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两者对比，可以看到任务栈中Splash两次的<strong>id是不同的</strong>，而<strong>main是一致的</strong>。<strong>App并非重启，只是多启动了一次Splash。</strong><br>可见：我们只需要消除往后打开时的Splash页面即可。<br>如何做？根据上述分析，有如下判断</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">在SplashActivity中</span><br><span class="line"><span class="keyword">if</span>(SplashActivity在 任务栈最底部 )&#123;</span><br><span class="line">    <span class="comment">//App为正常启动</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="comment">//App为已经启动并且点击Home键后再次打开</span></span><br><span class="line">    关闭被错误打开的SplashActivity</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断是否为 任务栈最底部的 源码:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Return whether this activity is the root of a task.  The root is the</span></span><br><span class="line"><span class="comment"> * first activity in a task.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> True if this is the root activity, else false.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isTaskRoot</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ActivityManager.getService().getTaskForActivity(mToken, <span class="keyword">true</span>) &gt;= <span class="number">0</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SplashActivity</span> <span class="keyword">extends</span> <span class="title">BaseActivity</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.isTaskRoot()) &#123;<span class="comment">//判断是否为根Activity</span></span><br><span class="line">            Intent mainIntent = getIntent();</span><br><span class="line">            String action = mainIntent.getAction();</span><br><span class="line">            <span class="comment">//判断是否为启动页 如果App不会因为其他原因调用该页面，可以不写if语句</span></span><br><span class="line">            <span class="keyword">if</span> (mainIntent.hasCategory(Intent.CATEGORY_LAUNCHER) </span><br><span class="line">                &amp;&amp; Intent.ACTION_MAIN.equals(action)) &#123;</span><br><span class="line">                finish();</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个代码应该<strong>紧随</strong>着<code>super.onCreate(savedInstanceState);</code>之后。<br>onCreate确保当前Activity是正在创建状态，而在setContentView之前，确保Activity是未渲染的，此时关闭不会让用户察觉</p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li><p><strong>方案二</strong>虽然确实能够解决Home键重启问题，但是也会导致App启动速度变慢（有一个白屏过程），而这个问题在App使用360/乐固等加固后，更为严重，这或许是需要进一步解决的。</p>
+</li>
+<li><p>我在项目中用了取巧的解决方案：迷惑用户——<strong>将白屏替换成启动页</strong>。为启动页设置一个Theme（仅限启动页）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"Splash_Theme"</span> <span class="attr">parent</span>=<span class="string">"AppTheme_NoActionBar"</span>&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@drawable/splash<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Bug</tag>
+        <tag>Android</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Andorid封装之WebActivity</title>
     <url>/dev/190429-webActivity.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
@@ -97,9 +172,38 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>Android</tag>
         <tag>Java</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android封装之路系列—MVP模式架构</title>
+    <url>/dev/200521-package.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="总续"><a href="#总续" class="headerlink" title="总续"></a>总续</h1><ul>
+<li>你是否常常感觉代码冗余杂陈</li>
+<li>你是否常常感觉代码复杂难懂</li>
+<li>你是否常常感觉…</li>
+<li>那就开启你的代码封装之路吧~</li>
+</ul>
+<ol>
+<li>面向对象程序设计有三个特征：封装、继承、多态，这三个特征即是语法也是手段，23种设计模板其实就是对这三种手段的灵活应用，今天<del>不谈</del>（还是得谈）任何高大上的设计模式，<del>仅仅</del>（不仅仅）谈谈代码封装。</li>
+<li>封装代码需要先做到的是：<a id="more"></a></li>
+<li>项目将以wanandroid为例进行</li>
+</ol>
+<h1 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h1><p>本次项目架构使用的是MVP模式，项目结构如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.yooking.mvp</span><br><span class="line">    - model<span class="comment">//M层</span></span><br><span class="line">        - BaseModel</span><br><span class="line">        - IModel</span><br><span class="line">    - presenter<span class="comment">//P层</span></span><br><span class="line">        - BasePresenter</span><br><span class="line">        - IPresenter</span><br><span class="line">    - view<span class="comment">//v层</span></span><br><span class="line">        - BaseActivity</span><br><span class="line">        - IView</span><br></pre></td></tr></table></figure>
+
+<p>看下各层代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
       </tags>
   </entry>
   <entry>
@@ -136,148 +240,9 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>Android</tag>
+        <tag>学习笔记</tag>
         <tag>Kotlin</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android release包Home键重启问题</title>
-    <url>/dev/190806-home-Restart.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="BUG描述"><a href="#BUG描述" class="headerlink" title="BUG描述"></a>BUG描述</h1><ol>
-<li><p><strong>操作流程</strong>：打release包——安装apk——点选“打开”按钮——点Home键——点桌面图标</p>
-</li>
-<li><p><strong>现象</strong>：App重启<a id="more"></a></p>
-</li>
-<li><p><strong>原理分析及分析过程</strong>：</p>
-<ul>
-<li><p><strong>比较</strong>【安装apk直接打开】时的intent和【桌面图标打开】的intent的区别</p>
-<p><strong>直接打开：</strong>（Logcat直接搜索<code>I/ActivityManager: START u0</code>）</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">I/ActivityManager: START u0 </span><br><span class="line">&#123;</span><br><span class="line">  act=android.intent.action.MAIN</span><br><span class="line">  cat=[android.intent.category.LAUNCHER]</span><br><span class="line">  flg=0x10000000</span><br><span class="line">  pkg=com.yooking.test</span><br><span class="line">  cmp=com.yooking.test/.SplashActivity</span><br><span class="line">&#125;</span><br><span class="line">from uid 10039</span><br></pre></td></tr></table></figure>
-
-<p><strong>桌面图标打开：</strong></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">I/ActivityManager: START u0 </span><br><span class="line">&#123;</span><br><span class="line">  act=android.intent.action.MAIN</span><br><span class="line">  cat=[android.intent.category.LAUNCHER]</span><br><span class="line">  flg=0x10200000</span><br><span class="line">  cmp=com.yooking.test/.SplashActivity</span><br><span class="line">  bnds=[856,662][1067,951]</span><br><span class="line">&#125;</span><br><span class="line">from uid 10068</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>对比结果：</strong>显然【桌面图标打开】时比【安装apk直接打开】少了一条pkg，多了一条bnds（pkg即Package，bnds即SourceBounds）</p>
-</li>
-<li><p><strong>猜测：</strong>怀疑bug的原因是pkg导致，那就模拟下呗：（红波浪线是因为@IntDef）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">setClickListener(findViewById(R.id.button),(view)-&gt;&#123;<span class="comment">//模拟直接打开</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);<span class="comment">//act</span></span><br><span class="line">    intent.addCategory(Intent.CATEGORY_LAUNCHER);<span class="comment">//cat</span></span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));<span class="comment">//flg 0x10000000</span></span><br><span class="line">    intent.setPackage(<span class="string">"com.yooking.test"</span>);<span class="comment">//pkg</span></span><br><span class="line">    ComponentName cmp = ComponentName.unflattenFromString(<span class="string">"com.yooking.test/.SplashActivity"</span>);</span><br><span class="line">    intent.setComponent(<span class="keyword">new</span> ComponentName());<span class="comment">//cmp</span></span><br><span class="line">    startActivity(intent);</span><br><span class="line">&#125;) </span><br><span class="line"></span><br><span class="line">setClickListener(findViewById(R.id.button),(view)-&gt;&#123;<span class="comment">//模拟桌面打开</span></span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);<span class="comment">//act</span></span><br><span class="line">    intent.addCategory(Intent.CATEGORY_LAUNCHER);<span class="comment">//cat</span></span><br><span class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED));<span class="comment">//flg 0x10200000</span></span><br><span class="line">    ComponentName cmp = ComponentName.unflattenFromString(<span class="string">"com.yooking.test/.SplashActivity"</span>);</span><br><span class="line">    intent.setComponent(<span class="keyword">new</span> ComponentName());<span class="comment">//cmp</span></span><br><span class="line">    startActivity(intent);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>结论：</strong>模拟结果与猜测一致，带有pkg参数的意图跳转时，点home键确实会出现app重启现象</p>
-</li>
-</ul>
-</li>
-</ol>
-<h1 id="解决BUG"><a href="#解决BUG" class="headerlink" title="解决BUG"></a>解决BUG</h1><ol>
-<li><p>bug的成因分析出来了，如何解决？</p>
-<p>根据前述分析，我们认为BUG出现的原因是Android手机下载app后直接打开时所传参数比桌面图标打开多了一个pkg导致的。</p>
-</li>
-<li><p><strong>解决方案1：</strong>莽过去！<br>什么叫莽过去？就是直截了当，干脆利落，你不是多传了个pkg吗，那我<em>把你关了，再自己启动一个</em>不就行了？</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">boolean</span> firstStart</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(firstStart)&#123;</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);</span><br><span class="line">        intent.addCategory(Intent.CATEGORY_LAUNCHER);</span><br><span class="line">        intent.setComponent(<span class="keyword">new</span> ComponentName(BuildConfig.APPLICATION_ID,SplashActivity<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        intent.addFlags(<span class="number">0x10200000</span>);</span><br><span class="line">        startActivity(intent);</span><br><span class="line">        finish();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>just look 挺 perfect 的…事实上嘛…<strong>就当无事发生好了…</strong><br>原因：带pkg和不带pkg被认为非同一应用，故而继续启动了Splash页面</p>
-</li>
-<li><p><strong>解决方案2：</strong>分析BUG现象，根据现象解决问题<br>目标是什么：App启动不重启<br>不重启意味着什么：点击Home键时的Activity回归任务栈顶部</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">任务栈：GET_TASKS权限于Android L废弃，REAL_GET_TASKS权限仅限系统应用有效！！！</span><br><span class="line">因此，无法在App日志中查看任务栈信息。</span><br><span class="line">任务栈查看方法：Android Studio 中 Terminal 输入 adb shell dumpsys activity activities</span><br></pre></td></tr></table></figure>
-
-<p>由于我在SplashActivity中写了finish方法，可以分别看到:<br><strong>#0</strong>直接启动：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">Running activities (most recent first):</span><br><span class="line">TaskRecord&#123;ea096c0 #1597 A=[packageName] U=0 StackId=1604 sz=1&#125;</span><br><span class="line">Run #0: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br><span class="line">mResumedActivity: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br><span class="line">mLastPausedActivity: ActivityRecord&#123;f68c709 u0 [packageName]/[packageName].activity.SplashActivity t-1f&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>#1</strong>点击Home键后，再次打开，在Splash页面时的任务栈：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">Running activities (most recent first):</span><br><span class="line">TaskRecord&#123;ea096c0 #1597 A=[packageName] U=0 StackId=1604 sz=2&#125;</span><br><span class="line">Run #1: ActivityRecord&#123;433989 u0 [packageName]/[packageName].activity.SplashActivity t1597&#125;</span><br><span class="line">Run #0: ActivityRecord&#123;e30acd0 u0 [packageName]/[packageName].activity.MainActivity t1597&#125;</span><br></pre></td></tr></table></figure>
-
-<p>两者对比，可以看到任务栈中Splash两次的<strong>id是不同的</strong>，而<strong>main是一致的</strong>。<strong>App并非重启，只是多启动了一次Splash。</strong><br>可见：我们只需要消除往后打开时的Splash页面即可。<br>如何做？根据上述分析，有如下判断</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">在SplashActivity中</span><br><span class="line"><span class="keyword">if</span>(SplashActivity在 任务栈最底部 )&#123;</span><br><span class="line">    <span class="comment">//App为正常启动</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="comment">//App为已经启动并且点击Home键后再次打开</span></span><br><span class="line">    关闭被错误打开的SplashActivity</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>判断是否为 任务栈最底部的 源码:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Return whether this activity is the root of a task.  The root is the</span></span><br><span class="line"><span class="comment"> * first activity in a task.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> True if this is the root activity, else false.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isTaskRoot</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ActivityManager.getService().getTaskForActivity(mToken, <span class="keyword">true</span>) &gt;= <span class="number">0</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>判断方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SplashActivity</span> <span class="keyword">extends</span> <span class="title">BaseActivity</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.isTaskRoot()) &#123;<span class="comment">//判断是否为根Activity</span></span><br><span class="line">            Intent mainIntent = getIntent();</span><br><span class="line">            String action = mainIntent.getAction();</span><br><span class="line">            <span class="comment">//判断是否为启动页 如果App不会因为其他原因调用该页面，可以不写if语句</span></span><br><span class="line">            <span class="keyword">if</span> (mainIntent.hasCategory(Intent.CATEGORY_LAUNCHER) </span><br><span class="line">                &amp;&amp; Intent.ACTION_MAIN.equals(action)) &#123;</span><br><span class="line">                finish();</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个代码应该<strong>紧随</strong>着<code>super.onCreate(savedInstanceState);</code>之后。<br>onCreate确保当前Activity是正在创建状态，而在setContentView之前，确保Activity是未渲染的，此时关闭不会让用户察觉</p>
-</li>
-</ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
-<li><p><strong>方案二</strong>虽然确实能够解决Home键重启问题，但是也会导致App启动速度变慢（有一个白屏过程），而这个问题在App使用360/乐固等加固后，更为严重，这或许是需要进一步解决的。</p>
-</li>
-<li><p>我在项目中用了取巧的解决方案：迷惑用户——<strong>将白屏替换成启动页</strong>。为启动页设置一个Theme（仅限启动页）</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"Splash_Theme"</span> <span class="attr">parent</span>=<span class="string">"AppTheme_NoActionBar"</span>&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:windowBackground"</span>&gt;</span>@drawable/splash<span class="tag">&lt;/<span class="name">item</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>Android</tag>
-        <tag>Java</tag>
-        <tag>Bug</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android 音量控制</title>
-    <url>/dev/200509-audioManager.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
-<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
-<li><p>设置声音模式：</p>
-<p><code>setRingerMode(int ringerMode)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整声音大小</p>
-<p><code>adjustVolume(int direction, int flags)</code>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取最大音量和当前音量</p>
-<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整音量为具体数值</p>
-<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android封装之路系列—MVP模式架构</title>
-    <url>/dev/200521-package.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="总续"><a href="#总续" class="headerlink" title="总续"></a>总续</h1><ul>
-<li>你是否常常感觉代码冗余杂陈</li>
-<li>你是否常常感觉代码复杂难懂</li>
-<li>你是否常常感觉…</li>
-<li>那就开启你的代码封装之路吧~</li>
-</ul>
-<ol>
-<li>面向对象程序设计有三个特征：封装、继承、多态，这三个特征即是语法也是手段，23种设计模板其实就是对这三种手段的灵活应用，今天<del>不谈</del>（还是得谈）任何高大上的设计模式，<del>仅仅</del>（不仅仅）谈谈代码封装。</li>
-<li>封装代码需要先做到的是：<a id="more"></a></li>
-<li>项目将以wanandroid为例进行</li>
-</ol>
-<h1 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h1><p>本次项目架构使用的是MVP模式，项目结构如下</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">com.yooking.mvp</span><br><span class="line">    - model<span class="comment">//M层</span></span><br><span class="line">        - BaseModel</span><br><span class="line">        - IModel</span><br><span class="line">    - presenter<span class="comment">//P层</span></span><br><span class="line">        - BasePresenter</span><br><span class="line">        - IPresenter</span><br><span class="line">    - view<span class="comment">//v层</span></span><br><span class="line">        - BaseActivity</span><br><span class="line">        - IView</span><br></pre></td></tr></table></figure>
-
-<p>看下各层代码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>Android</tag>
       </tags>
   </entry>
   <entry>
@@ -338,9 +303,75 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>Android</tag>
         <tag>Java</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android 音量控制</title>
+    <url>/dev/200509-audioManager.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
+<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
+<li><p>设置声音模式：</p>
+<p><code>setRingerMode(int ringerMode)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整声音大小</p>
+<p><code>adjustVolume(int direction, int flags)</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取最大音量和当前音量</p>
+<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整音量为具体数值</p>
+<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android音频拼接并播放</title>
+    <url>/dev/200817-GiveMeTheMoney.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>没时间解释了，先上车：<a href="https://github.com/yooking-git/FFmpegDemo">https://github.com/yooking-git/FFmpegDemo</a></p>
+<a id="more"></a>
+
+<p>感谢CSDN博主：<a href="https://blog.csdn.net/u011686167/article/details/79135240">徐福记456</a>大佬提供的C++代码和.so文件</p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>学习笔记</tag>
+        <tag>Kotlin</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android热补丁技术初探</title>
+    <url>/dev/190924-hotfix.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -460,23 +491,9 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>Android</tag>
         <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android热补丁技术初探</title>
-    <url>/dev/190924-hotfix.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
         <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -491,9 +508,9 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
+        <tag>Bug</tag>
         <tag>Android</tag>
         <tag>Java</tag>
-        <tag>Bug</tag>
       </tags>
   </entry>
   <entry>
@@ -526,9 +543,104 @@
         <category>想丶给代码码上诗意</category>
       </categories>
       <tags>
+        <tag>Bug</tag>
         <tag>Android</tag>
         <tag>Java</tag>
-        <tag>Bug</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Calendar的时间比对问题</title>
+    <url>/dev/200731-CalendarComparative.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h1><p>Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…<a id="more"></a></p>
+<p>会有如下代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"MainActivity"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        </span><br><span class="line">        Calendar calStart = Calendar.getInstance();</span><br><span class="line">        calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">        </span><br><span class="line">        setOnClickListener(v-&gt;&#123;</span><br><span class="line">            Calendar calEnd = Calendar.getInstance();</span><br><span class="line">            calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">            Log.i(TAG,<span class="string">"is startTime before endTime?"</span>+isNotBefore(calStart,calEnd));</span><br><span class="line">        &#125;,R.id.tv_main_comparative)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart,Calendar calEnd)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !calStart.before(calEnd);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setOnClickListener</span><span class="params">(OnClickListener listener,@ResId <span class="keyword">int</span> ... ids)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> id:ids)&#123;</span><br><span class="line">            findViewById(id).setOnClickListener(listener)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//日志结果</span></span><br><span class="line"><span class="comment">//首次点击：MainActivity:is startTime before endTime?false</span></span><br><span class="line"><span class="comment">//再次点击：MainActivity:is startTime before endTime?true</span></span><br><span class="line"><span class="comment">//多次点击：...或false或true</span></span><br></pre></td></tr></table></figure>
+
+<p>每次点击时的结果都是不尽相同的。为什么？</p>
+<h1 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h1><p>我们尝试新增如下日志</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    setOnClickListener(v-&gt;&#123;</span><br><span class="line">        ...</span><br><span class="line">        Log.i(TAG,<span class="string">"startTime.getTimeInMillis():"</span>+calStart.getTimeInMillis()+<span class="string">"---&gt;endTime.getTimeInMillis():"</span>+calEnd.getTimeInMillis());</span><br><span class="line">    &#125;,R.id.tv_main_comparative);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到打出的日志（这里就不贴日志了，可以自行尝试）有毫秒级的差别，也就是：</p>
+<ol>
+<li>calStart的真实时间是2008.01.01 00:00:00.xxx<br>（注：xxx是<code>Calendar calStart = Calendar.getInstance();</code>时的毫秒数）</li>
+<li>calEnd的真实时间的毫秒数则是点击瞬间的毫秒数</li>
+<li>由于毫秒数的不确定性，导致时而calStart大于、时而小于、时而等于calEnd</li>
+</ol>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>解决方案有两种：</p>
+<ol>
+<li><p>在使用到Calendar的类中定义一个基础Calendar</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Calendar calBase = Calendar.getInstance();</span><br><span class="line"></span><br><span class="line">Calendar calStart = Calendar.getInstance();</span><br><span class="line">calStart.setTime(calBase.getTime());</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = Calendar.getInstance();</span><br><span class="line">calEnd.setTime(calBase.getTime());</span><br><span class="line">calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>千万别写成如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//那我还得和你解释数据是怎么存储在堆和栈中... pass</span></span><br><span class="line">Calendar calStart = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这种写法其实都是在操作calBase，都不能算是另外操作calStart和calEnd.可尝试如下代码看看效果：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initTry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Calendar calBase = Calendar.getInstance();</span><br><span class="line">    Calendar calStart = calBase;</span><br><span class="line">    calBase.set(<span class="number">2008</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Calendar calEnd = calBase;</span><br><span class="line">    calEnd.set(<span class="number">2009</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Log.i(TAG,<span class="string">"log\nCalendar0--&gt;"</span>+calStart.getTime().toString()+<span class="string">"\nCalendar1--&gt;"</span>+calEnd.getTime().toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//日志</span></span><br><span class="line"><span class="comment">//log</span></span><br><span class="line"><span class="comment">//    Calendar0--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br><span class="line"><span class="comment">//    Calendar1--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>比较时根据精确度进行比较：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalendarUtils</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart, Calendar calEnd, @NotNull CalendarType type)</span> </span>&#123;</span><br><span class="line"><span class="comment">//        int startYear = calStart.get(Calendar.YEAR);</span></span><br><span class="line"><span class="comment">//        int endYear = calEnd.get(Calendar.YEAR);</span></span><br><span class="line"><span class="comment">//        if (startYear &lt;= endYear) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.YEAR)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.YEAR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startMonth = calStart.get(Calendar.MONTH);</span></span><br><span class="line"><span class="comment">//        int endMonth = calEnd.get(Calendar.MONTH);</span></span><br><span class="line"><span class="comment">//        if (startMonth &lt;= endMonth) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.MONTH)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MONTH == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startDay = calStart.get(Calendar.DAY_OF_MONTH);</span></span><br><span class="line"><span class="comment">//        int endDay = calEnd.get(Calendar.DAY_OF_MONTH);</span></span><br><span class="line"><span class="comment">//        if (startDay &lt;= endDay) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.DAY_OF_MONTH)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.DAY == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startHour = calStart.get(Calendar.HOUR_OF_DAY);</span></span><br><span class="line"><span class="comment">//        int endHour = calEnd.get(Calendar.HOUR_OF_DAY);</span></span><br><span class="line"><span class="comment">//        if (startHour &lt;= endHour) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.HOUR_OF_DAY)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.HOUR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startMinute = calStart.get(Calendar.MINUTE);</span></span><br><span class="line"><span class="comment">//        int endMinute = calEnd.get(Calendar.MINUTE);</span></span><br><span class="line"><span class="comment">//        if (startMinute &lt;= endMinute) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.MINUTE)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MINUTE == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startSecond = calStart.get(Calendar.SECOND);</span></span><br><span class="line"><span class="comment">//        int endSecond = calEnd.get(Calendar.SECOND);</span></span><br><span class="line"><span class="comment">//        if (startSecond &lt;= endSecond) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.SECOND)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.SECOND == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> calStart.getTimeInMillis() &gt;= calEnd.getTimeInMillis();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//后续做了变更，封装此方法，方便调整代码</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isBefore</span><span class="params">(Calendar calStart,Calendar calEnd,<span class="keyword">int</span> calendarField)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> calStart.get(calendarField)&lt;=calEnd.get(calendarField);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> CalendarType &#123;</span><br><span class="line">        YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLIS_SECOND</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><strong>写代码时务必要注重细节~</strong></p>
+<p>另：<del>（免责声明）</del>以上代码未在编辑器上校验过，纯手打~</p>
+<p>如有问题，请根据实际情况修改代码</p>
+<p>如有疑问，评论区见~</p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kotlin初体验：IM项目体验</title>
+    <url>/dev/190809-kotlin-IM.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><p>基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目<a id="more"></a><br>本文主要以一个小Demo来初步了解Kotlin编程与Java编程的差异</p>
+<h1 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h1><h2 id="聊天窗口构建"><a href="#聊天窗口构建" class="headerlink" title="聊天窗口构建"></a>聊天窗口构建</h2><p>框架引入：<a href="http://www.recyclerview.org/">BRVAH官网</a></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">implementation <span class="string">'androidx.recyclerview:recyclerview:1.1.0-beta02'</span><span class="comment">//AndroidX RecyclerView</span></span><br><span class="line">implementation <span class="string">'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'</span><span class="comment">//BRVAH</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>new 对象</strong><br>在Kotlin中，<code>new Object();</code>省略为<code>Object()</code>，也不需要分号<br><strong>全局变量</strong><br><code>private lateinit var mContext: Context</code><br>全局变量应该用var来定义，其类型写在:之后<br>lateinit 修饰符：延迟初始化<br>lateinit 不能用来修饰基本数据类型，因为基本类型的属性在类加载后的准备阶段都会被初始化为默认值</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> a : <span class="built_in">Int</span></span><br><span class="line"><span class="comment">//'lateinit' modifier is not allowed on properties of primitive types</span></span><br></pre></td></tr></table></figure>
+
+<p>lateinit 不能修饰val变量，只能修饰可变的属性</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">val</span> etMessage : AppCompatEditText</span><br><span class="line"><span class="comment">//'lateinit' modifier is allowed only on mutable properties</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>静态全局变量</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">	<span class="comment">//ChatActivity.class.getName()的写法</span></span><br><span class="line">	<span class="comment">//const 是常量修饰词 类似 java 中的 static final</span></span><br><span class="line">	<span class="comment">//val 相当于 final</span></span><br><span class="line">	<span class="comment">//const 不能修饰 var</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">val</span> TAG: String = ChatActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">name</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>符号</strong><br><code>helper!!</code>意为：helper不做为空校验，如果为空则抛出异常</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ? 即 或许为空</span></span><br><span class="line"><span class="comment">// ?. 相当于 if(object == null) return null; else return objcet.xx; </span></span><br><span class="line"><span class="keyword">val</span> mList: ArrayList&lt;String&gt;? = <span class="literal">null</span><span class="comment">//如果Object后面不加问号，即Object?那么mList = null会报错</span></span><br><span class="line">Log.d(TAG, <span class="string">"ListSize = <span class="subst">$&#123;mList?.size&#125;</span>"</span>)<span class="comment">//用 mList!!.size 会抛出空指针异常</span></span><br><span class="line">Log日志：com.yooking.socket.ChatActivity: ListSize = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>构建javabean</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> type: <span class="built_in">Int</span>) : MultiItemEntity &#123;</span><br><span class="line">	<span class="keyword">var</span> name: String? = <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对应的java写法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span> <span class="keyword">extends</span> <span class="title">MultiItemEntity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">""</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatData</span><span class="params">(<span class="keyword">int</span> type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在Kotlin中 get 方法 的使用方法为 chatData.name</span></span><br><span class="line"><span class="comment">//在Kotlin中 set 方法 的使用方法为 chatData.name = "string"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="WebSocketLib构建"><a href="#WebSocketLib构建" class="headerlink" title="WebSocketLib构建"></a>WebSocketLib构建</h2><p>框架引入：<a href="https://square.github.io/okhttp/">OkHttp-GithubPage</a></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">api <span class="string">'com.squareup.okhttp3:okhttp:4.0.1'</span><span class="comment">//okhttp 4.0.1</span></span><br><span class="line"><span class="comment">//api 'com.squareup.okhttp3:mockwebserver:4.0.1'//okhttp moc 请求验证</span></span><br><span class="line">api <span class="string">'com.squareup.okhttp3:logging-interceptor:4.0.1'</span><span class="comment">//okhttp 请求日志</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>匿名内部类</strong><br>在kotlin中，匿名内部类和java中的差别不大</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> handler: Handler</span><br><span class="line"><span class="keyword">init</span>&#123;</span><br><span class="line">    handler = Handler &#123;<span class="comment">//it:Messag!</span></span><br><span class="line">        send(heartMessage)</span><br><span class="line">        it.target.sendEmptyMessageDelayed(WHAT_HEART, heartTime)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//java</span></span><br><span class="line">handler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerMessage</span><span class="params">(Message msg)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        send(heartMessage);</span><br><span class="line">        sendEmptyMessageDelayed(WHAT_HEART, heartTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>静态内部类</strong><br>由于handler调用外部方法容易造成内存泄漏，所以，静态内部类了解一下：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WithoutLeakHandler</span></span>(wsu:WebSocketUtils):Handler()&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> mWsu:WeakReference&lt;WebSocketUtils&gt; = WeakReference(wsu)</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>?)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">val</span> webSocketUtils = mWsu.<span class="keyword">get</span>()!!</span><br><span class="line">            webSocketUtils.send(webSocketUtils.heartMessage)</span><br><span class="line">            msg!!.target.sendEmptyMessageDelayed(WHAT_HEART, webSocketUtils.heartTime)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="具体实现请见Demo"><a href="#具体实现请见Demo" class="headerlink" title="具体实现请见Demo"></a>具体实现请见Demo</h1><p>聊天代码：<a href="https://github.com/yooking-git/DEMO-IM">Demo</a></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>学习笔记</tag>
+        <tag>Kotlin</tag>
       </tags>
   </entry>
   <entry>
@@ -592,204 +704,6 @@
         <tag>学习笔记</tag>
         <tag>Flutter</tag>
         <tag>Dart</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kotlin初体验：IM项目体验</title>
-    <url>/dev/190809-kotlin-IM.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><p>基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目<a id="more"></a><br>本文主要以一个小Demo来初步了解Kotlin编程与Java编程的差异</p>
-<h1 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h1><h2 id="聊天窗口构建"><a href="#聊天窗口构建" class="headerlink" title="聊天窗口构建"></a>聊天窗口构建</h2><p>框架引入：<a href="http://www.recyclerview.org/">BRVAH官网</a></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">implementation <span class="string">'androidx.recyclerview:recyclerview:1.1.0-beta02'</span><span class="comment">//AndroidX RecyclerView</span></span><br><span class="line">implementation <span class="string">'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'</span><span class="comment">//BRVAH</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>new 对象</strong><br>在Kotlin中，<code>new Object();</code>省略为<code>Object()</code>，也不需要分号<br><strong>全局变量</strong><br><code>private lateinit var mContext: Context</code><br>全局变量应该用var来定义，其类型写在:之后<br>lateinit 修饰符：延迟初始化<br>lateinit 不能用来修饰基本数据类型，因为基本类型的属性在类加载后的准备阶段都会被初始化为默认值</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> a : <span class="built_in">Int</span></span><br><span class="line"><span class="comment">//'lateinit' modifier is not allowed on properties of primitive types</span></span><br></pre></td></tr></table></figure>
-
-<p>lateinit 不能修饰val变量，只能修饰可变的属性</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">val</span> etMessage : AppCompatEditText</span><br><span class="line"><span class="comment">//'lateinit' modifier is allowed only on mutable properties</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>静态全局变量</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">	<span class="comment">//ChatActivity.class.getName()的写法</span></span><br><span class="line">	<span class="comment">//const 是常量修饰词 类似 java 中的 static final</span></span><br><span class="line">	<span class="comment">//val 相当于 final</span></span><br><span class="line">	<span class="comment">//const 不能修饰 var</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">val</span> TAG: String = ChatActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">name</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>符号</strong><br><code>helper!!</code>意为：helper不做为空校验，如果为空则抛出异常</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ? 即 或许为空</span></span><br><span class="line"><span class="comment">// ?. 相当于 if(object == null) return null; else return objcet.xx; </span></span><br><span class="line"><span class="keyword">val</span> mList: ArrayList&lt;String&gt;? = <span class="literal">null</span><span class="comment">//如果Object后面不加问号，即Object?那么mList = null会报错</span></span><br><span class="line">Log.d(TAG, <span class="string">"ListSize = <span class="subst">$&#123;mList?.size&#125;</span>"</span>)<span class="comment">//用 mList!!.size 会抛出空指针异常</span></span><br><span class="line">Log日志：com.yooking.socket.ChatActivity: ListSize = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>构建javabean</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> type: <span class="built_in">Int</span>) : MultiItemEntity &#123;</span><br><span class="line">	<span class="keyword">var</span> name: String? = <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对应的java写法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span> <span class="keyword">extends</span> <span class="title">MultiItemEntity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">""</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatData</span><span class="params">(<span class="keyword">int</span> type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在Kotlin中 get 方法 的使用方法为 chatData.name</span></span><br><span class="line"><span class="comment">//在Kotlin中 set 方法 的使用方法为 chatData.name = "string"</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="WebSocketLib构建"><a href="#WebSocketLib构建" class="headerlink" title="WebSocketLib构建"></a>WebSocketLib构建</h2><p>框架引入：<a href="https://square.github.io/okhttp/">OkHttp-GithubPage</a></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">api <span class="string">'com.squareup.okhttp3:okhttp:4.0.1'</span><span class="comment">//okhttp 4.0.1</span></span><br><span class="line"><span class="comment">//api 'com.squareup.okhttp3:mockwebserver:4.0.1'//okhttp moc 请求验证</span></span><br><span class="line">api <span class="string">'com.squareup.okhttp3:logging-interceptor:4.0.1'</span><span class="comment">//okhttp 请求日志</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>匿名内部类</strong><br>在kotlin中，匿名内部类和java中的差别不大</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> handler: Handler</span><br><span class="line"><span class="keyword">init</span>&#123;</span><br><span class="line">    handler = Handler &#123;<span class="comment">//it:Messag!</span></span><br><span class="line">        send(heartMessage)</span><br><span class="line">        it.target.sendEmptyMessageDelayed(WHAT_HEART, heartTime)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//java</span></span><br><span class="line">handler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerMessage</span><span class="params">(Message msg)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        send(heartMessage);</span><br><span class="line">        sendEmptyMessageDelayed(WHAT_HEART, heartTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>静态内部类</strong><br>由于handler调用外部方法容易造成内存泄漏，所以，静态内部类了解一下：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WithoutLeakHandler</span></span>(wsu:WebSocketUtils):Handler()&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> mWsu:WeakReference&lt;WebSocketUtils&gt; = WeakReference(wsu)</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>?)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">val</span> webSocketUtils = mWsu.<span class="keyword">get</span>()!!</span><br><span class="line">            webSocketUtils.send(webSocketUtils.heartMessage)</span><br><span class="line">            msg!!.target.sendEmptyMessageDelayed(WHAT_HEART, webSocketUtils.heartTime)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="具体实现请见Demo"><a href="#具体实现请见Demo" class="headerlink" title="具体实现请见Demo"></a>具体实现请见Demo</h1><p>聊天代码：<a href="https://github.com/yooking-git/DEMO-IM">Demo</a></p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Kotlin</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>五大浏览器与四大内核</title>
-    <url>/dev/190924-browser.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="五大浏览器"><a href="#五大浏览器" class="headerlink" title="五大浏览器"></a>五大浏览器</h2><p>浏览器发展史上越不过的五座大山：IE、Opera、Safari、Firefox、Chrome<a id="more"></a></p>
-<h3 id="Internet-Explorer"><a href="#Internet-Explorer" class="headerlink" title="Internet Explorer"></a>Internet Explorer</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Internet_Explorer">Internet Explorer</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>Internet Explorer（旧称 Microsoft Internet Explorer 和 Windows Internet Explorer，简称 IE 或 MSIE），是微软所开发的图形用户界面网页浏览器。自从1995年开始，内置在各个新版本的Windows作业系统作为默认的浏览器，也是微软Windows操作系统的一个组成部分。</p>
-<p>值得一提的是 Windows 10 目前的默认浏览器为<a href="https://en.wikipedia.org/wiki/Microsoft_Edge">Microsoft Edge</a>。</p>
-</li>
-</ul>
-<h3 id="Opera"><a href="#Opera" class="headerlink" title="Opera"></a>Opera</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Opera_(web_browser)">Opera</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>Opera是由Opera软件为个人计算机推出的网页浏览器，用于Microsoft Windows、macOS和Linux操作系统。</p>
-<p>Opera软件为纳斯达克上市的挪威软件公司，其后被中国商人收购（2016年2月确定被奇虎360和昆仑万维收购），因此收购后出现许多信息安全争议，并在Opera 6.04之后的数个中文版，曾捆绑流氓软件3721上网助手。</p>
-<p>Opera浏览器2013以后采用Blink排版引擎。以往的Opera版本曾采用Presto排版引擎，曾在FreeBSD系统上运行。</p>
-<p>Opera的姊妹浏览器 – Opera Mobile、Opera Mini和Opera Coast – 可执行于Android、iOS、Windows Phone、Symbian、Maemo、Bada、BlackBerry和Windows Mobile等多种操作系统的设备，而Opera Mini可执行于支持Java ME功能的设备。</p>
-</li>
-</ul>
-<h3 id="Safari"><a href="#Safari" class="headerlink" title="Safari"></a>Safari</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Safari_(web_browser)">Safari</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>Safari 浏览器是苹果公司所开发，并内置于macOS（前称OS X、Mac OS X）的网页浏览器。Safari 浏览器在2003年1月7日首度发行测试版，并从Mac OS X Panther开始成为Mac OS X的默认浏览器，也是iOS、iPadOS内置的默认浏览器。Windows版本的首个测试版在2007年6月11日推出，支持Windows XP、Windows Vista和Windows 7，并在2008年3月18日推出正式版，但苹果已于2012年7月25日停止开发Windows版的Safari 浏览器。</p>
-<p>Safari 浏览器发行后的市占率不断攀升。2008年2月，TheCounter.com报告指Safari 浏览器的市占率为3.34%，而Net Applications则指其市占率为2.63%。其后市占率再从2009年1月的3.62%爬升至2011年4月的7.1%。在移动裝置平台，Net Applications表示</p>
-<p>Safari 浏览器占有率为62.17%。</p>
-<p>safari在斯瓦希里语为旅行，字源来自阿拉伯语同意词 سفرة （safra）。</p>
-</li>
-</ul>
-<h3 id="Firefox"><a href="#Firefox" class="headerlink" title="Firefox"></a>Firefox</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Firefox">Firefox</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>Mozilla Firefox，通称Firefox，中文也通称火狐，是一个自由及开源的网页浏览器，由Mozilla基金会及其子公司Mozilla公司开发。Firefox支持Windows、macOS及Linux，其移动版支持Android及Firefox OS，这些版本的Firefox使用Gecko来排版网页，Gecko是一个运行当前与预期之网页标准的排版引擎，而在2015年发布的Firefox for iOS则非使用Gecko。</p>
-<p>Firefox于2002年由Mozilla社群成员创建，当时叫做“Phoenix”，因为社群成员们想要一个独立的浏览器，而非Mozilla Application Suite这样的包。即使在测试阶段，Firefox也在测试者中颇为流行，并因其速度、安全性及扩展组件而受称赞。Firefox于2004年11月首次发布，并且9个月内下载量超过6000万，获取了巨大的成功，Internet Explorer的主导地位首次受到了挑战。Firefox被认为是Netscape Navigator的精神续作，因为Netscape于1998年被AOL收购前创建了Mozilla社群。</p>
-<p>Firefox全球市占率为35％至40%，为全球第二流行的网页浏览器。Firefox在某些国家还是最流行的网页浏览器，如在萨摩亚、德国、厄立特里亚及古巴，Firefox市占率分别为61.05%、38.36%、79.39%及85.93%。据Mozilla统计，截至2014年12月，Firefox在全世界拥有10亿用户[22]。</p>
-</li>
-</ul>
-<h3 id="Chrome"><a href="#Chrome" class="headerlink" title="Chrome"></a>Chrome</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Google_Chrome">Chrome</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>Google Chrome是由Google开发的免费网页浏览器。Chrome是化学元素“铬”的英文名称，过去也用Chrome称呼浏览器的外框。Chrome相应的开放源代码计划名为Chromium，而Google Chrome本身是非自由软件，未开放全部源代码。</p>
-<p>Chrome代码是基于其他开放源代码软件所编写，包括Apple WebKit和Mozilla Firefox，并开发出称为“V8”的高性能JavaScript引擎。Google Chrome的整体发展目标是提升稳定性、速度和安全性，并创造出简单且有效率的用户界面。CNET旗下的Download.com网站评出的2008年6月最佳Windows应用程序，其中Google Chrome排名首位。</p>
-<p>据StatCounter统计，截至2018年第一季度，Google Chrome在全球桌面浏览器中有66%的占有率。</p>
-<p>Chrome 50结束了对Windows XP与Windows Vista系统的支持，这两个系统上的最后版本为49.0.2623.112。</p>
-</li>
-</ul>
-<h2 id="四大内核"><a href="#四大内核" class="headerlink" title="四大内核"></a>四大内核</h2><p>四大内核有五个是常识</p>
-<h3 id="Trident"><a href="#Trident" class="headerlink" title="Trident"></a>Trident</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Trident_(software)">Trident</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>代表作：IE</p>
-<p>Trident（又称为MSHTML、IE内核），是微软的视窗操作系统（Windows）搭载的网页浏览器—Internet Explorer的排版引擎的名称，它的第一个版本随着1997年10月Internet Explorer第四版发布，之后不断的加入新的技术并随着新版本的Internet Explorer发布。在Internet Explorer第七版中，微软对Trident排版引擎做了的重大的变动，除了加入新的技术之外，并增加对网页标准的支持。尽管这些变动已经在相当大的程度上落后了其它的排版引擎，如Gecko、KHTML、Webkit及Presto。</p>
-<p>除此之外，微软还有另一个网页浏览器排版引擎，称为Tasman，它是使用在“Internet Explorer for Mac”的排版引擎。相较于Trident，Tasman引擎对网页标准有较佳的支持。与普遍的看法相反的是，微软已经停止了Mac版本的Internet Explorer的开发，但Tasman的开发仍旧持续，新版本的Tasman引擎仍被应用在一些微软产品上，例如Office for Mac。</p>
-<p><em>——编者按：四大内核剩下三个也是常识</em></p>
-</li>
-</ul>
-<h3 id="Gecko"><a href="#Gecko" class="headerlink" title="Gecko"></a>Gecko</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Gecko_(software)">Gecko</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>代表作：Firefox，即火狐浏览器。</p>
-<p>Gecko是一套自由及开放源代码、以C++编写的排版引擎，当前为Mozilla Firefox网页浏览器以及Mozilla Thunderbird电子邮件客户端等Mozilla基金会相关产品所使用。Gecko原本由网景通信公司开发，现在则由Mozilla基金会维护。</p>
-<p>这套排版引擎提供了一个丰富的应用程序接口以供互联网相关的应用程序使用，例如：网页浏览器、HTML编辑器、客户端／服务器等等。虽然最初的主要使用对象为Netscape和Mozilla Firefox网页浏览器，但现在已有很多其他软件在使用这个排版引擎。Gecko是跨平台的，能在Microsoft Windows、Linux和Mac OS X等主要操作系统上运行。</p>
-</li>
-</ul>
-<h3 id="Webkit"><a href="#Webkit" class="headerlink" title="Webkit"></a>Webkit</h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/WebKit">Webkit</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>代表作：Safari、Chrome</p>
-<p>WebKit是一种用来让网页浏览器绘制网页的排版引擎。它被用于Apple Safari。其分支Blink被用于基于Chromium的网页浏览器，如：Opera与Google Chrome。</p>
-<p>Webkit亦使用于Apple iOS、BlackBerry Tablet OS、Tizen及Amazon Kindle的默认浏览器。WebKit的C++应用程序接口提供了一系列的Class以在视窗上显示网页内容，并且实现了一些浏览器的特色，如用户链接点击、管理前后页面列表及近期历史页面等等。</p>
-<p>WebKit的HTML及JavaScript代码源自KDE的KHTML及KJS库的一个分支，现已由KDE、Apple、Google、Nokia、Bitstream、BlackBerry及Igalia等独立开发。OS X、Windows、GNU/Linux以及其他类Unix系统操作系统，皆支持这个项目。2013年4月3日，Google宣布它创建了WebKit中WebCore组件的分支——Blink，Blink将用于新版Google Chrome与Opera。</p>
-<p>WebKit的WebCore及JavaScriptCore组件使用GNU宽通用公共许可证，其他组件则采用BSD许可证。</p>
-<p>截至2013年3月7日，Webkit商标已被苹果公司在美国专利及商标局注册为其商标。</p>
-</li>
-</ul>
-<h3 id="Presto"><a href="#Presto" class="headerlink" title="Presto"></a><del>Presto</del></h3><ul>
-<li><p><a href="https://en.wikipedia.org/wiki/Presto_(browser_engine)">Presto</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>代表作：Opera</p>
-<p>Presto是一个由Opera Software开发的网页浏览器排版引擎，由Opera 7.0至12.18版本所使用。</p>
-<p>Presto取代了旧版Opera 4至6版本使用的Elektra排版引擎，包括加入动态功能，例如网页或其部分可随着DOM及Script语法的事件而重新排版。Presto在推出后不断有更新版本推出，使不少错误得以修正，以及阅读JavaScript性能得以最优化。</p>
-<p>2013年2月12日，Opera宣布将结束Presto引擎的开发，未来将以Webkit引擎为主。</p>
-<p>2016年2月15日，传出Opera被收购的消息，同日Presto内核版Opera更新到12.18。</p>
-</li>
-</ul>
-<h3 id="Blink"><a href="#Blink" class="headerlink" title="Blink"></a>Blink</h3><ul>
-<li><p><a href="https://zh.wikipedia.org/wiki/Blink">Blink</a><font size=1><em>WIKI</em></font></p>
-</li>
-<li><p>代表作：Chrome、Opera、Microsoft Edge</p>
-<p>Blink是一个由Google主导开发的开源浏览器排版引擎，Google计划将这个渲染引擎作为Chromium计划的一部分，并且在2013年4月的时候公布了这一消息。</p>
-<p>这一渲染引擎是开源引擎WebKit中WebCore组件的一个分支，并且在Chrome（28及往后版本）、Opera（15及往后版本）、Yandex、Vivaldi等诸多浏览器中使用。Chrome的开发者由于希望在浏览器的开发上拥有更大的自由度，同时避免与上游冲突，更可透过移除Chrome没有使用的组件而简化自己的程序库，所以决定开发WebKit的分支版本。根据提交统计，Google自2009年年底以来一直是WebKit代码库的最大贡献者。</p>
-<p>Blink的命名受到Netscape Navigator引入的Blink非标准元素启发。</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>浏览器</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Calendar的时间比对问题</title>
-    <url>/dev/200731-CalendarComparative.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h1><p>Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…<a id="more"></a></p>
-<p>会有如下代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"MainActivity"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        </span><br><span class="line">        Calendar calStart = Calendar.getInstance();</span><br><span class="line">        calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">        </span><br><span class="line">        setOnClickListener(v-&gt;&#123;</span><br><span class="line">            Calendar calEnd = Calendar.getInstance();</span><br><span class="line">            calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);<span class="comment">//2008.01.01 00:00:00</span></span><br><span class="line">            Log.i(TAG,<span class="string">"is startTime before endTime?"</span>+isNotBefore(calStart,calEnd));</span><br><span class="line">        &#125;,R.id.tv_main_comparative)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart,Calendar calEnd)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !calStart.before(calEnd);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setOnClickListener</span><span class="params">(OnClickListener listener,@ResId <span class="keyword">int</span> ... ids)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> id:ids)&#123;</span><br><span class="line">            findViewById(id).setOnClickListener(listener)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//日志结果</span></span><br><span class="line"><span class="comment">//首次点击：MainActivity:is startTime before endTime?false</span></span><br><span class="line"><span class="comment">//再次点击：MainActivity:is startTime before endTime?true</span></span><br><span class="line"><span class="comment">//多次点击：...或false或true</span></span><br></pre></td></tr></table></figure>
-
-<p>每次点击时的结果都是不尽相同的。为什么？</p>
-<h1 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h1><p>我们尝试新增如下日志</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    setOnClickListener(v-&gt;&#123;</span><br><span class="line">        ...</span><br><span class="line">        Log.i(TAG,<span class="string">"startTime.getTimeInMillis():"</span>+calStart.getTimeInMillis()+<span class="string">"---&gt;endTime.getTimeInMillis():"</span>+calEnd.getTimeInMillis());</span><br><span class="line">    &#125;,R.id.tv_main_comparative);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到打出的日志（这里就不贴日志了，可以自行尝试）有毫秒级的差别，也就是：</p>
-<ol>
-<li>calStart的真实时间是2008.01.01 00:00:00.xxx<br>（注：xxx是<code>Calendar calStart = Calendar.getInstance();</code>时的毫秒数）</li>
-<li>calEnd的真实时间的毫秒数则是点击瞬间的毫秒数</li>
-<li>由于毫秒数的不确定性，导致时而calStart大于、时而小于、时而等于calEnd</li>
-</ol>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>解决方案有两种：</p>
-<ol>
-<li><p>在使用到Calendar的类中定义一个基础Calendar</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Calendar calBase = Calendar.getInstance();</span><br><span class="line"></span><br><span class="line">Calendar calStart = Calendar.getInstance();</span><br><span class="line">calStart.setTime(calBase.getTime());</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = Calendar.getInstance();</span><br><span class="line">calEnd.setTime(calBase.getTime());</span><br><span class="line">calEnd.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<p>千万别写成如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//那我还得和你解释数据是怎么存储在堆和栈中... pass</span></span><br><span class="line">Calendar calStart = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Calendar calEnd = calBase;</span><br><span class="line">calStart.set(<span class="number">2008</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-<p>这种写法其实都是在操作calBase，都不能算是另外操作calStart和calEnd.可尝试如下代码看看效果：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initTry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Calendar calBase = Calendar.getInstance();</span><br><span class="line">    Calendar calStart = calBase;</span><br><span class="line">    calBase.set(<span class="number">2008</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Calendar calEnd = calBase;</span><br><span class="line">    calEnd.set(<span class="number">2009</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    Log.i(TAG,<span class="string">"log\nCalendar0--&gt;"</span>+calStart.getTime().toString()+<span class="string">"\nCalendar1--&gt;"</span>+calEnd.getTime().toString());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//日志</span></span><br><span class="line"><span class="comment">//log</span></span><br><span class="line"><span class="comment">//    Calendar0--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br><span class="line"><span class="comment">//    Calendar1--&gt;Sun Feb 01 00:00:00 GMT+08:00 2009</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>比较时根据精确度进行比较：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalendarUtils</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNotBefore</span><span class="params">(Calendar calStart, Calendar calEnd, @NotNull CalendarType type)</span> </span>&#123;</span><br><span class="line"><span class="comment">//        int startYear = calStart.get(Calendar.YEAR);</span></span><br><span class="line"><span class="comment">//        int endYear = calEnd.get(Calendar.YEAR);</span></span><br><span class="line"><span class="comment">//        if (startYear &lt;= endYear) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.YEAR)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.YEAR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startMonth = calStart.get(Calendar.MONTH);</span></span><br><span class="line"><span class="comment">//        int endMonth = calEnd.get(Calendar.MONTH);</span></span><br><span class="line"><span class="comment">//        if (startMonth &lt;= endMonth) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.MONTH)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MONTH == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startDay = calStart.get(Calendar.DAY_OF_MONTH);</span></span><br><span class="line"><span class="comment">//        int endDay = calEnd.get(Calendar.DAY_OF_MONTH);</span></span><br><span class="line"><span class="comment">//        if (startDay &lt;= endDay) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.DAY_OF_MONTH)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.DAY == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startHour = calStart.get(Calendar.HOUR_OF_DAY);</span></span><br><span class="line"><span class="comment">//        int endHour = calEnd.get(Calendar.HOUR_OF_DAY);</span></span><br><span class="line"><span class="comment">//        if (startHour &lt;= endHour) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.HOUR_OF_DAY)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.HOUR == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startMinute = calStart.get(Calendar.MINUTE);</span></span><br><span class="line"><span class="comment">//        int endMinute = calEnd.get(Calendar.MINUTE);</span></span><br><span class="line"><span class="comment">//        if (startMinute &lt;= endMinute) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.MINUTE)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.MINUTE == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        int startSecond = calStart.get(Calendar.SECOND);</span></span><br><span class="line"><span class="comment">//        int endSecond = calEnd.get(Calendar.SECOND);</span></span><br><span class="line"><span class="comment">//        if (startSecond &lt;= endSecond) return false;</span></span><br><span class="line">        <span class="keyword">if</span> (ifBefore(calStart,calEnd,Calendar.SECOND)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (CalendarType.SECOND == type) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> calStart.getTimeInMillis() &gt;= calEnd.getTimeInMillis();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//后续做了变更，封装此方法，方便调整代码</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isBefore</span><span class="params">(Calendar calStart,Calendar calEnd,<span class="keyword">int</span> calendarField)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> calStart.get(calendarField)&lt;=calEnd.get(calendarField);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> CalendarType &#123;</span><br><span class="line">        YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLIS_SECOND</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><strong>写代码时务必要注重细节~</strong></p>
-<p>另：<del>（免责声明）</del>以上代码未在编辑器上校验过，纯手打~</p>
-<p>如有问题，请根据实际情况修改代码</p>
-<p>如有疑问，评论区见~</p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
@@ -896,6 +810,109 @@
       <tags>
         <tag>学习笔记</tag>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>五大浏览器与四大内核</title>
+    <url>/dev/190924-browser.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="五大浏览器"><a href="#五大浏览器" class="headerlink" title="五大浏览器"></a>五大浏览器</h2><p>浏览器发展史上越不过的五座大山：IE、Opera、Safari、Firefox、Chrome<a id="more"></a></p>
+<h3 id="Internet-Explorer"><a href="#Internet-Explorer" class="headerlink" title="Internet Explorer"></a>Internet Explorer</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Internet_Explorer">Internet Explorer</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Internet Explorer（旧称 Microsoft Internet Explorer 和 Windows Internet Explorer，简称 IE 或 MSIE），是微软所开发的图形用户界面网页浏览器。自从1995年开始，内置在各个新版本的Windows作业系统作为默认的浏览器，也是微软Windows操作系统的一个组成部分。</p>
+<p>值得一提的是 Windows 10 目前的默认浏览器为<a href="https://en.wikipedia.org/wiki/Microsoft_Edge">Microsoft Edge</a>。</p>
+</li>
+</ul>
+<h3 id="Opera"><a href="#Opera" class="headerlink" title="Opera"></a>Opera</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Opera_(web_browser)">Opera</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Opera是由Opera软件为个人计算机推出的网页浏览器，用于Microsoft Windows、macOS和Linux操作系统。</p>
+<p>Opera软件为纳斯达克上市的挪威软件公司，其后被中国商人收购（2016年2月确定被奇虎360和昆仑万维收购），因此收购后出现许多信息安全争议，并在Opera 6.04之后的数个中文版，曾捆绑流氓软件3721上网助手。</p>
+<p>Opera浏览器2013以后采用Blink排版引擎。以往的Opera版本曾采用Presto排版引擎，曾在FreeBSD系统上运行。</p>
+<p>Opera的姊妹浏览器 – Opera Mobile、Opera Mini和Opera Coast – 可执行于Android、iOS、Windows Phone、Symbian、Maemo、Bada、BlackBerry和Windows Mobile等多种操作系统的设备，而Opera Mini可执行于支持Java ME功能的设备。</p>
+</li>
+</ul>
+<h3 id="Safari"><a href="#Safari" class="headerlink" title="Safari"></a>Safari</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Safari_(web_browser)">Safari</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Safari 浏览器是苹果公司所开发，并内置于macOS（前称OS X、Mac OS X）的网页浏览器。Safari 浏览器在2003年1月7日首度发行测试版，并从Mac OS X Panther开始成为Mac OS X的默认浏览器，也是iOS、iPadOS内置的默认浏览器。Windows版本的首个测试版在2007年6月11日推出，支持Windows XP、Windows Vista和Windows 7，并在2008年3月18日推出正式版，但苹果已于2012年7月25日停止开发Windows版的Safari 浏览器。</p>
+<p>Safari 浏览器发行后的市占率不断攀升。2008年2月，TheCounter.com报告指Safari 浏览器的市占率为3.34%，而Net Applications则指其市占率为2.63%。其后市占率再从2009年1月的3.62%爬升至2011年4月的7.1%。在移动裝置平台，Net Applications表示</p>
+<p>Safari 浏览器占有率为62.17%。</p>
+<p>safari在斯瓦希里语为旅行，字源来自阿拉伯语同意词 سفرة （safra）。</p>
+</li>
+</ul>
+<h3 id="Firefox"><a href="#Firefox" class="headerlink" title="Firefox"></a>Firefox</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Firefox">Firefox</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Mozilla Firefox，通称Firefox，中文也通称火狐，是一个自由及开源的网页浏览器，由Mozilla基金会及其子公司Mozilla公司开发。Firefox支持Windows、macOS及Linux，其移动版支持Android及Firefox OS，这些版本的Firefox使用Gecko来排版网页，Gecko是一个运行当前与预期之网页标准的排版引擎，而在2015年发布的Firefox for iOS则非使用Gecko。</p>
+<p>Firefox于2002年由Mozilla社群成员创建，当时叫做“Phoenix”，因为社群成员们想要一个独立的浏览器，而非Mozilla Application Suite这样的包。即使在测试阶段，Firefox也在测试者中颇为流行，并因其速度、安全性及扩展组件而受称赞。Firefox于2004年11月首次发布，并且9个月内下载量超过6000万，获取了巨大的成功，Internet Explorer的主导地位首次受到了挑战。Firefox被认为是Netscape Navigator的精神续作，因为Netscape于1998年被AOL收购前创建了Mozilla社群。</p>
+<p>Firefox全球市占率为35％至40%，为全球第二流行的网页浏览器。Firefox在某些国家还是最流行的网页浏览器，如在萨摩亚、德国、厄立特里亚及古巴，Firefox市占率分别为61.05%、38.36%、79.39%及85.93%。据Mozilla统计，截至2014年12月，Firefox在全世界拥有10亿用户[22]。</p>
+</li>
+</ul>
+<h3 id="Chrome"><a href="#Chrome" class="headerlink" title="Chrome"></a>Chrome</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Google_Chrome">Chrome</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>Google Chrome是由Google开发的免费网页浏览器。Chrome是化学元素“铬”的英文名称，过去也用Chrome称呼浏览器的外框。Chrome相应的开放源代码计划名为Chromium，而Google Chrome本身是非自由软件，未开放全部源代码。</p>
+<p>Chrome代码是基于其他开放源代码软件所编写，包括Apple WebKit和Mozilla Firefox，并开发出称为“V8”的高性能JavaScript引擎。Google Chrome的整体发展目标是提升稳定性、速度和安全性，并创造出简单且有效率的用户界面。CNET旗下的Download.com网站评出的2008年6月最佳Windows应用程序，其中Google Chrome排名首位。</p>
+<p>据StatCounter统计，截至2018年第一季度，Google Chrome在全球桌面浏览器中有66%的占有率。</p>
+<p>Chrome 50结束了对Windows XP与Windows Vista系统的支持，这两个系统上的最后版本为49.0.2623.112。</p>
+</li>
+</ul>
+<h2 id="四大内核"><a href="#四大内核" class="headerlink" title="四大内核"></a>四大内核</h2><p>四大内核有五个是常识</p>
+<h3 id="Trident"><a href="#Trident" class="headerlink" title="Trident"></a>Trident</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Trident_(software)">Trident</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：IE</p>
+<p>Trident（又称为MSHTML、IE内核），是微软的视窗操作系统（Windows）搭载的网页浏览器—Internet Explorer的排版引擎的名称，它的第一个版本随着1997年10月Internet Explorer第四版发布，之后不断的加入新的技术并随着新版本的Internet Explorer发布。在Internet Explorer第七版中，微软对Trident排版引擎做了的重大的变动，除了加入新的技术之外，并增加对网页标准的支持。尽管这些变动已经在相当大的程度上落后了其它的排版引擎，如Gecko、KHTML、Webkit及Presto。</p>
+<p>除此之外，微软还有另一个网页浏览器排版引擎，称为Tasman，它是使用在“Internet Explorer for Mac”的排版引擎。相较于Trident，Tasman引擎对网页标准有较佳的支持。与普遍的看法相反的是，微软已经停止了Mac版本的Internet Explorer的开发，但Tasman的开发仍旧持续，新版本的Tasman引擎仍被应用在一些微软产品上，例如Office for Mac。</p>
+<p><em>——编者按：四大内核剩下三个也是常识</em></p>
+</li>
+</ul>
+<h3 id="Gecko"><a href="#Gecko" class="headerlink" title="Gecko"></a>Gecko</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Gecko_(software)">Gecko</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Firefox，即火狐浏览器。</p>
+<p>Gecko是一套自由及开放源代码、以C++编写的排版引擎，当前为Mozilla Firefox网页浏览器以及Mozilla Thunderbird电子邮件客户端等Mozilla基金会相关产品所使用。Gecko原本由网景通信公司开发，现在则由Mozilla基金会维护。</p>
+<p>这套排版引擎提供了一个丰富的应用程序接口以供互联网相关的应用程序使用，例如：网页浏览器、HTML编辑器、客户端／服务器等等。虽然最初的主要使用对象为Netscape和Mozilla Firefox网页浏览器，但现在已有很多其他软件在使用这个排版引擎。Gecko是跨平台的，能在Microsoft Windows、Linux和Mac OS X等主要操作系统上运行。</p>
+</li>
+</ul>
+<h3 id="Webkit"><a href="#Webkit" class="headerlink" title="Webkit"></a>Webkit</h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/WebKit">Webkit</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Safari、Chrome</p>
+<p>WebKit是一种用来让网页浏览器绘制网页的排版引擎。它被用于Apple Safari。其分支Blink被用于基于Chromium的网页浏览器，如：Opera与Google Chrome。</p>
+<p>Webkit亦使用于Apple iOS、BlackBerry Tablet OS、Tizen及Amazon Kindle的默认浏览器。WebKit的C++应用程序接口提供了一系列的Class以在视窗上显示网页内容，并且实现了一些浏览器的特色，如用户链接点击、管理前后页面列表及近期历史页面等等。</p>
+<p>WebKit的HTML及JavaScript代码源自KDE的KHTML及KJS库的一个分支，现已由KDE、Apple、Google、Nokia、Bitstream、BlackBerry及Igalia等独立开发。OS X、Windows、GNU/Linux以及其他类Unix系统操作系统，皆支持这个项目。2013年4月3日，Google宣布它创建了WebKit中WebCore组件的分支——Blink，Blink将用于新版Google Chrome与Opera。</p>
+<p>WebKit的WebCore及JavaScriptCore组件使用GNU宽通用公共许可证，其他组件则采用BSD许可证。</p>
+<p>截至2013年3月7日，Webkit商标已被苹果公司在美国专利及商标局注册为其商标。</p>
+</li>
+</ul>
+<h3 id="Presto"><a href="#Presto" class="headerlink" title="Presto"></a><del>Presto</del></h3><ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Presto_(browser_engine)">Presto</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Opera</p>
+<p>Presto是一个由Opera Software开发的网页浏览器排版引擎，由Opera 7.0至12.18版本所使用。</p>
+<p>Presto取代了旧版Opera 4至6版本使用的Elektra排版引擎，包括加入动态功能，例如网页或其部分可随着DOM及Script语法的事件而重新排版。Presto在推出后不断有更新版本推出，使不少错误得以修正，以及阅读JavaScript性能得以最优化。</p>
+<p>2013年2月12日，Opera宣布将结束Presto引擎的开发，未来将以Webkit引擎为主。</p>
+<p>2016年2月15日，传出Opera被收购的消息，同日Presto内核版Opera更新到12.18。</p>
+</li>
+</ul>
+<h3 id="Blink"><a href="#Blink" class="headerlink" title="Blink"></a>Blink</h3><ul>
+<li><p><a href="https://zh.wikipedia.org/wiki/Blink">Blink</a><font size=1><em>WIKI</em></font></p>
+</li>
+<li><p>代表作：Chrome、Opera、Microsoft Edge</p>
+<p>Blink是一个由Google主导开发的开源浏览器排版引擎，Google计划将这个渲染引擎作为Chromium计划的一部分，并且在2013年4月的时候公布了这一消息。</p>
+<p>这一渲染引擎是开源引擎WebKit中WebCore组件的一个分支，并且在Chrome（28及往后版本）、Opera（15及往后版本）、Yandex、Vivaldi等诸多浏览器中使用。Chrome的开发者由于希望在浏览器的开发上拥有更大的自由度，同时避免与上游冲突，更可透过移除Chrome没有使用的组件而简化自己的程序库，所以决定开发WebKit的分支版本。根据提交统计，Google自2009年年底以来一直是WebKit代码库的最大贡献者。</p>
+<p>Blink的命名受到Netscape Navigator引入的Blink非标准元素启发。</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>浏览器</tag>
       </tags>
   </entry>
   <entry>
@@ -1028,6 +1045,55 @@
       </tags>
   </entry>
   <entry>
+    <title>自定义日历选择器</title>
+    <url>/dev/200616-calendarView.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上找的日历选择器一直不太满意，所以想着自己造个轮子<a id="more"></a></p>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>造轮子，其一是定义数据源<br>so：<code>void setData()</code><br>那么这个函数应该包含什么样的代码？让我们来分析下：<br>日历可以分为几个部分？</p>
+<ol>
+<li>列标题</li>
+<li>上个月的日期</li>
+<li>本月日期</li>
+<li>下个月日期</li>
+</ol>
+<p>测量界面并定义几个数值：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">    <span class="comment">//重新计算高度</span></span><br><span class="line">    measuredWidth = getMeasuredWidth();</span><br><span class="line">    <span class="keyword">if</span> (measuredWidth != <span class="number">0</span>) &#123;</span><br><span class="line">        textWidth = measuredWidth / <span class="number">7f</span>;<span class="comment">//文本宽度</span></span><br><span class="line">        textHeight = textWidth * <span class="number">1.1f</span>;<span class="comment">//文本高度</span></span><br><span class="line">        measuredHeight = (<span class="keyword">int</span>) (textHeight * (lineSize + <span class="number">1</span>));<span class="comment">//包括第一行 title</span></span><br><span class="line">        setMeasuredDimension(measuredWidth, measuredHeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>列标题可以直接绘制，并非数据源，在<code>onDraw(Canvas canvas)</code>中定义<code>titlePaint</code>并绘制</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (titlePaint == <span class="keyword">null</span>) &#123;</span><br><span class="line">    titlePaint = <span class="keyword">new</span> TextPaint();</span><br><span class="line">    titlePaint.setTextSize(textHeight / <span class="number">3</span>);</span><br><span class="line">    titlePaint.setColor(getResources().getColor(R.color.color_text_333333));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在绘制之前——我们定义了数据的字体大小和颜色——字的高度为文本框的三分之一，颜色为<b color="#333333">RGB: #333333</b></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawTitleText</span><span class="params">(Canvas canvas, <span class="keyword">float</span> centerX, <span class="keyword">float</span> centerY, String text)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//文字度量</span></span><br><span class="line">    Paint.FontMetrics fontMetrics = titlePaint.getFontMetrics();</span><br><span class="line">    <span class="comment">//得到基线的位置</span></span><br><span class="line">    <span class="keyword">float</span> baselineY = centerY + (fontMetrics.bottom - fontMetrics.top) / <span class="number">2</span> - fontMetrics.bottom;</span><br><span class="line">    <span class="keyword">float</span> textWidth = titlePaint.measureText(text);<span class="comment">//粗略计算文本宽度</span></span><br><span class="line">    canvas.drawText(text, centerX - textWidth / <span class="number">2</span>, baselineY, titlePaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>设定数据</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setData</span><span class="params">(Calendar calBase)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (data == <span class="keyword">null</span>) &#123;</span><br><span class="line">        data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        data.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.calBase = calBase;<span class="comment">//当前页面的年和月的值</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    Calendar calStart = Calendar.getInstance();<span class="comment">//本月开始 本月1号</span></span><br><span class="line">    calStart.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);<span class="comment">//本月1号</span></span><br><span class="line"></span><br><span class="line">    Calendar calEnd = Calendar.getInstance();<span class="comment">//本月结束 本月最后一天</span></span><br><span class="line">    calEnd.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH) + <span class="number">1</span>, <span class="number">1</span>);<span class="comment">//下个月1号</span></span><br><span class="line">    calEnd.add(Calendar.DATE, -<span class="number">1</span>);<span class="comment">//本月最后一天</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//周日 为 1 计算需要展示的上个月日期数</span></span><br><span class="line">    <span class="keyword">int</span> dayOfWeek = calStart.get(Calendar.DAY_OF_WEEK);</span><br><span class="line">    <span class="keyword">int</span> lastNum = dayOfWeek - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; lastNum; i++) &#123;<span class="comment">//添加上个月数据</span></span><br><span class="line">        Calendar calendar = Calendar.getInstance();</span><br><span class="line">        calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);</span><br><span class="line">        calendar.add(Calendar.DATE, -lastNum + i);</span><br><span class="line">        DateEntity dateEntity = <span class="keyword">new</span> DateEntity();<span class="comment">//日期基本类型</span></span><br><span class="line">        dateEntity.setCalendar(calendar);</span><br><span class="line">        dateEntity.setLastMonth(<span class="keyword">true</span>);<span class="comment">//是否为上个月</span></span><br><span class="line">        data.add(dateEntity);</span><br><span class="line">        Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; calEnd.get(Calendar.DAY_OF_MONTH); i++) &#123;<span class="comment">//添加本月数据</span></span><br><span class="line">        Calendar calendar = Calendar.getInstance();</span><br><span class="line">        calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);</span><br><span class="line">        calendar.add(Calendar.DATE, i);</span><br><span class="line">        DateEntity dateEntity = <span class="keyword">new</span> DateEntity();</span><br><span class="line">        dateEntity.setCalendar(calendar);</span><br><span class="line">        data.add(dateEntity);</span><br><span class="line">        Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> residueSize = <span class="number">7</span> - data.size() % <span class="number">7</span>;</span><br><span class="line">    <span class="keyword">if</span> (residueSize != <span class="number">7</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; residueSize; i++) &#123;<span class="comment">//添加下个月数据</span></span><br><span class="line">            Calendar calendar = Calendar.getInstance();</span><br><span class="line">            calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH) + <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">            calendar.add(Calendar.DATE, i);</span><br><span class="line">            DateEntity dateEntity = <span class="keyword">new</span> DateEntity();</span><br><span class="line">            dateEntity.setCalendar(calendar);</span><br><span class="line">            dateEntity.setNextMonth(<span class="keyword">true</span>);<span class="comment">//是否为下个月</span></span><br><span class="line">            data.add(dateEntity);</span><br><span class="line">            Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lineSize = data.size() / <span class="number">7</span>;</span><br><span class="line"></span><br><span class="line">    requestLayout();<span class="comment">//这里不用invalidate();因为要重新测量界面</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>绘制数据：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawData</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; data.size(); i++) &#123;</span><br><span class="line">        DateEntity dateEntity = data.get(i);</span><br><span class="line">        <span class="keyword">int</span> line = i / <span class="number">7</span> + <span class="number">2</span>;<span class="comment">//第二行开始</span></span><br><span class="line">        <span class="keyword">float</span> baseX = textWidth / <span class="number">2f</span> + textWidth * (<span class="keyword">float</span>) (i % <span class="number">7</span>);<span class="comment">//文字中心在X轴的位置</span></span><br><span class="line">        <span class="keyword">float</span> baseY = textHeight / <span class="number">2f</span> + textHeight * (line - <span class="number">1</span>);<span class="comment">//文字中心在Y轴的位置</span></span><br><span class="line">        <span class="keyword">float</span> numberY = baseY - textHeight / <span class="number">6f</span>;<span class="comment">//上移6分之一文字高度，给农历腾空间</span></span><br><span class="line">        drawText(canvas, baseX, numberY, dateEntity.getText(), numberPaint, dateEntity.isHint(), dateEntity.isSelected());<span class="comment">//阳历</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> lunarY = baseY + textHeight / <span class="number">6f</span>;</span><br><span class="line">        drawText(canvas, baseX, lunarY, dateEntity.getLunarText(), lunarPaint, dateEntity.isHint(), dateEntity.isSelected());<span class="comment">//农历</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawText</span><span class="params">(Canvas canvas, <span class="keyword">float</span> centerX, <span class="keyword">float</span> centerY, String text, TextPaint textPaint, <span class="keyword">boolean</span> isHint, <span class="keyword">boolean</span> isSelected)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isHint) &#123;</span><br><span class="line">        textPaint.setColor(hintColor);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        textPaint.setColor(textColor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//文字度量</span></span><br><span class="line">    Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();</span><br><span class="line">    <span class="comment">//得到基线的位置</span></span><br><span class="line">    <span class="keyword">float</span> baselineY = centerY + (fontMetrics.bottom - fontMetrics.top) / <span class="number">2</span> - fontMetrics.bottom;</span><br><span class="line">    <span class="keyword">float</span> textWidth = textPaint.measureText(text);<span class="comment">//粗略计算文本宽度</span></span><br><span class="line">    canvas.drawText(text, centerX - textWidth / <span class="number">2</span>, baselineY, textPaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/06/16/2SOCiyDmu3k8Mtx.png" alt="效果图.png"></p>
+<p>点击事件</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SuppressLint</span>(<span class="string">"ClickableViewAccessibility"</span>)</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">        <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">            downX = event.getX();</span><br><span class="line">            downY = event.getY();</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">            <span class="keyword">float</span> upX = event.getX();</span><br><span class="line">            <span class="keyword">float</span> upY = event.getY();</span><br><span class="line">            <span class="keyword">if</span> (Math.abs(upX - downX) &lt; minMove &amp;&amp; Math.abs(upY - downY) &lt; minMove) &#123;</span><br><span class="line">                <span class="keyword">int</span> column = (<span class="keyword">int</span>) (upX / textWidth);</span><br><span class="line">                <span class="keyword">int</span> line = (<span class="keyword">int</span>) (upY / textHeight);</span><br><span class="line">                Log.i(TAG, <span class="string">"列："</span> + column + <span class="string">"-"</span> + <span class="string">"行："</span> + line);</span><br><span class="line">                <span class="keyword">int</span> i = (line - <span class="number">1</span>) * <span class="number">7</span> + column;<span class="comment">//第一行是标题 计算点击的是到底几个data</span></span><br><span class="line">                <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (data.get(i).isHint()) &#123;<span class="comment">//如果是上个月，则返回上个月 反之</span></span><br><span class="line">                        <span class="keyword">if</span> (data.get(i).isLastMonth()) &#123;</span><br><span class="line">                            lastMonth();</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            nextMonth();</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (onMonthChangeListener != <span class="keyword">null</span>)</span><br><span class="line">                            onMonthChangeListener.onChanged(calBase);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">//                        clearSelected();</span></span><br><span class="line">                        <span class="keyword">if</span> (selectedType == TYPE_RANGE) &#123;<span class="comment">//如果是范围选择</span></span><br><span class="line">                            <span class="keyword">if</span> (calSelectedEnd != <span class="keyword">null</span>) &#123;<span class="comment">//选中最后一项，则重新开始选择</span></span><br><span class="line">                                clearSelected();</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">if</span> (calSelectedStart == <span class="keyword">null</span>) &#123;</span><br><span class="line">                                setSelectedStart(data.get(i).getCalendar());</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                setSelectedEnd(data.get(i).getCalendar());</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (selectedType == TYPE_SINGLE) &#123;<span class="comment">//如果是单选</span></span><br><span class="line"><span class="comment">//                            clearSelected();</span></span><br><span class="line">                            setSelected(data.get(i).getCalendar());</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (onDayClickListener != <span class="keyword">null</span>)</span><br><span class="line">                            onDayClickListener.onClickListener(data.get(i));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>记录完选中区，应该重新绘制界面</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (selectedType == TYPE_RANGE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelectedStart != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (calSelectedEnd == <span class="keyword">null</span>) &#123;</span><br><span class="line">            dateEntity.setSelected(calSelectedStart.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dateEntity.setSelected(!dateEntity.getCalendar().before(calSelectedStart) &amp;&amp; !dateEntity.getCalendar().after(calSelectedEnd));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (selectedType == TYPE_SINGLE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelected != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dateEntity.setSelected(calSelected.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (dateEntity.isSelected()) &#123;</span><br><span class="line">    canvas.drawLine(baseX - textWidth / <span class="number">2f</span>, baseY, baseX + textWidth / <span class="number">2f</span>, baseY, selectedPaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终呈现：</p>
+<p><img src="https://i.loli.net/2020/06/16/GQioClLAaF9fcT7.png" alt="最终预览"></p>
+<p>引用：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.yooking.tools.calendarview.CalendarPickerView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:background</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag"></span></span><br><span class="line"><span class="tag">    <span class="attr">app:hintColor</span>=<span class="string">"@color/color_text_999999"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:maskColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedColor</span>=<span class="string">"#0000ff"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedTextColor</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:textColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedType</span>=<span class="string">"range"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>源码：<a href="https://github.com/yooking-git/Utils/tree/master/timepicker">源码-Github</a></p>
+<p>Demo：<a href="https://github.com/yooking-git/Utils/blob/master/app/src/main/java/com/yooking/test/activity/TestActivity.java">Demo-Github</a></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>自定义WheelView</title>
     <url>/dev/200601-wheelview.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>儿童节快乐！！！</p>
@@ -1106,55 +1172,6 @@
 
 </li>
 </ol>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>Android</tag>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>自定义日历选择器</title>
-    <url>/dev/200616-calendarView.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上找的日历选择器一直不太满意，所以想着自己造个轮子<a id="more"></a></p>
-<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>造轮子，其一是定义数据源<br>so：<code>void setData()</code><br>那么这个函数应该包含什么样的代码？让我们来分析下：<br>日历可以分为几个部分？</p>
-<ol>
-<li>列标题</li>
-<li>上个月的日期</li>
-<li>本月日期</li>
-<li>下个月日期</li>
-</ol>
-<p>测量界面并定义几个数值：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">    <span class="comment">//重新计算高度</span></span><br><span class="line">    measuredWidth = getMeasuredWidth();</span><br><span class="line">    <span class="keyword">if</span> (measuredWidth != <span class="number">0</span>) &#123;</span><br><span class="line">        textWidth = measuredWidth / <span class="number">7f</span>;<span class="comment">//文本宽度</span></span><br><span class="line">        textHeight = textWidth * <span class="number">1.1f</span>;<span class="comment">//文本高度</span></span><br><span class="line">        measuredHeight = (<span class="keyword">int</span>) (textHeight * (lineSize + <span class="number">1</span>));<span class="comment">//包括第一行 title</span></span><br><span class="line">        setMeasuredDimension(measuredWidth, measuredHeight);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>列标题可以直接绘制，并非数据源，在<code>onDraw(Canvas canvas)</code>中定义<code>titlePaint</code>并绘制</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (titlePaint == <span class="keyword">null</span>) &#123;</span><br><span class="line">    titlePaint = <span class="keyword">new</span> TextPaint();</span><br><span class="line">    titlePaint.setTextSize(textHeight / <span class="number">3</span>);</span><br><span class="line">    titlePaint.setColor(getResources().getColor(R.color.color_text_333333));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在绘制之前——我们定义了数据的字体大小和颜色——字的高度为文本框的三分之一，颜色为<b color="#333333">RGB: #333333</b></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawTitleText</span><span class="params">(Canvas canvas, <span class="keyword">float</span> centerX, <span class="keyword">float</span> centerY, String text)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//文字度量</span></span><br><span class="line">    Paint.FontMetrics fontMetrics = titlePaint.getFontMetrics();</span><br><span class="line">    <span class="comment">//得到基线的位置</span></span><br><span class="line">    <span class="keyword">float</span> baselineY = centerY + (fontMetrics.bottom - fontMetrics.top) / <span class="number">2</span> - fontMetrics.bottom;</span><br><span class="line">    <span class="keyword">float</span> textWidth = titlePaint.measureText(text);<span class="comment">//粗略计算文本宽度</span></span><br><span class="line">    canvas.drawText(text, centerX - textWidth / <span class="number">2</span>, baselineY, titlePaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>设定数据</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setData</span><span class="params">(Calendar calBase)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (data == <span class="keyword">null</span>) &#123;</span><br><span class="line">        data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        data.clear();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.calBase = calBase;<span class="comment">//当前页面的年和月的值</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    Calendar calStart = Calendar.getInstance();<span class="comment">//本月开始 本月1号</span></span><br><span class="line">    calStart.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);<span class="comment">//本月1号</span></span><br><span class="line"></span><br><span class="line">    Calendar calEnd = Calendar.getInstance();<span class="comment">//本月结束 本月最后一天</span></span><br><span class="line">    calEnd.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH) + <span class="number">1</span>, <span class="number">1</span>);<span class="comment">//下个月1号</span></span><br><span class="line">    calEnd.add(Calendar.DATE, -<span class="number">1</span>);<span class="comment">//本月最后一天</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//周日 为 1 计算需要展示的上个月日期数</span></span><br><span class="line">    <span class="keyword">int</span> dayOfWeek = calStart.get(Calendar.DAY_OF_WEEK);</span><br><span class="line">    <span class="keyword">int</span> lastNum = dayOfWeek - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; lastNum; i++) &#123;<span class="comment">//添加上个月数据</span></span><br><span class="line">        Calendar calendar = Calendar.getInstance();</span><br><span class="line">        calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);</span><br><span class="line">        calendar.add(Calendar.DATE, -lastNum + i);</span><br><span class="line">        DateEntity dateEntity = <span class="keyword">new</span> DateEntity();<span class="comment">//日期基本类型</span></span><br><span class="line">        dateEntity.setCalendar(calendar);</span><br><span class="line">        dateEntity.setLastMonth(<span class="keyword">true</span>);<span class="comment">//是否为上个月</span></span><br><span class="line">        data.add(dateEntity);</span><br><span class="line">        Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; calEnd.get(Calendar.DAY_OF_MONTH); i++) &#123;<span class="comment">//添加本月数据</span></span><br><span class="line">        Calendar calendar = Calendar.getInstance();</span><br><span class="line">        calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH), <span class="number">1</span>);</span><br><span class="line">        calendar.add(Calendar.DATE, i);</span><br><span class="line">        DateEntity dateEntity = <span class="keyword">new</span> DateEntity();</span><br><span class="line">        dateEntity.setCalendar(calendar);</span><br><span class="line">        data.add(dateEntity);</span><br><span class="line">        Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> residueSize = <span class="number">7</span> - data.size() % <span class="number">7</span>;</span><br><span class="line">    <span class="keyword">if</span> (residueSize != <span class="number">7</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; residueSize; i++) &#123;<span class="comment">//添加下个月数据</span></span><br><span class="line">            Calendar calendar = Calendar.getInstance();</span><br><span class="line">            calendar.set(calBase.get(Calendar.YEAR), calBase.get(Calendar.MONTH) + <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">            calendar.add(Calendar.DATE, i);</span><br><span class="line">            DateEntity dateEntity = <span class="keyword">new</span> DateEntity();</span><br><span class="line">            dateEntity.setCalendar(calendar);</span><br><span class="line">            dateEntity.setNextMonth(<span class="keyword">true</span>);<span class="comment">//是否为下个月</span></span><br><span class="line">            data.add(dateEntity);</span><br><span class="line">            Log.i(TAG, LunarCalendarUtil.getLunarDate(calendar));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lineSize = data.size() / <span class="number">7</span>;</span><br><span class="line"></span><br><span class="line">    requestLayout();<span class="comment">//这里不用invalidate();因为要重新测量界面</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>绘制数据：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawData</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; data.size(); i++) &#123;</span><br><span class="line">        DateEntity dateEntity = data.get(i);</span><br><span class="line">        <span class="keyword">int</span> line = i / <span class="number">7</span> + <span class="number">2</span>;<span class="comment">//第二行开始</span></span><br><span class="line">        <span class="keyword">float</span> baseX = textWidth / <span class="number">2f</span> + textWidth * (<span class="keyword">float</span>) (i % <span class="number">7</span>);<span class="comment">//文字中心在X轴的位置</span></span><br><span class="line">        <span class="keyword">float</span> baseY = textHeight / <span class="number">2f</span> + textHeight * (line - <span class="number">1</span>);<span class="comment">//文字中心在Y轴的位置</span></span><br><span class="line">        <span class="keyword">float</span> numberY = baseY - textHeight / <span class="number">6f</span>;<span class="comment">//上移6分之一文字高度，给农历腾空间</span></span><br><span class="line">        drawText(canvas, baseX, numberY, dateEntity.getText(), numberPaint, dateEntity.isHint(), dateEntity.isSelected());<span class="comment">//阳历</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> lunarY = baseY + textHeight / <span class="number">6f</span>;</span><br><span class="line">        drawText(canvas, baseX, lunarY, dateEntity.getLunarText(), lunarPaint, dateEntity.isHint(), dateEntity.isSelected());<span class="comment">//农历</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">drawText</span><span class="params">(Canvas canvas, <span class="keyword">float</span> centerX, <span class="keyword">float</span> centerY, String text, TextPaint textPaint, <span class="keyword">boolean</span> isHint, <span class="keyword">boolean</span> isSelected)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isHint) &#123;</span><br><span class="line">        textPaint.setColor(hintColor);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        textPaint.setColor(textColor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//文字度量</span></span><br><span class="line">    Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();</span><br><span class="line">    <span class="comment">//得到基线的位置</span></span><br><span class="line">    <span class="keyword">float</span> baselineY = centerY + (fontMetrics.bottom - fontMetrics.top) / <span class="number">2</span> - fontMetrics.bottom;</span><br><span class="line">    <span class="keyword">float</span> textWidth = textPaint.measureText(text);<span class="comment">//粗略计算文本宽度</span></span><br><span class="line">    canvas.drawText(text, centerX - textWidth / <span class="number">2</span>, baselineY, textPaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.loli.net/2020/06/16/2SOCiyDmu3k8Mtx.png" alt="效果图.png"></p>
-<p>点击事件</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SuppressLint</span>(<span class="string">"ClickableViewAccessibility"</span>)</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">        <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">            downX = event.getX();</span><br><span class="line">            downY = event.getY();</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">            <span class="keyword">float</span> upX = event.getX();</span><br><span class="line">            <span class="keyword">float</span> upY = event.getY();</span><br><span class="line">            <span class="keyword">if</span> (Math.abs(upX - downX) &lt; minMove &amp;&amp; Math.abs(upY - downY) &lt; minMove) &#123;</span><br><span class="line">                <span class="keyword">int</span> column = (<span class="keyword">int</span>) (upX / textWidth);</span><br><span class="line">                <span class="keyword">int</span> line = (<span class="keyword">int</span>) (upY / textHeight);</span><br><span class="line">                Log.i(TAG, <span class="string">"列："</span> + column + <span class="string">"-"</span> + <span class="string">"行："</span> + line);</span><br><span class="line">                <span class="keyword">int</span> i = (line - <span class="number">1</span>) * <span class="number">7</span> + column;<span class="comment">//第一行是标题 计算点击的是到底几个data</span></span><br><span class="line">                <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (data.get(i).isHint()) &#123;<span class="comment">//如果是上个月，则返回上个月 反之</span></span><br><span class="line">                        <span class="keyword">if</span> (data.get(i).isLastMonth()) &#123;</span><br><span class="line">                            lastMonth();</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            nextMonth();</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (onMonthChangeListener != <span class="keyword">null</span>)</span><br><span class="line">                            onMonthChangeListener.onChanged(calBase);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">//                        clearSelected();</span></span><br><span class="line">                        <span class="keyword">if</span> (selectedType == TYPE_RANGE) &#123;<span class="comment">//如果是范围选择</span></span><br><span class="line">                            <span class="keyword">if</span> (calSelectedEnd != <span class="keyword">null</span>) &#123;<span class="comment">//选中最后一项，则重新开始选择</span></span><br><span class="line">                                clearSelected();</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">if</span> (calSelectedStart == <span class="keyword">null</span>) &#123;</span><br><span class="line">                                setSelectedStart(data.get(i).getCalendar());</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                setSelectedEnd(data.get(i).getCalendar());</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (selectedType == TYPE_SINGLE) &#123;<span class="comment">//如果是单选</span></span><br><span class="line"><span class="comment">//                            clearSelected();</span></span><br><span class="line">                            setSelected(data.get(i).getCalendar());</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (onDayClickListener != <span class="keyword">null</span>)</span><br><span class="line">                            onDayClickListener.onClickListener(data.get(i));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>记录完选中区，应该重新绘制界面</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (selectedType == TYPE_RANGE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelectedStart != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (calSelectedEnd == <span class="keyword">null</span>) &#123;</span><br><span class="line">            dateEntity.setSelected(calSelectedStart.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dateEntity.setSelected(!dateEntity.getCalendar().before(calSelectedStart) &amp;&amp; !dateEntity.getCalendar().after(calSelectedEnd));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (selectedType == TYPE_SINGLE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (calSelected != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dateEntity.setSelected(calSelected.getTimeInMillis() == dateEntity.getCalendar().getTimeInMillis());</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        dateEntity.setSelected(<span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (dateEntity.isSelected()) &#123;</span><br><span class="line">    canvas.drawLine(baseX - textWidth / <span class="number">2f</span>, baseY, baseX + textWidth / <span class="number">2f</span>, baseY, selectedPaint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最终呈现：</p>
-<p><img src="https://i.loli.net/2020/06/16/GQioClLAaF9fcT7.png" alt="最终预览"></p>
-<p>引用：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.yooking.tools.calendarview.CalendarPickerView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:background</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag"></span></span><br><span class="line"><span class="tag">    <span class="attr">app:hintColor</span>=<span class="string">"@color/color_text_999999"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:maskColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedColor</span>=<span class="string">"#0000ff"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedTextColor</span>=<span class="string">"@color/white"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:textColor</span>=<span class="string">"@color/color_text_333333"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:selectedType</span>=<span class="string">"range"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>源码：<a href="https://github.com/yooking-git/Utils/tree/master/timepicker">源码-Github</a></p>
-<p>Demo：<a href="https://github.com/yooking-git/Utils/blob/master/app/src/main/java/com/yooking/test/activity/TestActivity.java">Demo-Github</a></p>
 ]]></content>
       <categories>
         <category>想丶给代码码上诗意</category>
