@@ -916,6 +916,11 @@
 <li>2020.08.05 - 创建并调整登录体系、优化Retrofit网络请求、优化SwipeRefreshRecyclerView等</li>
 <li>2020.08.06 - 再次调整登录体系；将界面交给Holder控制，简化代码；登录成功后，存储后台返回信息，保证本地登录的逻辑自恰；修改Presenter和Model之间的访问方式，减小代码耦合；新增我的界面</li>
 <li>2020.08.07 - 添加我的收藏页面（收藏的文章列表）</li>
+<li>2020.08.14 - 修复收藏页面bug、新增收藏网站功能</li>
+<li>2020.08.17 - 新增本地浏览器（X5内核）</li>
+<li>2020.08.18 - 新增我的分享</li>
+<li>2020.08.19 - 新增积分排行和积分明细</li>
+<li>2020.09.15 - 新增安全键盘、新增本地存储账号</li>
 </ol>
 <h1 id="目前状态"><a href="#目前状态" class="headerlink" title="目前状态"></a>目前状态</h1><p>使用MVP架构、Retrofit网络请求框架。该App可能会包含很多不必要的工具，可在build.gradle中拆除</p>
 <p>Home界面逻辑功能优化完毕</p>
@@ -943,6 +948,7 @@
 <li>收藏的文章（站内、站外 可删除）</li>
 <li>收藏的网址</li>
 </ul>
+<p>我的分享包含：（2020.08）</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>鸣谢：<br>图标：<a href="https://www.iconfont.cn/">阿里巴巴矢量图标库</a><br>接口：<a href="https://wanandroid.com/blog/show/2">玩安卓wanandroid</a> </p>
 ]]></content>
       <categories>
