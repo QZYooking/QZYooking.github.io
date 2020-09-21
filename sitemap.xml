@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.yookingh.cn/dev/200921-JNI_Study.html</loc>
+    
+    <lastmod>2020-09-21T06:38:37.998Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.yookingh.cn/dev/200806-playAndroid.html</loc>
     
     <lastmod>2020-09-15T11:30:29.138Z</lastmod>

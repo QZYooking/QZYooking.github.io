@@ -22,22 +22,26 @@
     var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="世界那么大，组件那么小。Small，做最轻巧的跨平台插件化框架。 ——Galenlin 本文暂停更新直到Small支持AS3.2为止">
+  <meta name="description" content="目的：java代码调用C++代码">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android插件化-Small框架">
-<meta property="og:url" content="http://blog.yookingh.cn/dev/190802-small.html">
+<meta property="og:title" content=".so文件的生成和使用">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/200921-JNI_Study.html">
 <meta property="og:site_name" content="墨染青葱几许烟">
-<meta property="og:description" content="世界那么大，组件那么小。Small，做最轻巧的跨平台插件化框架。 ——Galenlin 本文暂停更新直到Small支持AS3.2为止">
+<meta property="og:description" content="目的：java代码调用C++代码">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-08-02T09:31:45.000Z">
-<meta property="article:modified_time" content="2020-05-13T01:19:08.676Z">
+<meta property="og:image" content="https://i.loli.net/2020/09/21/qCv7BXGu5n4JSEP.png">
+<meta property="og:image" content="https://i.loli.net/2020/09/21/X1TmxrMotkPgOFl.png">
+<meta property="og:image" content="https://i.loli.net/2020/09/21/GCmlq8chd6bHBvk.png">
+<meta property="article:published_time" content="2020-09-21T03:37:00.000Z">
+<meta property="article:modified_time" content="2020-09-21T06:38:37.998Z">
 <meta property="article:author" content="yooking">
 <meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="Android">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/09/21/qCv7BXGu5n4JSEP.png">
 
-<link rel="canonical" href="http://blog.yookingh.cn/dev/190802-small.html">
+<link rel="canonical" href="http://blog.yookingh.cn/dev/200921-JNI_Study.html">
 
 
 <script id="page-configurations">
@@ -50,7 +54,7 @@
   };
 </script>
 
-  <title>Android插件化-Small框架 | 墨染青葱几许烟</title>
+  <title>.so文件的生成和使用 | 墨染青葱几许烟</title>
   
 
 
@@ -197,7 +201,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/190802-small.html">
+    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200921-JNI_Study.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/imgs/a_icon_head.jpg">
@@ -210,7 +214,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Android插件化-Small框架
+          .so文件的生成和使用
         </h1>
 
         <div class="post-meta">
@@ -220,7 +224,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-08-02 17:31:45" itemprop="dateCreated datePublished" datetime="2019-08-02T17:31:45+08:00">2019-08-02</time>
+              <time title="创建时间：2020-09-21 11:37:00" itemprop="dateCreated datePublished" datetime="2020-09-21T11:37:00+08:00">2020-09-21</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,8 +245,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/dev/190802-small.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/dev/190802-small.html" itemprop="commentCount"></span>
+    <a title="valine" href="/dev/200921-JNI_Study.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/200921-JNI_Study.html" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -257,56 +261,47 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>世界那么大，组件那么小。Small，做最轻巧的跨平台插件化框架。 ——Galenlin</strong></p>
-<p>本文暂停更新直到Small支持AS3.2为止<a id="more"></a></p>
-<p><strong>Small官方路径：</strong></p>
-<ul>
-<li><p>Github路径：<a href="https://github.com/wequick/Small">github.com/wequick/Small</a></p>
-</li>
-<li><p>文档路径：<a href="http://code.wequick.net/Small/cn/home">code.wequick.net/Small/cn/home</a></p>
-</li>
-</ul>
-<h2 id="引入框架"><a href="#引入框架" class="headerlink" title="引入框架"></a>引入框架</h2><ol>
-<li><p>根据官方文档配置框架</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    ext.small_version = <span class="string">'1.5.0-beta2'</span></span><br><span class="line">    ...</span><br><span class="line">    dependencies&#123;</span><br><span class="line">        ...</span><br><span class="line">        classpath <span class="string">"net.wequick.tools.build:gradle-small:$small_version"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">apply plugin: <span class="string">'net.wequick.small'</span></span><br><span class="line">small &#123;</span><br><span class="line">    aarVersion = <span class="string">"$small_version"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p><strong>目的</strong>：java代码调用C++代码<a id="more"></a></p>
+<h1 id="宏命令"><a href="#宏命令" class="headerlink" title="宏命令"></a>宏命令</h1><h2 id="javah"><a href="#javah" class="headerlink" title="javah"></a>javah</h2><p><img src="https://i.loli.net/2020/09/21/qCv7BXGu5n4JSEP.png" alt="宏_javah.jpg"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Program</span> $JDKPath$/bin/javah</span><br><span class="line"><span class="meta">@Arguments</span> -v -jni -d $ModuleFileDir$/src/main/jni $FileClass$</span><br><span class="line"><span class="meta">@WorkingDirectory</span> $SourcepathEntry$</span><br></pre></td></tr></table></figure>
 
-<p><strong>报错1：</strong></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR: Unable to resolve dependency for ':app@debug/compileClasspath': Could not resolve org.jetbrains.kotlin:kotlin-stdlib-jre7:1.3.31.</span><br></pre></td></tr></table></figure>
+<h2 id="ndk-build"><a href="#ndk-build" class="headerlink" title="ndk-build"></a>ndk-build</h2><p><img src="https://i.loli.net/2020/09/21/X1TmxrMotkPgOFl.png" alt="宏_jni_build.jpg"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Program</span> $Ndk路径$\ndk-build.cmd</span><br><span class="line"><span class="meta">@WorkingDirectory</span> $ModuleFileDir$\src\main\</span><br></pre></td></tr></table></figure>
 
-<p>emmm…<strong>垃圾软件毁我青春</strong>，Tyr Again<br>好的，报错换了，<strong>报错2：</strong></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR: Failed to resolve: org.jetbrains.kotlin:kotlin-stdlib-jre7:1.3.31</span><br></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p><code>app</code>下<code>build.gradle</code>配置（无关配置使用<code>...</code>代替）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">def LIBRARY_NAME = <span class="string">"\"LIBRARY_KEYGEN\""</span><span class="comment">//与稍后创建的工具类同名</span></span><br><span class="line">...</span><br><span class="line">android&#123;</span><br><span class="line">    ...</span><br><span class="line">    defaultConfig&#123;</span><br><span class="line">        ...</span><br><span class="line">        ndk &#123;</span><br><span class="line">            moduleName LIBRARY_NAME</span><br><span class="line">            abiFilters <span class="string">"armeabi-v7a"</span>, <span class="string">"x86"</span><span class="comment">//cpu的类型</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        debug&#123;</span><br><span class="line">            buildConfigField(<span class="string">"String"</span>,<span class="string">"LIBRARY_NAME"</span>,LIBRARY_NAME)</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">        release &#123;</span><br><span class="line">            buildConfigField(<span class="string">"String"</span>,<span class="string">"LIBRARY_NAME"</span>,LIBRARY_NAME)</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    sourceSets.main &#123;</span><br><span class="line">        jni.srcDirs = [<span class="string">'libs'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>emmm…<strong>垃圾软件毁我青春！！！</strong>，要不这框架我不用了…<br><strong>如果遇到问题无法解决，那么就解决出题人</strong>——于是我把基于Kotlin编程改为基于Java编程…</p>
-</li>
-<li><p>Small框架引入后，在Terminal中键入：<code>gradlew small</code>校验：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">### Compile-time</span><br><span class="line"></span><br><span class="line">gradle-small plugin : 1.5.0-beta2 (maven)</span><br><span class="line">          small aar : 1.5.0-beta2 (maven)</span><br><span class="line">        gradle core : 5.1.1</span><br><span class="line">     android plugin : 3.4.2</span><br><span class="line">                 OS : Windows 7 6.1 (amd64)</span><br><span class="line"></span><br><span class="line">### Bundles</span><br><span class="line"></span><br><span class="line">| type | name | PP | sdk |  aapt  | support | file | size |</span><br><span class="line">|------|------|----|-----|--------|---------|------|------|</span><br><span class="line">| host | app  |    | 28  | 29.0.2 |         |      |      |</span><br></pre></td></tr></table></figure>
+<h1 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h1><h2 id="1-创建调用JNI的工具类"><a href="#1-创建调用JNI的工具类" class="headerlink" title="1.创建调用JNI的工具类"></a>1.创建调用JNI的工具类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.yooking.sodemo;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过JNI获取Key值</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/9/21.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JniKeyUtils</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(BuildConfig.LIBRARY_NAME);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">getKeygen</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h2 id="2-生成-h文件"><a href="#2-生成-h文件" class="headerlink" title="2.生成.h文件"></a>2.生成.h文件</h2><p>右键单击<code>JniKeyUtils</code>文件-<code>NDK</code>（宏命令中的Group值）-<code>javah</code></p>
+<p>生成文件夹：<code>app/src/main/jni</code></p>
+<p>生成文件：<code>com_yooking_sodemo_JniKeyUtils.h</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* DO NOT EDIT THIS FILE - it is machine generated */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="comment">/* Header for class com_yooking_sodemo_JniKeyUtils */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _Included_com_yooking_sodemo_JniKeyUtils</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _Included_com_yooking_sodemo_JniKeyUtils</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Class:     com_yooking_sodemo_JniKeyUtils</span></span><br><span class="line"><span class="comment"> * Method:    getKeygen</span></span><br><span class="line"><span class="comment"> * Signature: ()Ljava/lang/String;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">JNIEXPORT jstring JNICALL Java_com_yooking_sodemo_JniKeyUtils_getKeygen</span><br><span class="line">  (JNIEnv *, jclass);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 
+<h2 id="3-创建-c文件"><a href="#3-创建-c文件" class="headerlink" title="3.创建.c文件"></a>3.创建.c文件</h2><p>右键单击<code>jni</code>文件夹-<code>New</code>-<code>C/C++ Source File</code></p>
+<p>生成文件：<code>JniKeyUtils.c</code></p>
+<p>往文件中输入：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Created by yooking on 2020/9/21.</span></span><br><span class="line"><span class="comment">// Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"com_yooking_sodemo_JniKeyUtils.h"</span></span></span><br><span class="line"></span><br><span class="line">JNIEXPORT jstring JNICALL Java_com_yooking_sodemo_JniKeyUtils_getKeygen</span><br><span class="line">  (JNIEnv * env, jclass object)&#123;</span><br><span class="line">    <span class="keyword">return</span> (*env)-&gt;NewStringUTF(env,<span class="string">"取得密钥值"</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
-</li>
+<h2 id="4-创建-mk文件"><a href="#4-创建-mk文件" class="headerlink" title="4.创建.mk文件"></a>4.创建.mk文件</h2><ol>
+<li>Android.mk</li>
 </ol>
-<h2 id="配置宿主"><a href="#配置宿主" class="headerlink" title="配置宿主"></a>配置宿主</h2><ol>
-<li><p>新建一个Application</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppAplication</span> <span class="keyword">extends</span> <span class="title">Application</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>初始化Small</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果项目中使用了ContentProvider，</span></span><br><span class="line"><span class="comment"> * 那么该方法必须在构造方法中调用</span></span><br><span class="line"><span class="comment"> * ——在onCreate之前</span></span><br><span class="line"><span class="comment"> * 如果未用到ContentProvider，</span></span><br><span class="line"><span class="comment"> * 可以在onCreate中调用</span></span><br><span class="line"><span class="comment"> * ——因此放在构造方法中最省事</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">preSetUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Small.preSetUp(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AppAplication</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	preSetUp();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH := <span class="variable">$(<span class="built_in">call</span> my-<span class="built_in">dir</span>)</span></span><br><span class="line"><span class="keyword">include</span> <span class="variable">$(CLEAR_VARS)</span></span><br><span class="line"><span class="comment">#编译生成的文件的类库名——Build.gradle中的命名</span></span><br><span class="line">LOCAL_MODULE    := LIBRARY_KEYGEN</span><br><span class="line"><span class="comment">#要编译的c文件名称</span></span><br><span class="line">LOCAL_SRC_FILES := JniKeyUtils.c</span><br><span class="line"><span class="keyword">include</span> <span class="variable">$(BUILD_SHARED_LIBRARY)</span></span><br></pre></td></tr></table></figure>
 
-
-
-</li>
-</ol>
-<h2 id="创建插件模块"><a href="#创建插件模块" class="headerlink" title="创建插件模块"></a>创建插件模块</h2><ol>
-<li><p>根据文档表明，我需要创建一个：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Application/Library name ：App.main</span><br><span class="line">             Module name ：app.main</span><br><span class="line">            Package name ：com.yooking.app.main</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
 <ol start="2">
-<li>我想我遇到一个大麻烦了：<code>Ilegal character &#39;.&#39; in Module name &#39;App.main&#39;</code><br>emmm…点开<a href="https://github.com/wequick/Small/issues">issues</a><br>emmm…很遗憾，朋友们，这篇文章结束了，忽然感觉自己少了好多事儿~~</li>
+<li>applicatiion.mk</li>
 </ol>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#APP_ABI := all</span></span><br><span class="line"><span class="comment">#根据需要配置</span></span><br><span class="line">APP_ABI := x86</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-生成-so文件"><a href="#5-生成-so文件" class="headerlink" title="5.生成.so文件"></a>5.生成.so文件</h2><p>右键单击<code>jni</code>文件夹-<code>NDK</code>（宏命令中的Group值）-<code>ndk-build</code></p>
+<p>自动生成和<code>jni</code>同级的<code>obj</code>和<code>libs</code>文件夹（<code>obj</code>和<code>libs</code>均可删除）</p>
+<p>手动创建同级文件夹——<code>jniLibs</code>文件夹</p>
+<p>将<code>libs</code>下的文件复制到<code>jniLibs</code>中即可（或修改<code>libs</code>文件名为<code>jniLibs</code>）</p>
+<h2 id="6-运行测试"><a href="#6-运行测试" class="headerlink" title="6.运行测试"></a>6.运行测试</h2><p><code>MainActivity.java</code>文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.yooking.sodemo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.os.Bundle;</span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> androidx.appcompat.app.AppCompatActivity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        ((TextView) findViewById(R.id.tv_test)).setText(JniKeyUtils.getKeygen());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<p><img src="https://i.loli.net/2020/09/21/GCmlq8chd6bHBvk.png" alt="reason.png"></p>
 
     </div>
 
@@ -347,12 +342,12 @@
   <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
 
-  <p><span>本文标题:</span>Android插件化-Small框架</a></p>
+  <p><span>本文标题:</span>.so文件的生成和使用</a></p>
   <p><span>文章作者:</span>yooking</a></p>
-  <p><span>发布时间:</span>2019年08月02日 - 17:31:45</p>
-  <p><span>最后更新:</span>2020年05月13日 - 09:19:08</p>
-  <p><span>原始链接:</span><a href="/dev/190802-small.html" title="Android插件化-Small框架">http://blog.yookingh.cn/dev/190802-small.html</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/190802-small.html"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2020年09月21日 - 11:37:00</p>
+  <p><span>最后更新:</span>2020年09月21日 - 14:38:37</p>
+  <p><span>原始链接:</span><a href="/dev/200921-JNI_Study.html" title=".so文件的生成和使用">http://blog.yookingh.cn/dev/200921-JNI_Study.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200921-JNI_Study.html"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -386,13 +381,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/travel/190508-travels-Xiamen.html" rel="prev" title="鹭岛游记">
-      <i class="fa fa-chevron-left"></i> 鹭岛游记
+    <a href="/dev/200817-GiveMeTheMoney.html" rel="prev" title="Android音频拼接并播放">
+      <i class="fa fa-chevron-left"></i> Android音频拼接并播放
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dev/190806-home-Restart.html" rel="next" title="Android release包Home键重启问题">
-      Android release包Home键重启问题 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -451,7 +443,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引入框架"><span class="nav-number">1.</span> <span class="nav-text">引入框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置宿主"><span class="nav-number">2.</span> <span class="nav-text">配置宿主</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建插件模块"><span class="nav-number">3.</span> <span class="nav-text">创建插件模块</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#宏命令"><span class="nav-number">1.</span> <span class="nav-text">宏命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#javah"><span class="nav-number">1.1.</span> <span class="nav-text">javah</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ndk-build"><span class="nav-number">1.2.</span> <span class="nav-text">ndk-build</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体步骤"><span class="nav-number">3.</span> <span class="nav-text">具体步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-创建调用JNI的工具类"><span class="nav-number">3.1.</span> <span class="nav-text">1.创建调用JNI的工具类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-生成-h文件"><span class="nav-number">3.2.</span> <span class="nav-text">2.生成.h文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-创建-c文件"><span class="nav-number">3.3.</span> <span class="nav-text">3.创建.c文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-创建-mk文件"><span class="nav-number">3.4.</span> <span class="nav-text">4.创建.mk文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-生成-so文件"><span class="nav-number">3.5.</span> <span class="nav-text">5.生成.so文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-运行测试"><span class="nav-number">3.6.</span> <span class="nav-text">6.运行测试</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
