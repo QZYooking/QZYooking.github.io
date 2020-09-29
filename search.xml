@@ -217,41 +217,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Android 音量控制</title>
-    <url>/dev/200509-audioManager.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
-<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
-<li><p>设置声音模式：</p>
-<p><code>setRingerMode(int ringerMode)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整声音大小</p>
-<p><code>adjustVolume(int direction, int flags)</code>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取最大音量和当前音量</p>
-<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>调整音量为具体数值</p>
-<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Android封装之路系列—MVP模式架构</title>
     <url>/dev/200521-package.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="总续"><a href="#总续" class="headerlink" title="总续"></a>总续</h1><ul>
@@ -281,43 +246,30 @@
       </tags>
   </entry>
   <entry>
-    <title>Android沉浸式布局导致的键盘遮挡问题处理方案</title>
-    <url>/dev/190808-virtual-Keyboard.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目——沉浸式布局<br>沉浸式方案：全屏+透明状态栏<br>问题：键盘遮挡输入框<a id="more"></a><br>解决思路：检测键盘是否弹起，根据键盘的弹起与回收，重新绘制界面<br>解决方案：AndroidBug5497Workaround</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AndroidBug5497Workaround</span> </span>&#123;</span><br><span class="line">    <span class="comment">//该解决方案用于处理 全屏下键盘 问题 :</span></span><br><span class="line">    <span class="comment">//当Theme为 @android:style/Theme.Light.NoTitleBar.Fullscreen 时</span></span><br><span class="line">    <span class="comment">//android:windowSoftInputMode="adjustResize" 无效</span></span><br><span class="line">    <span class="comment">// For more information, see https://code.google.com/p/android/issues/detail?id=5497</span></span><br><span class="line">    <span class="comment">// To use this class, simply invoke assistActivity() on an Activity that already has its content view set.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//紧随setContentView之后调用</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">assistActivity</span> <span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> AndroidBug5497Workaround(activity);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> View mChildOfContent;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> usableHeightPrevious;</span><br><span class="line">    <span class="keyword">private</span> FrameLayout.LayoutParams frameLayoutParams;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">AndroidBug5497Workaround</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//获取Activity的最外层布局</span></span><br><span class="line">        FrameLayout content = (FrameLayout) activity.findViewById(android.R.id.content);</span><br><span class="line">        mChildOfContent = content.getChildAt(<span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//监听键盘弹起与收回</span></span><br><span class="line">        mChildOfContent.getViewTreeObserver().addOnGlobalLayoutListener(</span><br><span class="line">            <span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    possiblyResizeChildOfContent();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">//重置页面属性</span></span><br><span class="line">        frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 获取界面可用高度，如果软键盘弹起后，Activity的xml布局可用高度需要减去键盘高度 </span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">possiblyResizeChildOfContent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> usableHeightNow = computeUsableHeight();</span><br><span class="line">		</span><br><span class="line">        <span class="comment">//判断 当前可用高度和 历史可用高度不同 （即键盘状态发生变化） 时，调整界面高度</span></span><br><span class="line">        <span class="keyword">if</span> (usableHeightNow != usableHeightPrevious) &#123;</span><br><span class="line">            <span class="keyword">int</span> usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();</span><br><span class="line">            <span class="keyword">int</span> heightDifference = usableHeightSansKeyboard - usableHeightNow;</span><br><span class="line">            <span class="comment">//将 可用高度的1/4视为键盘高度</span></span><br><span class="line">            <span class="keyword">if</span> (heightDifference &gt; (usableHeightSansKeyboard/<span class="number">4</span>)) &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became visible</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard - heightDifference;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became hidden</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard;</span><br><span class="line">            &#125;</span><br><span class="line">            mChildOfContent.requestLayout();</span><br><span class="line">            usableHeightPrevious = usableHeightNow;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//获取页面可用高度</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">computeUsableHeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Rect r = <span class="keyword">new</span> Rect();</span><br><span class="line">        mChildOfContent.getWindowVisibleDisplayFrame(r);</span><br><span class="line">        <span class="comment">//全屏应用 不需要减去 top , r.top 为状态栏高度，r.bottom 为屏幕可用最底部高度</span></span><br><span class="line">        <span class="comment">//return r.bottom;</span></span><br><span class="line">        <span class="keyword">return</span> (r.bottom - r.top);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <title>Android 音量控制</title>
+    <url>/dev/200509-audioManager.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Android监听音量、修改音量——AudioManager的使用。<a id="more"></a></p>
+<h1 id="方法与参数"><a href="#方法与参数" class="headerlink" title="方法与参数"></a>方法与参数</h1><ol>
+<li><p>设置声音模式：</p>
+<p><code>setRingerMode(int ringerMode)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 静音模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_SILENT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 震动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_VIBRATE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音模式/响铃模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> RINGER_MODE_NORMAL = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整声音大小</p>
+<p><code>adjustVolume(int direction, int flags)</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//direction</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 减小音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_LOWER = -<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增大音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ADJUST_RAISE = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//flags</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 会弹出调节音量的界面</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_SHOW_UI = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 声音调整为最小值时开启振动模式</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_ALLOW_RINGER_MODES = <span class="number">1</span> &lt;&lt; <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调整音量时播放声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> FLAG_PLAY_SOUND = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取最大音量和当前音量</p>
+<p><code>getStreamVolume(int streamType)</code>和<code>getStreamMaxVolume(int streamType)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通话声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_VOICE_CALL = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 系统声音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_SYSTEM = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多媒体音量</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_MUSIC = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 提示音</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> STREAM_ALARM = <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调整音量为具体数值</p>
+<p><code>setStreamVolume(int streamType, int index, int flags)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//streamType 同3</span></span><br><span class="line"><span class="comment">//flags 同2</span></span><br><span class="line"><span class="comment">//index 为目标音量</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p><a href="https://code.google.com/p/android/issues/detail?id=5497">google-issues-5497</a>（code.google.com）<br><a href="https://github.com/madebycm/AndroidBug5497Workaround">Android-5497问题解决方案</a>（github.com）<br><a href="https://www.jianshu.com/p/a95a1b84da11">据说能解决5497方案的兼容问题</a>（jianshu.com）</p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>Android</tag>
-        <tag>Java</tag>
-        <tag>Bug</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android音频拼接并播放</title>
-    <url>/dev/200817-GiveMeTheMoney.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>没时间解释了，先上车：<a href="https://github.com/yooking-git/FFmpegDemo">https://github.com/yooking-git/FFmpegDemo</a></p>
-<a id="more"></a>
+</li>
+</ol>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * AudioManager辅助类</span></span><br><span class="line"><span class="comment"> * Created by yooking on 2020/5/9.</span></span><br><span class="line"><span class="comment"> * Copyright (c) 2020 yooking. All rights reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AudioHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//工厂 - 单例 - 懒汉式 - 线程安全</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioHelper instance;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AudioManager manager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> AudioHelper <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            instance = <span class="keyword">new</span> AudioHelper();</span><br><span class="line">            <span class="comment">//这里用ApplicationContext</span></span><br><span class="line">            manager = (AudioManager) AppContext.getInstance().getSystemService(Context.AUDIO_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMediaVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_MUSIC);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话最大音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCallVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSystemVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_SYSTEM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmMaxVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamMaxVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取提示音量最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAlarmVolume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> manager.getStreamVolume(AudioManager.STREAM_ALARM);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置多媒体音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMediaVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_MUSIC, <span class="comment">//音量类型</span></span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置通话音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.STREAM_VOICE_CALL);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置铃声音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAlarmVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_ALARM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置系统音量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSystemVolume</span><span class="params">(<span class="keyword">int</span> volume)</span> </span>&#123;</span><br><span class="line">        manager.setStreamVolume(AudioManager.STREAM_SYSTEM,</span><br><span class="line">                volume,</span><br><span class="line">                AudioManager.FLAG_PLAY_SOUND</span><br><span class="line">                        | AudioManager.FLAG_SHOW_UI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭/打开扬声器播放</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSpeakerStatus</span><span class="params">(<span class="keyword">boolean</span> on)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        获取当前音频模式，返回值：MODE_NORMAL（普通）、MODE_RINGTONE（铃声）、MODE_IN_CALL（呼叫）或者MODE_IN_COMMUNICATION（通话）</span></span><br><span class="line"><span class="comment">//        int mode = manager.getMode();</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (on) &#123; <span class="comment">//扬声器</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">true</span>);</span><br><span class="line">            manager.setMode(AudioManager.MODE_NORMAL);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 设置成听筒模式</span></span><br><span class="line">            manager.setSpeakerphoneOn(<span class="keyword">false</span>);<span class="comment">// 关闭扬声器</span></span><br><span class="line">            manager.setMode(AudioManager.MODE_IN_COMMUNICATION);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>感谢CSDN博主：<a href="https://blog.csdn.net/u011686167/article/details/79135240">徐福记456</a>大佬提供的C++代码和.so文件</p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Kotlin</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android热补丁技术初探</title>
-    <url>/dev/190924-hotfix.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
 ]]></content>
       <categories>
         <category>想丶给代码码上诗意</category>
@@ -389,6 +341,40 @@
         <tag>学习笔记</tag>
         <tag>Android</tag>
         <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android沉浸式布局导致的键盘遮挡问题处理方案</title>
+    <url>/dev/190808-virtual-Keyboard.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>公司项目——沉浸式布局<br>沉浸式方案：全屏+透明状态栏<br>问题：键盘遮挡输入框<a id="more"></a><br>解决思路：检测键盘是否弹起，根据键盘的弹起与回收，重新绘制界面<br>解决方案：AndroidBug5497Workaround</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AndroidBug5497Workaround</span> </span>&#123;</span><br><span class="line">    <span class="comment">//该解决方案用于处理 全屏下键盘 问题 :</span></span><br><span class="line">    <span class="comment">//当Theme为 @android:style/Theme.Light.NoTitleBar.Fullscreen 时</span></span><br><span class="line">    <span class="comment">//android:windowSoftInputMode="adjustResize" 无效</span></span><br><span class="line">    <span class="comment">// For more information, see https://code.google.com/p/android/issues/detail?id=5497</span></span><br><span class="line">    <span class="comment">// To use this class, simply invoke assistActivity() on an Activity that already has its content view set.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//紧随setContentView之后调用</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">assistActivity</span> <span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> AndroidBug5497Workaround(activity);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> View mChildOfContent;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> usableHeightPrevious;</span><br><span class="line">    <span class="keyword">private</span> FrameLayout.LayoutParams frameLayoutParams;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">AndroidBug5497Workaround</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//获取Activity的最外层布局</span></span><br><span class="line">        FrameLayout content = (FrameLayout) activity.findViewById(android.R.id.content);</span><br><span class="line">        mChildOfContent = content.getChildAt(<span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//监听键盘弹起与收回</span></span><br><span class="line">        mChildOfContent.getViewTreeObserver().addOnGlobalLayoutListener(</span><br><span class="line">            <span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    possiblyResizeChildOfContent();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">//重置页面属性</span></span><br><span class="line">        frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 获取界面可用高度，如果软键盘弹起后，Activity的xml布局可用高度需要减去键盘高度 </span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">possiblyResizeChildOfContent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> usableHeightNow = computeUsableHeight();</span><br><span class="line">		</span><br><span class="line">        <span class="comment">//判断 当前可用高度和 历史可用高度不同 （即键盘状态发生变化） 时，调整界面高度</span></span><br><span class="line">        <span class="keyword">if</span> (usableHeightNow != usableHeightPrevious) &#123;</span><br><span class="line">            <span class="keyword">int</span> usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();</span><br><span class="line">            <span class="keyword">int</span> heightDifference = usableHeightSansKeyboard - usableHeightNow;</span><br><span class="line">            <span class="comment">//将 可用高度的1/4视为键盘高度</span></span><br><span class="line">            <span class="keyword">if</span> (heightDifference &gt; (usableHeightSansKeyboard/<span class="number">4</span>)) &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became visible</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard - heightDifference;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// keyboard probably just became hidden</span></span><br><span class="line">                frameLayoutParams.height = usableHeightSansKeyboard;</span><br><span class="line">            &#125;</span><br><span class="line">            mChildOfContent.requestLayout();</span><br><span class="line">            usableHeightPrevious = usableHeightNow;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//获取页面可用高度</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">computeUsableHeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Rect r = <span class="keyword">new</span> Rect();</span><br><span class="line">        mChildOfContent.getWindowVisibleDisplayFrame(r);</span><br><span class="line">        <span class="comment">//全屏应用 不需要减去 top , r.top 为状态栏高度，r.bottom 为屏幕可用最底部高度</span></span><br><span class="line">        <span class="comment">//return r.bottom;</span></span><br><span class="line">        <span class="keyword">return</span> (r.bottom - r.top);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p><a href="https://code.google.com/p/android/issues/detail?id=5497">google-issues-5497</a>（code.google.com）<br><a href="https://github.com/madebycm/AndroidBug5497Workaround">Android-5497问题解决方案</a>（github.com）<br><a href="https://www.jianshu.com/p/a95a1b84da11">据说能解决5497方案的兼容问题</a>（jianshu.com）</p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+        <tag>Bug</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Android音频拼接并播放</title>
+    <url>/dev/200817-GiveMeTheMoney.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>没时间解释了，先上车：<a href="https://github.com/yooking-git/FFmpegDemo">https://github.com/yooking-git/FFmpegDemo</a></p>
+<a id="more"></a>
+
+<p>感谢CSDN博主：<a href="https://blog.csdn.net/u011686167/article/details/79135240">徐福记456</a>大佬提供的C++代码和.so文件</p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Android</tag>
+        <tag>Kotlin</tag>
       </tags>
   </entry>
   <entry>
@@ -514,6 +500,20 @@
       </tags>
   </entry>
   <entry>
+    <title>Android热补丁技术初探</title>
+    <url>/dev/190924-hotfix.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="什么是热补丁"><a href="#什么是热补丁" class="headerlink" title="什么是热补丁"></a>什么是热补丁</h2><p>&emsp;&emsp;简单来说，就是在不重新安装Apk的情况下，修复App存在的bug或进行功能性迭代。<a id="more"></a></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Android</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Calendar的时间比对问题</title>
     <url>/dev/200731-CalendarComparative.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h1><p>Calendar的比较时基于毫秒的，但是calendar使用set方法只能精确到秒，如果用Calendar进行同一秒的比较，可能会有…<a id="more"></a></p>
@@ -596,54 +596,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Kotlin初体验：IM项目体验</title>
-    <url>/dev/190809-kotlin-IM.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><p>基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目<a id="more"></a><br>本文主要以一个小Demo来初步了解Kotlin编程与Java编程的差异</p>
-<h1 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h1><h2 id="聊天窗口构建"><a href="#聊天窗口构建" class="headerlink" title="聊天窗口构建"></a>聊天窗口构建</h2><p>框架引入：<a href="http://www.recyclerview.org/">BRVAH官网</a></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">implementation <span class="string">'androidx.recyclerview:recyclerview:1.1.0-beta02'</span><span class="comment">//AndroidX RecyclerView</span></span><br><span class="line">implementation <span class="string">'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'</span><span class="comment">//BRVAH</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>new 对象</strong><br>在Kotlin中，<code>new Object();</code>省略为<code>Object()</code>，也不需要分号<br><strong>全局变量</strong><br><code>private lateinit var mContext: Context</code><br>全局变量应该用var来定义，其类型写在:之后<br>lateinit 修饰符：延迟初始化<br>lateinit 不能用来修饰基本数据类型，因为基本类型的属性在类加载后的准备阶段都会被初始化为默认值</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> a : <span class="built_in">Int</span></span><br><span class="line"><span class="comment">//'lateinit' modifier is not allowed on properties of primitive types</span></span><br></pre></td></tr></table></figure>
-
-<p>lateinit 不能修饰val变量，只能修饰可变的属性</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">val</span> etMessage : AppCompatEditText</span><br><span class="line"><span class="comment">//'lateinit' modifier is allowed only on mutable properties</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>静态全局变量</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">	<span class="comment">//ChatActivity.class.getName()的写法</span></span><br><span class="line">	<span class="comment">//const 是常量修饰词 类似 java 中的 static final</span></span><br><span class="line">	<span class="comment">//val 相当于 final</span></span><br><span class="line">	<span class="comment">//const 不能修饰 var</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">val</span> TAG: String = ChatActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">name</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>符号</strong><br><code>helper!!</code>意为：helper不做为空校验，如果为空则抛出异常</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ? 即 或许为空</span></span><br><span class="line"><span class="comment">// ?. 相当于 if(object == null) return null; else return objcet.xx; </span></span><br><span class="line"><span class="keyword">val</span> mList: ArrayList&lt;String&gt;? = <span class="literal">null</span><span class="comment">//如果Object后面不加问号，即Object?那么mList = null会报错</span></span><br><span class="line">Log.d(TAG, <span class="string">"ListSize = <span class="subst">$&#123;mList?.size&#125;</span>"</span>)<span class="comment">//用 mList!!.size 会抛出空指针异常</span></span><br><span class="line">Log日志：com.yooking.socket.ChatActivity: ListSize = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>构建javabean</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> type: <span class="built_in">Int</span>) : MultiItemEntity &#123;</span><br><span class="line">	<span class="keyword">var</span> name: String? = <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对应的java写法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span> <span class="keyword">extends</span> <span class="title">MultiItemEntity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">""</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatData</span><span class="params">(<span class="keyword">int</span> type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在Kotlin中 get 方法 的使用方法为 chatData.name</span></span><br><span class="line"><span class="comment">//在Kotlin中 set 方法 的使用方法为 chatData.name = "string"</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="WebSocketLib构建"><a href="#WebSocketLib构建" class="headerlink" title="WebSocketLib构建"></a>WebSocketLib构建</h2><p>框架引入：<a href="https://square.github.io/okhttp/">OkHttp-GithubPage</a></p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">api <span class="string">'com.squareup.okhttp3:okhttp:4.0.1'</span><span class="comment">//okhttp 4.0.1</span></span><br><span class="line"><span class="comment">//api 'com.squareup.okhttp3:mockwebserver:4.0.1'//okhttp moc 请求验证</span></span><br><span class="line">api <span class="string">'com.squareup.okhttp3:logging-interceptor:4.0.1'</span><span class="comment">//okhttp 请求日志</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>匿名内部类</strong><br>在kotlin中，匿名内部类和java中的差别不大</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> handler: Handler</span><br><span class="line"><span class="keyword">init</span>&#123;</span><br><span class="line">    handler = Handler &#123;<span class="comment">//it:Messag!</span></span><br><span class="line">        send(heartMessage)</span><br><span class="line">        it.target.sendEmptyMessageDelayed(WHAT_HEART, heartTime)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//java</span></span><br><span class="line">handler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerMessage</span><span class="params">(Message msg)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        send(heartMessage);</span><br><span class="line">        sendEmptyMessageDelayed(WHAT_HEART, heartTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>静态内部类</strong><br>由于handler调用外部方法容易造成内存泄漏，所以，静态内部类了解一下：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WithoutLeakHandler</span></span>(wsu:WebSocketUtils):Handler()&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> mWsu:WeakReference&lt;WebSocketUtils&gt; = WeakReference(wsu)</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>?)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">val</span> webSocketUtils = mWsu.<span class="keyword">get</span>()!!</span><br><span class="line">            webSocketUtils.send(webSocketUtils.heartMessage)</span><br><span class="line">            msg!!.target.sendEmptyMessageDelayed(WHAT_HEART, webSocketUtils.heartTime)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="具体实现请见Demo"><a href="#具体实现请见Demo" class="headerlink" title="具体实现请见Demo"></a>具体实现请见Demo</h1><p>聊天代码：<a href="https://github.com/yooking-git/DEMO-IM">Demo</a></p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>Android</tag>
-        <tag>Kotlin</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Flutter踩坑日记</title>
     <url>/dev/200512-flutter.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
@@ -704,6 +656,163 @@
         <tag>学习笔记</tag>
         <tag>Flutter</tag>
         <tag>Dart</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Jenkins自动化部署工具的使用（）</title>
+    <url>/dev/200928-Jenkins.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>硬件：联想 拯救者 Y7000p<br>系统：Windows 10 64位 专业版<br>配置：</p>
+<ul>
+<li>Jdk 1.8.0_251</li>
+<li>Jenkins 2.253  <a id="more"></a></li>
+</ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>官方FTP下载地址：<a href="http://ftp-chi.osuosl.org/pub/jenkins/windows/">http://ftp-chi.osuosl.org/pub/jenkins/windows/</a><br>官网：<a href="https://www.jenkins.io/">https://www.jenkins.io/</a></p>
+<ol>
+<li>下载</li>
+</ol>
+<p><img src="https://i.loli.net/2020/09/28/thVPL2EqS9vMImU.png" alt="jenkins-download.png"></p>
+<ol start="2">
+<li><p>安装<br>双击.msi文件执行即可（C盘可能会有权限问题，所以尽量放在非C盘）<br>安装完成后根据配置的端口打开对应的网页：<a href="http://localhost:8080/">http://localhost:8080/</a><br>根据提示的文件路径输入密码、安装插件、配置用户——提示十分清晰，这里不一一介绍了。</p>
+</li>
+<li><p>启动服务<br>win+R 打开cmd窗口</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">请根据自己电脑的路径来跳转</span></span><br><span class="line">cd C:\Windows\Microsoft.NET\Framework64\v4.0.30319</span><br><span class="line"><span class="meta">#</span><span class="bash">安装服务</span></span><br><span class="line">installUtil D:\Jeenkins\jenkins.exe</span><br></pre></td></tr></table></figure>
+
+<p>win+R 打开<code>services.msc</code>服务控制台，启动<code>Jenkins</code>服务</p>
+<p>可自行配置bat文件启动服务</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">Service-Start.bat</span></span><br><span class="line">net start Jenkins</span><br><span class="line"><span class="meta">#</span><span class="bash">Service-Stop.bat</span></span><br><span class="line">net stop Jenkins</span><br></pre></td></tr></table></figure>
+
+<p>为bat创建快捷方式，对快捷方式右击-属性-高级-以管理员方式运行</p>
+</li>
+</ol>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>配置页路径：<a href="http://localhost:8080/configure">http://localhost:8080/configure</a></p>
+<ol>
+<li><p>配置主目录——我们可以点开问号看提示</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Jenkins储存所有的数据文件在这个目录下. 你可以通过以下几种方式更改：</span><br><span class="line"></span><br><span class="line">    使用你Web容器的管理工具设置JENKINS_HOME环境参数.</span><br><span class="line">    在启动Web容器之前设置JENKINS_HOME环境变量.</span><br><span class="line">    (不推荐)更改Jenkins.war(或者在展开的Web容器)内的web.xml配置文件. </span><br><span class="line"></span><br><span class="line">这个值在Jenkins运行时是不能更改的. 其通常用来确保你的配置是否生效.</span><br></pre></td></tr></table></figure>
+
+<p>这里我就很想看看英文版的了…Web容器的管理工具究竟是什么？我尝试着改了系统的环境变量，甚至重启了系统，结果显然是失败了。于是我使用了<strong><del>不</del>推荐</strong>方式解决(以下只展示修改的部分)</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">service</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- &lt;env name="JENKINS_HOME" value="%LocalAppData%\Jenkins.jenkins"/&gt;--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">env</span> <span class="attr">name</span>=<span class="string">"JENKINS_HOME"</span> <span class="attr">value</span>=<span class="string">"Jenkins.jenkins"</span>/&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="tag">&lt;<span class="name">extensions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">extension</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- &lt;pidfile&gt;%LocalAppData%\Jenkinsjenkins.pid&lt;/pidfile&gt; --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pidfile</span>&gt;</span>D:\Jeenkins\Jenkinsjenkins.pid<span class="tag">&lt;/<span class="name">pidfile</span>&gt;</span></span><br><span class="line">            ...</span><br><span class="line">        <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">extensions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置键值对<br>以下默认会自动下载到C盘，这里全配在D盘：</p>
+<ol>
+<li><p>是规避权限问题，</p>
+</li>
+<li><p>是为了防止C盘空间臃肿</p>
+</li>
+</ol>
+<p>在<code>页面（/configure）-全局属性-Environment variables</code>中进行配置</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"ANDROID_HOME"</span>:<span class="string">"D:\AndroidSDK"</span>,</span><br><span class="line">    <span class="attr">"ANDROID_NDK_HOME"</span>:<span class="string">"D:\AndroidSDK\ndk\21.3.6528147"</span>,</span><br><span class="line">    <span class="attr">"GRADLE_USER_HOME"</span>:<span class="string">"D:\AndroidTools\gradle_home"</span>,</span><br><span class="line">    <span class="attr">"LANG"</span>:<span class="string">"zh.CH.UTF-8"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：AndroidSdk、Ndk、gradle均可与Android Studio配置相同路径</strong></p>
+</li>
+<li><p>配置git工具（/configureTools）</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>:<span class="string">"git"</span>,</span><br><span class="line">    <span class="attr">"Path to Git executable"</span>:<span class="string">"D:\Git\bin\git.exe"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ps:在当前页面还可以配置好gradle备用</p>
+</li>
+</ol>
+<h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>​    新建Item-输入任务名-选择Frestyle Project即可-点击保存（请根据自身需求设定）</p>
+<h2 id="配置（仅供参考）"><a href="#配置（仅供参考）" class="headerlink" title="配置（仅供参考）"></a>配置（仅供参考）</h2><ol>
+<li><p>配置用户可输入/选择参数（This project is parameterized）</p>
+<ul>
+<li>git分支选择（使用到git parameter插件）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"Git"</span>,<span class="comment">//建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"打包分支选择器"</span>,</span><br><span class="line">    <span class="attr">"参数类型"</span>:<span class="string">"分支或标签"</span>,</span><br><span class="line">    <span class="attr">"默认值"</span>:<span class="string">"origin/master"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>单选（choice parameter）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"productFlavors"</span>,<span class="comment">//选择开发阶段 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"dev"</span>,<span class="comment">//备用选项，每行一个。第一行的将作为默认选项。</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"rp"</span>,</span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"prod"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"dev-测试,rp-准生产,prod-生产"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"buildTypes"</span>,<span class="comment">//选择打包版本 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"release"</span>,<span class="comment">//备用选项，每行一个。第一行的将作为默认选项。</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"debug"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"release-签名包,debug-测试包"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>文本框（string parameter）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"apkName"</span>,<span class="comment">//apk包名 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"默认值"</span>:<span class="string">"com_yooking_app"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"请输入生成的安装包包名"</span></span><br><span class="line">    <span class="comment">//勾选去除空白字符</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PS：如果打包完成后需要上传到服务器，可以配置可选服务器子路径、可选是否上传至服务器等，根据需求灵活应用</p>
+</li>
+<li><p>源码管理（这里使用git）</p>
+<ul>
+<li><p>如果没有配置git账户，可先新增Git账户，然后再选择即可。</p>
+</li>
+<li><p>指定分支填<code>$Git</code>——<strong>注意：值与配置用户可输入/选择参数一致</strong></p>
+</li>
+</ul>
+</li>
+<li><p>构建环境</p>
+<p>勾选Set Build Name，<code>Build Name</code> 值为 <code>$apkName</code></p>
+</li>
+<li><p>构建</p>
+<ul>
+<li>项目构建前需要先将准备好的key文件放入对应目录，这里可以使用.bat文件<br>增加构建步骤-选择<code>Execute Winddows batch command</code><br>调用自己的bat文件：<code>call D:\Jeenkins\yooking\invokeBefort.bat</code></li>
+<li>增加构建步骤-选择<code>Invoke Gradle script</code>-推荐<code>Use Gradle Wrapper</code><br>clean项目后重新编译打包：<code>{&quot;Task&quot;:&quot;clean assemble${productFlavors}${buildTypes}&quot;}</code><br>ps：task中可跟随<code>--info</code>等命令</li>
+<li>项目构建完毕后，如果有其他操作要执行，可以继续使用.bat文件操作</li>
+</ul>
+</li>
+<li><p>构建后操作</p>
+<ul>
+<li>如果有上传FTP/发送邮件等操作，可在此处执行</li>
+</ul>
+</li>
+</ol>
+<p>最后点击保存即可。</p>
+<h2 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h2><p>看看效果<img src="https://i.loli.net/2020/09/29/BefWPONZDA1ogYk.png" alt="火狐截图_2020-09-29T02-05-58.734Z.png" style="zoom:50%;" /></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Jenkins</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Kotlin初体验：IM项目体验</title>
+    <url>/dev/190809-kotlin-IM.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><p>基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目<a id="more"></a><br>本文主要以一个小Demo来初步了解Kotlin编程与Java编程的差异</p>
+<h1 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h1><h2 id="聊天窗口构建"><a href="#聊天窗口构建" class="headerlink" title="聊天窗口构建"></a>聊天窗口构建</h2><p>框架引入：<a href="http://www.recyclerview.org/">BRVAH官网</a></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">implementation <span class="string">'androidx.recyclerview:recyclerview:1.1.0-beta02'</span><span class="comment">//AndroidX RecyclerView</span></span><br><span class="line">implementation <span class="string">'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'</span><span class="comment">//BRVAH</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>new 对象</strong><br>在Kotlin中，<code>new Object();</code>省略为<code>Object()</code>，也不需要分号<br><strong>全局变量</strong><br><code>private lateinit var mContext: Context</code><br>全局变量应该用var来定义，其类型写在:之后<br>lateinit 修饰符：延迟初始化<br>lateinit 不能用来修饰基本数据类型，因为基本类型的属性在类加载后的准备阶段都会被初始化为默认值</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> a : <span class="built_in">Int</span></span><br><span class="line"><span class="comment">//'lateinit' modifier is not allowed on properties of primitive types</span></span><br></pre></td></tr></table></figure>
+
+<p>lateinit 不能修饰val变量，只能修饰可变的属性</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">val</span> etMessage : AppCompatEditText</span><br><span class="line"><span class="comment">//'lateinit' modifier is allowed only on mutable properties</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>静态全局变量</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">	<span class="comment">//ChatActivity.class.getName()的写法</span></span><br><span class="line">	<span class="comment">//const 是常量修饰词 类似 java 中的 static final</span></span><br><span class="line">	<span class="comment">//val 相当于 final</span></span><br><span class="line">	<span class="comment">//const 不能修饰 var</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">val</span> TAG: String = ChatActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">name</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>符号</strong><br><code>helper!!</code>意为：helper不做为空校验，如果为空则抛出异常</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ? 即 或许为空</span></span><br><span class="line"><span class="comment">// ?. 相当于 if(object == null) return null; else return objcet.xx; </span></span><br><span class="line"><span class="keyword">val</span> mList: ArrayList&lt;String&gt;? = <span class="literal">null</span><span class="comment">//如果Object后面不加问号，即Object?那么mList = null会报错</span></span><br><span class="line">Log.d(TAG, <span class="string">"ListSize = <span class="subst">$&#123;mList?.size&#125;</span>"</span>)<span class="comment">//用 mList!!.size 会抛出空指针异常</span></span><br><span class="line">Log日志：com.yooking.socket.ChatActivity: ListSize = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>构建javabean</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> type: <span class="built_in">Int</span>) : MultiItemEntity &#123;</span><br><span class="line">	<span class="keyword">var</span> name: String? = <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对应的java写法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span> <span class="keyword">extends</span> <span class="title">MultiItemEntity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">""</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatData</span><span class="params">(<span class="keyword">int</span> type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在Kotlin中 get 方法 的使用方法为 chatData.name</span></span><br><span class="line"><span class="comment">//在Kotlin中 set 方法 的使用方法为 chatData.name = "string"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="WebSocketLib构建"><a href="#WebSocketLib构建" class="headerlink" title="WebSocketLib构建"></a>WebSocketLib构建</h2><p>框架引入：<a href="https://square.github.io/okhttp/">OkHttp-GithubPage</a></p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">api <span class="string">'com.squareup.okhttp3:okhttp:4.0.1'</span><span class="comment">//okhttp 4.0.1</span></span><br><span class="line"><span class="comment">//api 'com.squareup.okhttp3:mockwebserver:4.0.1'//okhttp moc 请求验证</span></span><br><span class="line">api <span class="string">'com.squareup.okhttp3:logging-interceptor:4.0.1'</span><span class="comment">//okhttp 请求日志</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>匿名内部类</strong><br>在kotlin中，匿名内部类和java中的差别不大</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> handler: Handler</span><br><span class="line"><span class="keyword">init</span>&#123;</span><br><span class="line">    handler = Handler &#123;<span class="comment">//it:Messag!</span></span><br><span class="line">        send(heartMessage)</span><br><span class="line">        it.target.sendEmptyMessageDelayed(WHAT_HEART, heartTime)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//java</span></span><br><span class="line">handler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerMessage</span><span class="params">(Message msg)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        send(heartMessage);</span><br><span class="line">        sendEmptyMessageDelayed(WHAT_HEART, heartTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>静态内部类</strong><br>由于handler调用外部方法容易造成内存泄漏，所以，静态内部类了解一下：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WithoutLeakHandler</span></span>(wsu:WebSocketUtils):Handler()&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> mWsu:WeakReference&lt;WebSocketUtils&gt; = WeakReference(wsu)</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>?)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">val</span> webSocketUtils = mWsu.<span class="keyword">get</span>()!!</span><br><span class="line">            webSocketUtils.send(webSocketUtils.heartMessage)</span><br><span class="line">            msg!!.target.sendEmptyMessageDelayed(WHAT_HEART, webSocketUtils.heartTime)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="具体实现请见Demo"><a href="#具体实现请见Demo" class="headerlink" title="具体实现请见Demo"></a>具体实现请见Demo</h1><p>聊天代码：<a href="https://github.com/yooking-git/DEMO-IM">Demo</a></p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Android</tag>
+        <tag>Kotlin</tag>
       </tags>
   </entry>
   <entry>
@@ -873,69 +982,6 @@
       </tags>
   </entry>
   <entry>
-    <title>玩Android_APP开发进度及项目介绍</title>
-    <url>/dev/200806-playAndroid.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文旨在记录开发进度、代码旨在编写、收集一些工具类供自己使用<a id="more"></a></p>
-<h1 id="项目进度"><a href="#项目进度" class="headerlink" title="项目进度"></a>项目进度</h1><ol>
-<li>2020.06.02 - 创建项目</li>
-<li>2020.06.02 - 定义框架</li>
-<li>2020.06.02 - 创建HomeFragment</li>
-<li>2020.06.08 - 自定义View（SwipeRefreshRecyclerView）作为通用RecyclerView</li>
-<li>2020.06.08 - 添加自定义Zxing（子）项目</li>
-<li>2020.06.08 - 优化自定义WheelView（子）项目（时间选择器）</li>
-<li>2020.06.23 - 时间选择器项目优化</li>
-<li>2020.06.29 - 优化Logger输出</li>
-<li>2020.06.29 - Zxing项目进入优化阶段</li>
-<li>2020.07.09 - Zxing项目更新完毕</li>
-<li>2020.08.04 - 时间选择器项目优化</li>
-<li>2020.08.05 - 创建并调整登录体系、优化Retrofit网络请求、优化SwipeRefreshRecyclerView等</li>
-<li>2020.08.06 - 再次调整登录体系；将界面交给Holder控制，简化代码；登录成功后，存储后台返回信息，保证本地登录的逻辑自恰；修改Presenter和Model之间的访问方式，减小代码耦合；新增我的界面</li>
-<li>2020.08.07 - 添加我的收藏页面（收藏的文章列表）</li>
-<li>2020.08.14 - 修复收藏页面bug、新增收藏网站功能</li>
-<li>2020.08.17 - 新增本地浏览器（X5内核）</li>
-<li>2020.08.18 - 新增我的分享</li>
-<li>2020.08.19 - 新增积分排行和积分明细</li>
-<li>2020.09.15 - 新增安全键盘、新增本地存储账号</li>
-</ol>
-<h1 id="目前状态"><a href="#目前状态" class="headerlink" title="目前状态"></a>目前状态</h1><p>使用MVP架构、Retrofit网络请求框架。该App可能会包含很多不必要的工具，可在build.gradle中拆除</p>
-<p>Home界面逻辑功能优化完毕</p>
-<p>HomeFragment包含：(2020.06.02)</p>
-<ul>
-<li>首页轮播</li>
-<li>置顶文章</li>
-<li>文章</li>
-<li>文章收藏与取消收藏功能（须登录）</li>
-</ul>
-<p>登录功能包含：（默认打开App即登录）(2020.08.05)</p>
-<ul>
-<li>登录功能</li>
-<li>登录状态存储功能</li>
-<li>退出功能</li>
-</ul>
-<p>MineFragment包含：(2020.08.06)</p>
-<ul>
-<li>用户名、用户账户展示</li>
-<li>我的收藏</li>
-<li>我的分享</li>
-</ul>
-<p>我的收藏包含：(2020.08.07)</p>
-<ul>
-<li>收藏的文章（站内、站外 可删除）</li>
-<li>收藏的网址</li>
-</ul>
-<p>我的分享包含：（2020.08）</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>鸣谢：<br>图标：<a href="https://www.iconfont.cn/">阿里巴巴矢量图标库</a><br>接口：<a href="https://wanandroid.com/blog/show/2">玩安卓wanandroid</a> </p>
-]]></content>
-      <categories>
-        <category>想丶给代码码上诗意</category>
-      </categories>
-      <tags>
-        <tag>Android</tag>
-        <tag>Java</tag>
-        <tag>项目开发</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>开启Hexo之路</title>
     <url>/blog/200512-hexo.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
@@ -1039,6 +1085,69 @@
       <tags>
         <tag>学习笔记</tag>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>玩Android_APP开发进度及项目介绍</title>
+    <url>/dev/200806-playAndroid.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文旨在记录开发进度、代码旨在编写、收集一些工具类供自己使用<a id="more"></a></p>
+<h1 id="项目进度"><a href="#项目进度" class="headerlink" title="项目进度"></a>项目进度</h1><ol>
+<li>2020.06.02 - 创建项目</li>
+<li>2020.06.02 - 定义框架</li>
+<li>2020.06.02 - 创建HomeFragment</li>
+<li>2020.06.08 - 自定义View（SwipeRefreshRecyclerView）作为通用RecyclerView</li>
+<li>2020.06.08 - 添加自定义Zxing（子）项目</li>
+<li>2020.06.08 - 优化自定义WheelView（子）项目（时间选择器）</li>
+<li>2020.06.23 - 时间选择器项目优化</li>
+<li>2020.06.29 - 优化Logger输出</li>
+<li>2020.06.29 - Zxing项目进入优化阶段</li>
+<li>2020.07.09 - Zxing项目更新完毕</li>
+<li>2020.08.04 - 时间选择器项目优化</li>
+<li>2020.08.05 - 创建并调整登录体系、优化Retrofit网络请求、优化SwipeRefreshRecyclerView等</li>
+<li>2020.08.06 - 再次调整登录体系；将界面交给Holder控制，简化代码；登录成功后，存储后台返回信息，保证本地登录的逻辑自恰；修改Presenter和Model之间的访问方式，减小代码耦合；新增我的界面</li>
+<li>2020.08.07 - 添加我的收藏页面（收藏的文章列表）</li>
+<li>2020.08.14 - 修复收藏页面bug、新增收藏网站功能</li>
+<li>2020.08.17 - 新增本地浏览器（X5内核）</li>
+<li>2020.08.18 - 新增我的分享</li>
+<li>2020.08.19 - 新增积分排行和积分明细</li>
+<li>2020.09.15 - 新增安全键盘、新增本地存储账号</li>
+</ol>
+<h1 id="目前状态"><a href="#目前状态" class="headerlink" title="目前状态"></a>目前状态</h1><p>使用MVP架构、Retrofit网络请求框架。该App可能会包含很多不必要的工具，可在build.gradle中拆除</p>
+<p>Home界面逻辑功能优化完毕</p>
+<p>HomeFragment包含：(2020.06.02)</p>
+<ul>
+<li>首页轮播</li>
+<li>置顶文章</li>
+<li>文章</li>
+<li>文章收藏与取消收藏功能（须登录）</li>
+</ul>
+<p>登录功能包含：（默认打开App即登录）(2020.08.05)</p>
+<ul>
+<li>登录功能</li>
+<li>登录状态存储功能</li>
+<li>退出功能</li>
+</ul>
+<p>MineFragment包含：(2020.08.06)</p>
+<ul>
+<li>用户名、用户账户展示</li>
+<li>我的收藏</li>
+<li>我的分享</li>
+</ul>
+<p>我的收藏包含：(2020.08.07)</p>
+<ul>
+<li>收藏的文章（站内、站外 可删除）</li>
+<li>收藏的网址</li>
+</ul>
+<p>我的分享包含：（2020.08）</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>鸣谢：<br>图标：<a href="https://www.iconfont.cn/">阿里巴巴矢量图标库</a><br>接口：<a href="https://wanandroid.com/blog/show/2">玩安卓wanandroid</a> </p>
+]]></content>
+      <categories>
+        <category>想丶给代码码上诗意</category>
+      </categories>
+      <tags>
+        <tag>Android</tag>
+        <tag>Java</tag>
+        <tag>项目开发</tag>
       </tags>
   </entry>
   <entry>

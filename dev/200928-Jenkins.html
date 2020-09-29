@@ -22,22 +22,24 @@
     var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="前言 什么是Flutter Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。">
+  <meta name="description" content="硬件：联想 拯救者 Y7000p系统：Windows 10 64位 专业版配置：  Jdk 1.8.0_251 Jenkins 2.253">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Flutter踩坑日记">
-<meta property="og:url" content="http://blog.yookingh.cn/dev/200512-flutter.html">
+<meta property="og:title" content="Jenkins自动化部署工具的使用（）">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/200928-Jenkins.html">
 <meta property="og:site_name" content="墨染青葱几许烟">
-<meta property="og:description" content="前言 什么是Flutter Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。">
+<meta property="og:description" content="硬件：联想 拯救者 Y7000p系统：Windows 10 64位 专业版配置：  Jdk 1.8.0_251 Jenkins 2.253">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-05-12T01:52:33.000Z">
-<meta property="article:modified_time" content="2020-05-13T01:13:32.110Z">
+<meta property="og:image" content="https://i.loli.net/2020/09/28/thVPL2EqS9vMImU.png">
+<meta property="og:image" content="https://i.loli.net/2020/09/29/BefWPONZDA1ogYk.png">
+<meta property="article:published_time" content="2020-09-28T01:51:20.000Z">
+<meta property="article:modified_time" content="2020-09-29T02:09:49.451Z">
 <meta property="article:author" content="yooking">
 <meta property="article:tag" content="学习笔记">
-<meta property="article:tag" content="Flutter">
-<meta property="article:tag" content="Dart">
+<meta property="article:tag" content="Jenkins">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/09/28/thVPL2EqS9vMImU.png">
 
-<link rel="canonical" href="http://blog.yookingh.cn/dev/200512-flutter.html">
+<link rel="canonical" href="http://blog.yookingh.cn/dev/200928-Jenkins.html">
 
 
 <script id="page-configurations">
@@ -50,7 +52,7 @@
   };
 </script>
 
-  <title>Flutter踩坑日记 | 墨染青葱几许烟</title>
+  <title>Jenkins自动化部署工具的使用（） | 墨染青葱几许烟</title>
   
 
 
@@ -197,7 +199,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200512-flutter.html">
+    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/200928-Jenkins.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/imgs/a_icon_head.jpg">
@@ -210,7 +212,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Flutter踩坑日记
+          Jenkins自动化部署工具的使用（）
         </h1>
 
         <div class="post-meta">
@@ -220,7 +222,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-05-12 09:52:33" itemprop="dateCreated datePublished" datetime="2020-05-12T09:52:33+08:00">2020-05-12</time>
+              <time title="创建时间：2020-09-28 09:51:20" itemprop="dateCreated datePublished" datetime="2020-09-28T09:51:20+08:00">2020-09-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,8 +243,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/dev/200512-flutter.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/dev/200512-flutter.html" itemprop="commentCount"></span>
+    <a title="valine" href="/dev/200928-Jenkins.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/200928-Jenkins.html" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -257,56 +259,103 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ol>
-<li><p>什么是Flutter</p>
-<p>Flutter是谷歌的移动UI框架，可以快速在iOS和Android上构建高质量的原生用户界面。    Flutter可以与现有的代码一起工作。在全世界，Flutter正在被越来越多的开发者和组织使用，并且Flutter是完全免费、开源的。<a id="more"></a></p>
-</li>
-<li><p>Flutter使用什么语言</p>
-<p>dart语言</p>
-</li>
-<li><p>Dart的特点</p>
-<p>基于 Dart 的特点：</p>
+        <p>硬件：联想 拯救者 Y7000p<br>系统：Windows 10 64位 专业版<br>配置：</p>
 <ul>
-<li>高效优秀的编程语言</li>
-<li>丰富强大的框架</li>
-<li>方便灵活的工具</li>
+<li>Jdk 1.8.0_251</li>
+<li>Jenkins 2.253  <a id="more"></a></li>
 </ul>
-<p>我们可以通过它在不同的设备上创作华丽的、高品质体验的应用</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>官方FTP下载地址：<a href="http://ftp-chi.osuosl.org/pub/jenkins/windows/">http://ftp-chi.osuosl.org/pub/jenkins/windows/</a><br>官网：<a href="https://www.jenkins.io/">https://www.jenkins.io/</a></p>
+<ol>
+<li>下载</li>
+</ol>
+<p><img src="https://i.loli.net/2020/09/28/thVPL2EqS9vMImU.png" alt="jenkins-download.png"></p>
+<ol start="2">
+<li><p>安装<br>双击.msi文件执行即可（C盘可能会有权限问题，所以尽量放在非C盘）<br>安装完成后根据配置的端口打开对应的网页：<a href="http://localhost:8080/">http://localhost:8080/</a><br>根据提示的文件路径输入密码、安装插件、配置用户——提示十分清晰，这里不一一介绍了。</p>
+</li>
+<li><p>启动服务<br>win+R 打开cmd窗口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">请根据自己电脑的路径来跳转</span></span><br><span class="line">cd C:\Windows\Microsoft.NET\Framework64\v4.0.30319</span><br><span class="line"><span class="meta">#</span><span class="bash">安装服务</span></span><br><span class="line">installUtil D:\Jeenkins\jenkins.exe</span><br></pre></td></tr></table></figure>
+
+<p>win+R 打开<code>services.msc</code>服务控制台，启动<code>Jenkins</code>服务</p>
+<p>可自行配置bat文件启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">Service-Start.bat</span></span><br><span class="line">net start Jenkins</span><br><span class="line"><span class="meta">#</span><span class="bash">Service-Stop.bat</span></span><br><span class="line">net stop Jenkins</span><br></pre></td></tr></table></figure>
+
+<p>为bat创建快捷方式，对快捷方式右击-属性-高级-以管理员方式运行</p>
 </li>
 </ol>
-<h1 id="踩坑笔记"><a href="#踩坑笔记" class="headerlink" title="踩坑笔记"></a>踩坑笔记</h1><ol>
-<li><p>Git与下载的区别</p>
-<p><a href="https://flutterchina.club/setup-windows/#%E8%8E%B7%E5%8F%96flutter-sdk">官网</a>描述，让人头大。Git下载，安全无忧。</p>
-<p>手动下载的FlutterSdk是没有灵魂的（没有 .git 文件，需要手动生成）。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 手动生成</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git init</span></span><br></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>配置页路径：<a href="http://localhost:8080/configure">http://localhost:8080/configure</a></p>
+<ol>
+<li><p>配置主目录——我们可以点开问号看提示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Jenkins储存所有的数据文件在这个目录下. 你可以通过以下几种方式更改：</span><br><span class="line"></span><br><span class="line">    使用你Web容器的管理工具设置JENKINS_HOME环境参数.</span><br><span class="line">    在启动Web容器之前设置JENKINS_HOME环境变量.</span><br><span class="line">    (不推荐)更改Jenkins.war(或者在展开的Web容器)内的web.xml配置文件. </span><br><span class="line"></span><br><span class="line">这个值在Jenkins运行时是不能更改的. 其通常用来确保你的配置是否生效.</span><br></pre></td></tr></table></figure>
 
-<p>而直接git clone到的就没有这个问题了</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Flutter Sdk</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> -b stable https://github.com/flutter/flutter.git</span></span><br></pre></td></tr></table></figure>
-
-<p>如果没有.git文件，在执行<code>flutter doctor</code>时会报错（此处没有截图）<br>执行<code>flutter doctor</code>时，大陆用户千万不要忘了配置环境变量（Windows为例 - 也可以手动添加）：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> PUB_HOSTED_URL=https://pub.flutter-io.cn</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">set</span> FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</span></span><br></pre></td></tr></table></figure>
+<p>这里我就很想看看英文版的了…Web容器的管理工具究竟是什么？我尝试着改了系统的环境变量，甚至重启了系统，结果显然是失败了。于是我使用了<strong><del>不</del>推荐</strong>方式解决(以下只展示修改的部分)</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">service</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- &lt;env name="JENKINS_HOME" value="%LocalAppData%\Jenkins.jenkins"/&gt;--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">env</span> <span class="attr">name</span>=<span class="string">"JENKINS_HOME"</span> <span class="attr">value</span>=<span class="string">"Jenkins.jenkins"</span>/&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="tag">&lt;<span class="name">extensions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">extension</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- &lt;pidfile&gt;%LocalAppData%\Jenkinsjenkins.pid&lt;/pidfile&gt; --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">pidfile</span>&gt;</span>D:\Jeenkins\Jenkinsjenkins.pid<span class="tag">&lt;/<span class="name">pidfile</span>&gt;</span></span><br><span class="line">            ...</span><br><span class="line">        <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">extensions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><p>源自海外，长城警告</p>
-<p>git clone 成功克隆了 FllutterSdk -&gt; flutter.doctor也执行完毕了 -&gt; Android Studio Plugins也加载好了，一切都是那么美好，Flutter的世界正在向我招手，按下start，flutter run！！！</p>
-<p>第1分钟：第一次加载嘛，应该要下载点东西，慢正常…<br>第2分钟：第一次加载嘛，慢正常…<br>第5分钟：慢挺正常的…</p>
-<p>报错…emmm…</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//无法解决什么什么</span><br><span class="line">Could not resolve io.flutter:flutter_embedding_debug:1.0.0-540786dd51f112885a89792d678296b95e6622e5.</span><br><span class="line">//无法获取 https://storage.googleapis.com</span><br><span class="line">Could not get resource 'https://storage.googleapis.com/download.flutter.io/io/flutter/flutter_embedding_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/flutter_embedding_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.pom'</span><br></pre></td></tr></table></figure>
-
-<p>下载sdk失败？那一定是你和世界隔了一堵墙，请：科学上网、合理爬梯——好孩子千万不要学！</p>
-<p>当然，也可以用别人搭的瞭望塔看看世界。</p>
-<ul>
-<li>android/build.gradle</li>
-</ul>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">       <span class="comment">// google()</span></span><br><span class="line">       <span class="comment">// jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;<span class="comment">//一般放在allprojects就行 - 对应 storage.googleapis.com </span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>%FLUTTER_SDK_HOME%/packages/flutter_tools/gradle/flutter.gradle</li>
-</ul>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">      <span class="comment">//  google()</span></span><br><span class="line">      <span class="comment">//  jcenter()</span></span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/google'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'https://maven.aliyun.com/repository/jcenter'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://maven.aliyun.com/nexus/content/groups/public'</span> &#125;</span><br><span class="line">        maven &#123; url <span class="string">'http://download.flutter.io'</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.5.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<li><p>配置键值对<br>以下默认会自动下载到C盘，这里全配在D盘：</p>
+<ol>
+<li><p>是规避权限问题，</p>
+</li>
+<li><p>是为了防止C盘空间臃肿</p>
 </li>
 </ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;之前在其他电脑上其实配置过一次Flutter（然后电脑送人了…），当时选择的是翻墙，一切过程走的很流畅，没啥坎坷的——我根本不觉得需要写个笔记记录。<br>&emsp;&emsp;这次在集团里想重新配置下，也不知道是不是Win10的锅（肯定不是），还是集团网络太差（不可能），也可能是命运吧总是颠沛流离…（手动滑稽）没翻墙真的是太难了！——集团翻墙会被网络安全部门警告！<br>&emsp;&emsp;玩Flutter的可能大概都是墙外生活的人，<code>maven { url &#39;http://download.flutter.io&#39; }</code>这句话真的是在度娘身上一阵猛翻才搜出来的。<br>&emsp;&emsp;如果有其他问题，欢迎评论区留言。</p>
+<p>在<code>页面（/configure）-全局属性-Environment variables</code>中进行配置</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"ANDROID_HOME"</span>:<span class="string">"D:\AndroidSDK"</span>,</span><br><span class="line">    <span class="attr">"ANDROID_NDK_HOME"</span>:<span class="string">"D:\AndroidSDK\ndk\21.3.6528147"</span>,</span><br><span class="line">    <span class="attr">"GRADLE_USER_HOME"</span>:<span class="string">"D:\AndroidTools\gradle_home"</span>,</span><br><span class="line">    <span class="attr">"LANG"</span>:<span class="string">"zh.CH.UTF-8"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>提示：AndroidSdk、Ndk、gradle均可与Android Studio配置相同路径</strong></p>
+</li>
+<li><p>配置git工具（/configureTools）</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>:<span class="string">"git"</span>,</span><br><span class="line">    <span class="attr">"Path to Git executable"</span>:<span class="string">"D:\Git\bin\git.exe"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ps:在当前页面还可以配置好gradle备用</p>
+</li>
+</ol>
+<h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>​    新建Item-输入任务名-选择Frestyle Project即可-点击保存（请根据自身需求设定）</p>
+<h2 id="配置（仅供参考）"><a href="#配置（仅供参考）" class="headerlink" title="配置（仅供参考）"></a>配置（仅供参考）</h2><ol>
+<li><p>配置用户可输入/选择参数（This project is parameterized）</p>
+<ul>
+<li>git分支选择（使用到git parameter插件）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"Git"</span>,<span class="comment">//建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"打包分支选择器"</span>,</span><br><span class="line">    <span class="attr">"参数类型"</span>:<span class="string">"分支或标签"</span>,</span><br><span class="line">    <span class="attr">"默认值"</span>:<span class="string">"origin/master"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>单选（choice parameter）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"productFlavors"</span>,<span class="comment">//选择开发阶段 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"dev"</span>,<span class="comment">//备用选项，每行一个。第一行的将作为默认选项。</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"rp"</span>,</span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"prod"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"dev-测试,rp-准生产,prod-生产"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"buildTypes"</span>,<span class="comment">//选择打包版本 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"release"</span>,<span class="comment">//备用选项，每行一个。第一行的将作为默认选项。</span></span><br><span class="line">    <span class="attr">"选项"</span>:<span class="string">"debug"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"release-签名包,debug-测试包"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>文本框（string parameter）</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"名称"</span>:<span class="string">"apkName"</span>,<span class="comment">//apk包名 建议英文且无特殊字符 后续调用使用 '$' 符号</span></span><br><span class="line">    <span class="attr">"默认值"</span>:<span class="string">"com_yooking_app"</span>,</span><br><span class="line">    <span class="attr">"描述"</span>:<span class="string">"请输入生成的安装包包名"</span></span><br><span class="line">    <span class="comment">//勾选去除空白字符</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PS：如果打包完成后需要上传到服务器，可以配置可选服务器子路径、可选是否上传至服务器等，根据需求灵活应用</p>
+</li>
+<li><p>源码管理（这里使用git）</p>
+<ul>
+<li><p>如果没有配置git账户，可先新增Git账户，然后再选择即可。</p>
+</li>
+<li><p>指定分支填<code>$Git</code>——<strong>注意：值与配置用户可输入/选择参数一致</strong></p>
+</li>
+</ul>
+</li>
+<li><p>构建环境</p>
+<p>勾选Set Build Name，<code>Build Name</code> 值为 <code>$apkName</code></p>
+</li>
+<li><p>构建</p>
+<ul>
+<li>项目构建前需要先将准备好的key文件放入对应目录，这里可以使用.bat文件<br>增加构建步骤-选择<code>Execute Winddows batch command</code><br>调用自己的bat文件：<code>call D:\Jeenkins\yooking\invokeBefort.bat</code></li>
+<li>增加构建步骤-选择<code>Invoke Gradle script</code>-推荐<code>Use Gradle Wrapper</code><br>clean项目后重新编译打包：<code>{&quot;Task&quot;:&quot;clean assemble${productFlavors}${buildTypes}&quot;}</code><br>ps：task中可跟随<code>--info</code>等命令</li>
+<li>项目构建完毕后，如果有其他操作要执行，可以继续使用.bat文件操作</li>
+</ul>
+</li>
+<li><p>构建后操作</p>
+<ul>
+<li>如果有上传FTP/发送邮件等操作，可在此处执行</li>
+</ul>
+</li>
+</ol>
+<p>最后点击保存即可。</p>
+<h2 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h2><p>看看效果<img src="https://i.loli.net/2020/09/29/BefWPONZDA1ogYk.png" alt="火狐截图_2020-09-29T02-05-58.734Z.png" style="zoom:50%;" /></p>
 
     </div>
 
@@ -347,12 +396,12 @@
   <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
 
-  <p><span>本文标题:</span>Flutter踩坑日记</a></p>
+  <p><span>本文标题:</span>Jenkins自动化部署工具的使用（）</a></p>
   <p><span>文章作者:</span>yooking</a></p>
-  <p><span>发布时间:</span>2020年05月12日 - 09:52:33</p>
-  <p><span>最后更新:</span>2020年05月13日 - 09:13:32</p>
-  <p><span>原始链接:</span><a href="/dev/200512-flutter.html" title="Flutter踩坑日记">http://blog.yookingh.cn/dev/200512-flutter.html</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200512-flutter.html"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2020年09月28日 - 09:51:20</p>
+  <p><span>最后更新:</span>2020年09月29日 - 10:09:49</p>
+  <p><span>原始链接:</span><a href="/dev/200928-Jenkins.html" title="Jenkins自动化部署工具的使用（）">http://blog.yookingh.cn/dev/200928-Jenkins.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/200928-Jenkins.html"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -376,8 +425,7 @@
           
           <div class="post-tags">
               <a href="/tags/study/" rel="tag"><i class="fa fa-tag"></i> 学习笔记</a>
-              <a href="/tags/Flutter/" rel="tag"><i class="fa fa-tag"></i> Flutter</a>
-              <a href="/tags/Dart/" rel="tag"><i class="fa fa-tag"></i> Dart</a>
+              <a href="/tags/Jenkins/" rel="tag"><i class="fa fa-tag"></i> Jenkins</a>
           </div>
 
         
@@ -386,13 +434,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dev/200509-audioManager.html" rel="prev" title="Android 音量控制">
-      <i class="fa fa-chevron-left"></i> Android 音量控制
+    <a href="/dev/200921-JNI_Study.html" rel="prev" title=".so文件的生成和使用">
+      <i class="fa fa-chevron-left"></i> .so文件的生成和使用
     </a></div>
-      <div class="post-nav-item">
-    <a href="/blog/200512-hexo.html" rel="next" title="开启Hexo之路">
-      开启Hexo之路 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -451,7 +496,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踩坑笔记"><span class="nav-number">2.</span> <span class="nav-text">踩坑笔记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#项目"><span class="nav-number">3.</span> <span class="nav-text">项目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建项目"><span class="nav-number">3.1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置（仅供参考）"><span class="nav-number">3.2.</span> <span class="nav-text">配置（仅供参考）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建项目"><span class="nav-number">3.3.</span> <span class="nav-text">构建项目</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
