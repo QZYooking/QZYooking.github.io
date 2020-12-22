@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="环境 sys-os : Vmware - ubuntu-20.04.1-desktop-amd64 ndk :  android-ndk-r15c android-ndk-r21d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenSSL的编译和使用">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/201215-openssl.html">
+<meta property="og:site_name" content="墨染青葱几许烟">
+<meta property="og:description" content="环境 sys-os : Vmware - ubuntu-20.04.1-desktop-amd64 ndk :  android-ndk-r15c android-ndk-r21d">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-15T07:25:27.000Z">
+<meta property="article:modified_time" content="2020-12-17T10:01:55.383Z">
+<meta property="article:author" content="yooking">
+<meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.yookingh.cn/dev/201215-openssl.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OpenSSL的编译和使用 | 墨染青葱几许烟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">墨染青葱几许烟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">左手代码 右手诗意</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-时间轴">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间轴</a>
+
+  </li>
+        <li class="menu-item menu-item-标签云">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-关于&留言">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于&留言</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/yooking-git" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/201215-openssl.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/imgs/a_icon_head.jpg">
+      <meta itemprop="name" content="yooking">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="墨染青葱几许烟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenSSL的编译和使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-15 15:25:27" itemprop="dateCreated datePublished" datetime="2020-12-15T15:25:27+08:00">2020-12-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dev/" itemprop="url" rel="index"><span itemprop="name">想丶给代码码上诗意</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/dev/201215-openssl.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/201215-openssl.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ol>
+<li>sys-os : Vmware - ubuntu-20.04.1-desktop-amd64</li>
+<li>ndk : <ul>
+<li>android-ndk-r15c</li>
+<li>android-ndk-r21d<a id="more"></a></li>
+</ul>
+</li>
+<li>openssl : openssl-1.1.1h</li>
+<li>sdk : android-sdk_r24.4.1-linux.tgz</li>
+<li>download :<ul>
+<li>Vmware - <a href="https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html">https://www.vmware.com</a></li>
+<li>Ubuntu - <a href="https://ubuntu.com/download/desktop">http://releases.ubuntu.com</a></li>
+<li>ndk - <a href="https://dl.google.com/android/repository/">https://dl.google.com</a></li>
+<li>openssl : <a href="https://www.openssl.org/source/">https://www.openssl.org</a></li>
+<li>sdk : <a href="https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz">https://dl.google.com</a></li>
+</ul>
+</li>
+</ol>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><ol>
+<li><p>虚拟机和Ubuntu安装这里就不细说了。(Ubuntu更换软件源参考：<a href="https://blog.csdn.net/baidu_36602427/article/details/86551862">https://blog.csdn.net/baidu_36602427</a>)</p>
+</li>
+<li><p>下载并解压sdk使用<code>wget</code>命令和<code>tar</code>命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 在指定目录下执行 指定目录（/home/yooking/Public/android）</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget 下载命令 也可以使用 -P 命令安装到指定目录（/home/yooking/Public/android）</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> wget -P /home/yooking/Public/android https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz</span></span><br><span class="line">wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 下载完毕后解压(进入目标文件夹下执行)</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -z或--gzip或--ungzip 通过gzip指令处理备份文件。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -x或--extract或--get 从备份文件中还原文件。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -v或--verbose 显示指令执行过程。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -f&lt;备份文件&gt;或--file=&lt;备份文件&gt; 指定备份文件。（也可以在-zxvf后面输入目标地址）</span></span><br><span class="line">tar -zxvf android-sdk_r24.4.1-linux.tgz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载并解压ndk</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 新建文件夹 /home/yooking/Public/android/android-sdk/ndk</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在ndk文件夹中使用wget命令</span></span><br><span class="line">wget https://dl.google.com/android/repository/android-ndk-r15c-linux-x86_64.zip</span><br><span class="line"><span class="meta">#</span><span class="bash"> 和</span></span><br><span class="line">wget https://dl.google.com/android/repository/android-ndk-r21d-linux-x86_64.zip</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用unzip解压这两个压缩包</span></span><br><span class="line">unzip android-ndk-r15c-linux-x86_64.zip</span><br><span class="line">unzip android-ndk-r21d-linux-x86_64.zip</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载并解压openssl</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 新建文件夹 /home/yooking/Downloads/openssl</span></span><br><span class="line">wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1h.tar.gz</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用tar命令解压</span></span><br><span class="line">tar -zxvf openssl-1.1.1h.tar.gz</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="创建sh脚本文件并编译"><a href="#创建sh脚本文件并编译" class="headerlink" title="创建sh脚本文件并编译"></a>创建sh脚本文件并编译</h1><h2 id="r21和r15有不同"><a href="#r21和r15有不同" class="headerlink" title="r21和r15有不同"></a>r21和r15有不同</h2><p>从NDK r19开始，由于gcc兼容clang的编译方式有问题，该版本已经移除了相关gcc文件，所以用老方法交叉编译Openssl的时候，会提示找不到gcc文件。</p>
+<h2 id="r15下的sh脚本"><a href="#r15下的sh脚本" class="headerlink" title="r15下的sh脚本"></a>r15下的sh脚本</h2><p>参考：<a href="https://blog.csdn.net/zoujin6649/article/details/89891720">https://blog.csdn.net/zoujin6649</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 在 /home/yooking/Downloads/openssl/openssl-1.1.1h 目录下执行</span></span><br><span class="line">gedit build-android-single.sh</span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改完后保存即可</span></span><br></pre></td></tr></table></figure>
+
+<p><code>build-android-single.sh</code>脚本文件及注释如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 设定openssl路径</span></span><br><span class="line">OPENSSL_HOME=/home/yooking/Downloads/openssl/openssl-1.1.1h</span><br><span class="line"><span class="meta">#</span><span class="bash"> 打开openssl文件夹</span></span><br><span class="line">cd $OPENSSL_HOME</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置编译环境 可以是armeabi armeabi-v7a arm64-v8a mips mips64 x86 x86_64</span></span><br><span class="line">ARCH=arm64-v8a</span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="keyword">if</span> 语句判断 并设置 ARCH_NAME TOOL_CHAIN</span></span><br><span class="line">echo $ARCH</span><br><span class="line">	if [ "$ARCH" = "armeabi-v7a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">		TOOL_CHAIN=arm-linux-androideabi-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "armeabi" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">		TOOL_CHAIN=arm-linux-androideabi-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "arm64-v8a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm64</span><br><span class="line">		TOOL_CHAIN=aarch64-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "mips" ]; then</span><br><span class="line">		ARCH_NAME=android-mips</span><br><span class="line">		TOOL_CHAIN=mipsel-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "mips64" ]; then</span><br><span class="line">		ARCH_NAME=android-mips64</span><br><span class="line">		TOOL_CHAIN=mips64el-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86" ]; then</span><br><span class="line">		ARCH_NAME=android-x86</span><br><span class="line">		TOOL_CHAIN=x86-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86_64" ]; then</span><br><span class="line">		ARCH_NAME=android-x86_64</span><br><span class="line">		TOOL_CHAIN=x86_64-4.9</span><br><span class="line">	fi</span><br><span class="line">echo $TOOL_CHAIN #TOOL_CHAIN名称</span><br><span class="line">echo $ARCH_NAME</span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除之前生成的文件并重新创建</span></span><br><span class="line">rm -rf ./output-$ARCH</span><br><span class="line">mkdir ./output-$ARCH</span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置NDK路径</span></span><br><span class="line">export ANDROID_NDK=/home/yooking/Public/android/android-sdk/ndk/android-ndk-r15c</span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置TOOL_CHAIN路径</span></span><br><span class="line">export PATH=$ANDROID_NDK/toolchains/$TOOL_CHAIN/prebuilt/linux-x86_64/bin:$PATH</span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行Configure文件（openssl-1.1.1h 自带该编译文件）</span></span><br><span class="line">./Configure $ARCH_NAME -D__ANDROID_API__=23 --prefix=$OPENSSL_HOME/output-$ARCH</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用make命令</span></span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p>执行脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 第一次执行脚本时需要执行config文件，生成Makefile文件</span></span><br><span class="line">./config</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第二次或以上执行前须执行</span></span><br><span class="line">make clean</span><br><span class="line"><span class="meta">#</span><span class="bash"> Makefile文件生成后，执行sh命令</span></span><br><span class="line">sh build-android-single.sh</span><br></pre></td></tr></table></figure>
+
+<p>修改脚本为<strong>循环编译</strong>，编译所有需要的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 生成循环编译脚本</span></span><br><span class="line">gedit build-android-all.sh</span><br></pre></td></tr></table></figure>
+
+<p><code>build-android-all.sh</code>脚本文件内容如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">func_cmp()&#123;</span><br><span class="line">	OPENSSL_HOME=/home/yooking/Downloads/openssl/openssl-1.1.1h</span><br><span class="line">	cd $OPENSSL_HOME</span><br><span class="line">	make clean</span><br><span class="line">	rm -rf ./output-$ARCH</span><br><span class="line">	mkdir ./output-$ARCH</span><br><span class="line">	export ANDROID_NDK=/home/yooking/Public/android/android-sdk/ndk/android-ndk-r21d</span><br><span class="line">	export PATH=$ANDROID_NDK/toolchains/$TOOL_CHAIN/prebuilt/linux-x86_64/bin:$PATH</span><br><span class="line">	./Configure $ARCH_NAME -D__ANDROID_API__=23 --prefix=$OPENSSL_HOME/output-$ARCH</span><br><span class="line">	make &amp;&amp; make install</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for ARCH in armeabi-v7a armeabi arm64-v8a x86 x86_64 #mips mips64</span><br><span class="line">do</span><br><span class="line">	echo $ARCH</span><br><span class="line">	if [ "$ARCH" = "armeabi-v7a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">		TOOL_CHAIN=arm-linux-androideabi-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "armeabi" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">		TOOL_CHAIN=arm-linux-androideabi-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "arm64-v8a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm64</span><br><span class="line">		TOOL_CHAIN=aarch64-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "mips" ]; then</span><br><span class="line">		ARCH_NAME=android-mips</span><br><span class="line">		TOOL_CHAIN=mipsel-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "mips64" ]; then</span><br><span class="line">		ARCH_NAME=android-mips64</span><br><span class="line">		TOOL_CHAIN=mips64el-linux-android-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86" ]; then</span><br><span class="line">		ARCH_NAME=android-x86</span><br><span class="line">		TOOL_CHAIN=x86-4.9</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86_64" ]; then</span><br><span class="line">		ARCH_NAME=android-x86_64</span><br><span class="line">		TOOL_CHAIN=x86_64-4.9</span><br><span class="line">	fi</span><br><span class="line">	echo $TOOL_CHAIN</span><br><span class="line">	func_cmp</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>执行脚本方法同上，如为第一次执行（即没有Makefile文件），仍需要执行<code>./config</code>循环编译无需执行<code>make clean</code></p>
+<h2 id="r21下的sh脚本"><a href="#r21下的sh脚本" class="headerlink" title="r21下的sh脚本"></a>r21下的sh脚本</h2><p>参考：<a href="https://blog.csdn.net/iamadk/article/details/97155757">https://blog.csdn.net/iamadk</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建用于生成toolchain路径的Python脚本</span></span><br><span class="line">gedit toolchains_path.py</span><br></pre></td></tr></table></figure>
+
+<p><code>Python</code>脚本内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">    Get the toolchains path</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> atexit</span><br><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">import</span> stat</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> textwrap</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取路径尾部 - 事实上如果是作为android环境的话，可以直接写 linux-x86_64</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_host_tag_or_die</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""Return the host tag for this platform. Die if not supported."""</span></span><br><span class="line">    <span class="keyword">if</span> sys.platform.startswith(<span class="string">'linux'</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'linux-x86_64'</span></span><br><span class="line">    <span class="keyword">elif</span> sys.platform == <span class="string">'darwin'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'darwin-x86_64'</span></span><br><span class="line">    <span class="keyword">elif</span> sys.platform == <span class="string">'win32'</span> <span class="keyword">or</span> sys.platform == <span class="string">'cygwin'</span>:</span><br><span class="line">        host_tag = <span class="string">'windows-x86_64'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(os.path.join(NDK_DIR, <span class="string">'prebuilt'</span>, host_tag)):</span><br><span class="line">            host_tag = <span class="string">'windows'</span></span><br><span class="line">        <span class="keyword">return</span> host_tag</span><br><span class="line">    sys.exit(<span class="string">'Unsupported platform: '</span> + sys.platform)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里是获取路径的头部 ndk 为外部传入的值</span></span><br><span class="line"><span class="comment"># 如 android-arm android-arm64 android-x86 android-x86_64</span></span><br><span class="line"><span class="comment"># 这里要注意的是 r21 没有android-mips 和 android-mips64</span></span><br><span class="line"><span class="comment"># toolchains/llvm/prebuilt 为固定的路径</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_toolchain_path_or_die</span><span class="params">(ndk, host_tag)</span>:</span></span><br><span class="line">    <span class="string">"""Return the toolchain path or die."""</span></span><br><span class="line">    toolchain_path = os.path.join(ndk, <span class="string">'toolchains/llvm/prebuilt'</span>,</span><br><span class="line">                                  host_tag)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(toolchain_path):</span><br><span class="line">        sys.exit(<span class="string">'Could not find toolchain: &#123;&#125;'</span>.format(toolchain_path))</span><br><span class="line">    <span class="keyword">return</span> toolchain_path</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""Program entry point."""</span></span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">'Optional app description'</span>)</span><br><span class="line">    parser.add_argument(<span class="string">'--ndk'</span>, required=<span class="literal">True</span>,</span><br><span class="line">                    help=<span class="string">'The NDK Home directory'</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    host_tag = get_host_tag_or_die()</span><br><span class="line">    toolchain_path = get_toolchain_path_or_die(args.ndk, host_tag)</span><br><span class="line">    <span class="keyword">print</span> toolchain_path</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>创建编译执行脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 防止滚雪球型报错 如果任何语句的执行结果不是<span class="literal">true</span>则应该退出</span></span><br><span class="line">set -e</span><br><span class="line"><span class="meta">#</span><span class="bash"> linux输出详细日志 r15的脚本中使用的是<span class="built_in">echo</span>来输出</span></span><br><span class="line">set -x</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Set directory</span></span><br><span class="line">OPENSSL_DIR=/home/yooking/Downloads/openssl/openssl-1.1.1h</span><br><span class="line">export ANDROID_NDK_HOME=/home/yooking/Public/android/android-sdk/ndk/android-ndk-r21d</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Find the toolchain <span class="keyword">for</span> your build machine</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行Python脚本 生成 toolchain路径</span></span><br><span class="line">toolchains_path=$(python toolchains_path.py --ndk $&#123;ANDROID_NDK_HOME&#125;)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Configure the OpenSSL environment, refer to NOTES.ANDROID <span class="keyword">in</span> OPENSSL_DIR</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Set compiler clang, instead of gcc by default</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置clang执行</span></span><br><span class="line">CC=clang</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Add toolchains bin directory to PATH</span></span><br><span class="line">PATH=$toolchains_path/bin:$PATH</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Set the Android API levels</span></span><br><span class="line">ANDROID_API=21</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Set the target architecture</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Can be android-arm, android-arm64, android-x86, android-x86 etc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置编译环境</span></span><br><span class="line">architecture=android-arm</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Create the make file</span></span><br><span class="line">cd $&#123;OPENSSL_DIR&#125;</span><br><span class="line">./Configure $&#123;architecture&#125; -D__ANDROID_API__=$ANDROID_API</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Build</span></span><br><span class="line">make</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Copy the outputs</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 将生成的目标文件复制到对应的目录下</span></span><br><span class="line">OUTPUT_INCLUDE=$SCRIPTPATH/output/include</span><br><span class="line">OUTPUT_LIB=$SCRIPTPATH/output/lib/$&#123;architecture&#125;</span><br><span class="line">mkdir -p $OUTPUT_INCLUDE</span><br><span class="line">mkdir -p $OUTPUT_LIB</span><br><span class="line">cp -RL include/openssl $OUTPUT_INCLUDE</span><br><span class="line">cp libcrypto.so $OUTPUT_LIB</span><br><span class="line">cp libcrypto.a $OUTPUT_LIB</span><br><span class="line">cp libssl.so $OUTPUT_LIB</span><br><span class="line">cp libssl.a $OUTPUT_LIB</span><br></pre></td></tr></table></figure>
+
+<p>执行编译脚本同r15，第一次需要执行<code>./config</code>生成Makefile，第二次或以上需要清除make记录即<code>make clean</code>，接下来依旧是创建<strong>循环编译</strong>脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">func_cmp()&#123;</span><br><span class="line"><span class="meta">	#</span><span class="bash"> Set directory</span></span><br><span class="line">	OPENSSL_DIR=/home/yooking/Downloads/openssl/openssl-1.1.1h</span><br><span class="line">	export ANDROID_NDK_HOME=/home/yooking/Public/android/android-sdk/ndk/android-ndk-r21d</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Find the toolchain <span class="keyword">for</span> your build machine</span></span><br><span class="line">	toolchains_path=$(python toolchains_path.py --ndk $&#123;ANDROID_NDK_HOME&#125;)</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Configure the OpenSSL environment, refer to NOTES.ANDROID <span class="keyword">in</span> OPENSSL_DIR</span></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Set compiler clang, instead of gcc by default</span></span><br><span class="line">	CC=clang</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Add toolchains bin directory to PATH</span></span><br><span class="line">	PATH=$toolchains_path/bin:$PATH</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Set the Android API levels</span></span><br><span class="line">	ANDROID_API=21</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Set the target architecture</span></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Can be android-arm, android-arm64, android-x86, android-x86_64 etc</span></span><br><span class="line">	architecture=$ARCH_NAME</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Create the make file</span></span><br><span class="line">	cd $&#123;OPENSSL_DIR&#125;</span><br><span class="line">	./Configure $&#123;architecture&#125; -D__ANDROID_API__=$ANDROID_API</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Build</span></span><br><span class="line">	make</span><br><span class="line"></span><br><span class="line"><span class="meta">	#</span><span class="bash"> Copy the outputs</span></span><br><span class="line">	OUTPUT_INCLUDE=$OPENSSL_DIR/output/include</span><br><span class="line">	OUTPUT_LIB=$OPENSSL_DIR/output/libs/$&#123;ARCH&#125;</span><br><span class="line">	mkdir -p $OUTPUT_INCLUDE</span><br><span class="line">	mkdir -p $OUTPUT_LIB</span><br><span class="line">	cp -RL include/openssl $OUTPUT_INCLUDE</span><br><span class="line">	cp libcrypto.so $OUTPUT_LIB</span><br><span class="line">	cp libcrypto.a $OUTPUT_LIB</span><br><span class="line">	cp libssl.so $OUTPUT_LIB</span><br><span class="line">	cp libssl.a $OUTPUT_LIB</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里加入make clean 每次编译完成后直接清理</span></span><br><span class="line">	make clean</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">set -e</span><br><span class="line">set -x</span><br><span class="line"><span class="meta">#</span><span class="bash"> 循环体</span></span><br><span class="line">for ARCH in armeabi-v7a armeabi arm64-v8a x86 x86_64</span><br><span class="line">do</span><br><span class="line">	if [ "$ARCH" = "armeabi-v7a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "armeabi" ]; then</span><br><span class="line">		ARCH_NAME=android-arm</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "arm64-v8a" ]; then</span><br><span class="line">		ARCH_NAME=android-arm64</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86" ]; then</span><br><span class="line">		ARCH_NAME=android-x86</span><br><span class="line">	fi</span><br><span class="line">	if [ "$ARCH" = "x86_64" ]; then</span><br><span class="line">		ARCH_NAME=android-x86_64</span><br><span class="line">	fi</span><br><span class="line">	func_cmp</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><ol>
+<li><p>配置</p>
+<ul>
+<li>Android Studio - gradle:3.5.2</li>
+<li>ndk - android-ndk-r21d</li>
+</ul>
+</li>
+<li><p>使用<br>将自动生成的cpp下的CMakeLists.txt移动到app下(个人习惯)<br>同时也要修改<code>app/build.gradle</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">externalNativeBuild &#123;</span><br><span class="line">    cmake &#123;</span><br><span class="line">        path <span class="string">"CMakeLists.txt"</span></span><br><span class="line">        version <span class="string">"3.10.2"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将<code>sh脚本文件</code>执行后生成的<strong>libs文件夹</strong>复制到<code>app/src/main/cpp</code>下</p>
+</li>
+<li><p>将<code>sh脚本文件</code>执行后生成的include下的<strong>openssl文件夹</strong>复制到<code>app/src/main/cpp</code>下</p>
+</li>
+<li><p>配置CMakeLists</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># For more information about using CMake with Android Studio, read the</span></span><br><span class="line"><span class="comment"># documentation: https://d.android.com/studio/projects/add-native-code.html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Sets the minimum version of CMake required to build the native library.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Creates and names a library, sets it as either STATIC</span></span><br><span class="line"><span class="comment"># or SHARED, and provides the relative paths to its source code.</span></span><br><span class="line"><span class="comment"># You can define multiple libraries, and CMake builds them for you.</span></span><br><span class="line"><span class="comment"># Gradle automatically packages shared libraries with your APK.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示把src/main/cpp加入到include目录，这样在代码中使用：#include &lt;...&gt;就能访问到头文件</span></span><br><span class="line"><span class="comment"># openssl 中 .h 文件的引用方式是 include &lt;openssl/symhacks.h&gt; 而事实上这些是在同一个文件夹下，并不需要openssl/，为使能正常使用 所以添加 include_directories</span></span><br><span class="line"><span class="keyword">include_directories</span>(src/main/cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这是原有的 无需修改</span></span><br><span class="line"><span class="keyword">add_library</span>( <span class="comment"># Sets the name of the library.</span></span><br><span class="line">        native-lib</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Sets the library as a shared library.</span></span><br><span class="line">        SHARED</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Provides a relative path to your source file(s).</span></span><br><span class="line">        src/main/cpp/native-lib.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加两个预编译库 - 1</span></span><br><span class="line"><span class="keyword">add_library</span>(<span class="comment"># Sets the name of the library.</span></span><br><span class="line">        openssl-crypto</span><br><span class="line">        <span class="comment"># Sets the library as a static library.</span></span><br><span class="line">        STATIC</span><br><span class="line">        IMPORTED)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set_target_properties</span>(</span><br><span class="line">        <span class="comment"># Specifies the target library.</span></span><br><span class="line">        openssl-crypto</span><br><span class="line">        <span class="comment"># Specifies the parameter you want to define.</span></span><br><span class="line">        PROPERTIES IMPORTED_LOCATION</span><br><span class="line">        <span class="comment"># Provides the path to the library you want to import.</span></span><br><span class="line">        <span class="comment"># 完整路径</span></span><br><span class="line">        <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/src/main/cpp/libs/<span class="variable">$&#123;ANDROID_ABI&#125;</span>/libcrypto.a)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加两个预编译库 - 2</span></span><br><span class="line"><span class="keyword">add_library</span>(<span class="comment"># Sets the name of the library.</span></span><br><span class="line">        openssl-ssl</span><br><span class="line">        <span class="comment"># Sets the library as a static library.</span></span><br><span class="line">        STATIC</span><br><span class="line">        IMPORTED)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set_target_properties</span>(</span><br><span class="line">        <span class="comment"># Specifies the target library.</span></span><br><span class="line">        openssl-ssl</span><br><span class="line">        <span class="comment"># Specifies the parameter you want to define.</span></span><br><span class="line">        PROPERTIES IMPORTED_LOCATION</span><br><span class="line">        <span class="comment"># Provides the path to the library you want to import.</span></span><br><span class="line">        <span class="comment"># 完整路径</span></span><br><span class="line">        <span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/src/main/cpp/libs/<span class="variable">$&#123;ANDROID_ABI&#125;</span>/libssl.a)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Searches for a specified prebuilt library and stores the path as a</span></span><br><span class="line"><span class="comment"># variable. Because CMake includes system libraries in the search path by</span></span><br><span class="line"><span class="comment"># default, you only need to specify the name of the public NDK library</span></span><br><span class="line"><span class="comment"># you want to add. CMake verifies that the library exists before</span></span><br><span class="line"><span class="comment"># completing its build.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">find_library</span>( <span class="comment"># Sets the name of the path variable.</span></span><br><span class="line">        log-lib</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Specifies the name of the NDK library that</span></span><br><span class="line">        <span class="comment"># you want CMake to locate.</span></span><br><span class="line">        log)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Specifies libraries CMake should link to your target library. You</span></span><br><span class="line"><span class="comment"># can link multiple libraries, such as libraries you define in this</span></span><br><span class="line"><span class="comment"># build script, prebuilt third-party libraries, or system libraries.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将新的编译库加入链接池中</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>( <span class="comment"># Specifies the target library.</span></span><br><span class="line">        native-lib</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Links the target library to the log library</span></span><br><span class="line">        <span class="comment"># included in the NDK.</span></span><br><span class="line">        <span class="variable">$&#123;log-lib&#125;</span> openssl-ssl openssl-crypto)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div><font color="#FF0000">------------本文结束<i class="fa fa-paw"></i>感谢您的阅读------------</font><br/><br/>Thank you for your accept！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_wechat.png" alt="yooking 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/imgs/a_icon_pay_ali.png" alt="yooking 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+	  
+
+      <footer class="post-footer">
+		<div>
+			
+				
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+
+  <p><span>本文标题:</span>OpenSSL的编译和使用</a></p>
+  <p><span>文章作者:</span>yooking</a></p>
+  <p><span>发布时间:</span>2020年12月15日 - 15:25:27</p>
+  <p><span>最后更新:</span>2020年12月17日 - 18:01:55</p>
+  <p><span>原始链接:</span><a href="/dev/201215-openssl.html" title="OpenSSL的编译和使用">http://blog.yookingh.cn/dev/201215-openssl.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/201215-openssl.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+			
+		</div>
+          
+          <div class="post-tags">
+              <a href="/tags/study/" rel="tag"><i class="fa fa-tag"></i> 学习笔记</a>
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dev/200928-Jenkins.html" rel="prev" title="Jenkins自动化部署工具的使用（Android项目）">
+      <i class="fa fa-chevron-left"></i> Jenkins自动化部署工具的使用（Android项目）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dev/201216-gmssl.html" rel="next" title="GmSSL的编译和使用">
+      GmSSL的编译和使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建sh脚本文件并编译"><span class="nav-number">3.</span> <span class="nav-text">创建sh脚本文件并编译</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#r21和r15有不同"><span class="nav-number">3.1.</span> <span class="nav-text">r21和r15有不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#r15下的sh脚本"><span class="nav-number">3.2.</span> <span class="nav-text">r15下的sh脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#r21下的sh脚本"><span class="nav-number">3.3.</span> <span class="nav-text">r21下的sh脚本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引用"><span class="nav-number">4.</span> <span class="nav-text">引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yooking"
+      src="/imgs/a_icon_head.jpg">
+  <p class="site-author-name" itemprop="name">yooking</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+
+<div id="music_163">
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" height=86 src="//music.163.com/outchain/player?type=2&id=1417959188&auto=1&height=66"></iframe>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yooking-git" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yooking-git" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:android_yoo@126.com" title="E-Mail → mailto:android_yoo@126.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友情链接
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chensheng.group/" title="https:&#x2F;&#x2F;www.chensheng.group&#x2F;" rel="noopener" target="_blank">陈先生的小前端</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/theme-next" title="https:&#x2F;&#x2F;github.com&#x2F;theme-next" rel="noopener" target="_blank">NexT主题Github</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://hexo-theme-next.netlify.app/" title="https:&#x2F;&#x2F;hexo-theme-next.netlify.app&#x2F;" rel="noopener" target="_blank">NexT主题博客</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yooking</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">171k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:36</span>
+</div>
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("04/07/2019 00:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,0' opacity='0.7' zIndex='-1' count='140' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script size="300" alpha="0.1" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'uutufTwYVUeCtemIaV78RUzY-gzGzoHsz',
+      appKey     : 'EWtCrVS44F22gkjWkQ15x4lx',
+      placeholder: "恭迎评论指教（Your comments and criticisms are always welcome.）",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
