@@ -22,22 +22,21 @@
     var CONFIG = {"hostname":"blog.yookingh.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#00000000","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="项目基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目">
+  <meta name="description" content="前言Ubuntu默认使用的官方源来自欧洲服务器，从国内访问时速度过慢。国内有更加快速的阿里、清华、网易等源，所以一般建议安装好Ubuntu系统后就自行更换软件源。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kotlin初体验：IM项目体验">
-<meta property="og:url" content="http://blog.yookingh.cn/dev/190809-kotlin-IM.html">
+<meta property="og:title" content="Ubuntu更换软件源">
+<meta property="og:url" content="http://blog.yookingh.cn/dev/201222-Ubuntu-path.html">
 <meta property="og:site_name" content="墨染青葱几许烟">
-<meta property="og:description" content="项目基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目">
+<meta property="og:description" content="前言Ubuntu默认使用的官方源来自欧洲服务器，从国内访问时速度过慢。国内有更加快速的阿里、清华、网易等源，所以一般建议安装好Ubuntu系统后就自行更换软件源。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-08-09T03:32:46.000Z">
-<meta property="article:modified_time" content="2020-05-13T01:19:37.900Z">
+<meta property="article:published_time" content="2020-12-22T06:51:33.000Z">
+<meta property="article:modified_time" content="2020-12-22T08:27:06.668Z">
 <meta property="article:author" content="yooking">
 <meta property="article:tag" content="学习笔记">
-<meta property="article:tag" content="Android">
-<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="Ubuntu">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://blog.yookingh.cn/dev/190809-kotlin-IM.html">
+<link rel="canonical" href="http://blog.yookingh.cn/dev/201222-Ubuntu-path.html">
 
 
 <script id="page-configurations">
@@ -50,7 +49,7 @@
   };
 </script>
 
-  <title>Kotlin初体验：IM项目体验 | 墨染青葱几许烟</title>
+  <title>Ubuntu更换软件源 | 墨染青葱几许烟</title>
   
 
 
@@ -197,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/190809-kotlin-IM.html">
+    <link itemprop="mainEntityOfPage" href="http://blog.yookingh.cn/dev/201222-Ubuntu-path.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/imgs/a_icon_head.jpg">
@@ -210,7 +209,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Kotlin初体验：IM项目体验
+          Ubuntu更换软件源
         </h1>
 
         <div class="post-meta">
@@ -220,7 +219,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-08-09 11:32:46" itemprop="dateCreated datePublished" datetime="2019-08-09T11:32:46+08:00">2019-08-09</time>
+              <time title="创建时间：2020-12-22 14:51:33" itemprop="dateCreated datePublished" datetime="2020-12-22T14:51:33+08:00">2020-12-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,8 +240,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/dev/190809-kotlin-IM.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/dev/190809-kotlin-IM.html" itemprop="commentCount"></span>
+    <a title="valine" href="/dev/201222-Ubuntu-path.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/dev/201222-Ubuntu-path.html" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -257,41 +256,175 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h1><p>基于 Kotlin 和 AndroidX 及 WebSocket 的 IM 项目<a id="more"></a><br>本文主要以一个小Demo来初步了解Kotlin编程与Java编程的差异</p>
-<h1 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h1><h2 id="聊天窗口构建"><a href="#聊天窗口构建" class="headerlink" title="聊天窗口构建"></a>聊天窗口构建</h2><p>框架引入：<a href="http://www.recyclerview.org/">BRVAH官网</a></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">'androidx.recyclerview:recyclerview:1.1.0-beta02'</span><span class="comment">//AndroidX RecyclerView</span></span><br><span class="line">implementation <span class="string">'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'</span><span class="comment">//BRVAH</span></span><br></pre></td></tr></table></figure>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Ubuntu默认使用的官方源来自欧洲服务器，从国内访问时速度过慢。国内有更加快速的阿里、清华、网易等源，所以一般建议安装好Ubuntu系统后就自行更换软件源。<a id="more"></a></p>
+<h1 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h1><h2 id="1-获取Ubuntu版本代号"><a href="#1-获取Ubuntu版本代号" class="headerlink" title="1.获取Ubuntu版本代号"></a>1.获取Ubuntu版本代号</h2><p>Ubuntu每个版本都拥有不同的软件源，因此需要先获取系统版本代号，获取方式：</p>
+<ol>
+<li><code>Ctrl+Alt+T</code>打开终端</li>
+<li>输入<code>lsb_release -a</code>命令查看Ubuntu版本代号</li>
+<li>复制备用。</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 输入命令</span></span><br><span class="line">yooking@ubuntu:~$ lsb_release -a</span><br><span class="line"><span class="meta">#</span><span class="bash"> 返回结果 - 代号为Codename 即 focal</span></span><br><span class="line">No LSB modules are available.</span><br><span class="line">Distributor ID:	Ubuntu</span><br><span class="line">Description:	Ubuntu 20.04.1 LTS</span><br><span class="line">Release:	20.04</span><br><span class="line">Codename:	focal</span><br></pre></td></tr></table></figure>
 
-<p><strong>new 对象</strong><br>在Kotlin中，<code>new Object();</code>省略为<code>Object()</code>，也不需要分号<br><strong>全局变量</strong><br><code>private lateinit var mContext: Context</code><br>全局变量应该用var来定义，其类型写在:之后<br>lateinit 修饰符：延迟初始化<br>lateinit 不能用来修饰基本数据类型，因为基本类型的属性在类加载后的准备阶段都会被初始化为默认值</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">lateinit</span> <span class="keyword">var</span> a : <span class="built_in">Int</span></span><br><span class="line"><span class="comment">//'lateinit' modifier is not allowed on properties of primitive types</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-修改源文件"><a href="#2-修改源文件" class="headerlink" title="2.修改源文件"></a>2.修改源文件</h2><p>Ubuntu的软件源配置在<code>/etc/apt/sources.list</code>中</p>
+<ol>
+<li><p>为了防止修改发生意外，我们先对该文件进行复制（不复制也行）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /etc/apt/sources.list /etc/apt/sources.list.bcakup</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑该文件(以清华源为例)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 这里使用编辑器，比较方便。vim等方式也可以，根据个人习惯吧</span></span><br><span class="line">sudo gedit /etc/apt/sources.list</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 将编辑器的内容清空，并粘贴如下数据 其中focal要修改为你的Codename</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 清华大学源</span></span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse</span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#测试版源码</span></span></span><br><span class="line">deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse</span><br><span class="line"><span class="meta">#</span><span class="bash"> 清华大学源-源码</span></span><br><span class="line">deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-backports main restricted universe multiverse</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#测试版源-源码</span></span></span><br><span class="line">deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ focal-proposed main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存即可</p>
+</li>
+</ol>
+<h2 id="3-运行更新"><a href="#3-运行更新" class="headerlink" title="3.运行更新"></a>3.运行更新</h2><ol>
+<li><p>检测更新</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行更新</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
 
-<p>lateinit 不能修饰val变量，只能修饰可变的属性</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">val</span> etMessage : AppCompatEditText</span><br><span class="line"><span class="comment">//'lateinit' modifier is allowed only on mutable properties</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>静态全局变量</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">	<span class="comment">//ChatActivity.class.getName()的写法</span></span><br><span class="line">	<span class="comment">//const 是常量修饰词 类似 java 中的 static final</span></span><br><span class="line">	<span class="comment">//val 相当于 final</span></span><br><span class="line">	<span class="comment">//const 不能修饰 var</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">val</span> TAG: String = ChatActivity::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">name</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>符号</strong><br><code>helper!!</code>意为：helper不做为空校验，如果为空则抛出异常</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ? 即 或许为空</span></span><br><span class="line"><span class="comment">// ?. 相当于 if(object == null) return null; else return objcet.xx; </span></span><br><span class="line"><span class="keyword">val</span> mList: ArrayList&lt;String&gt;? = <span class="literal">null</span><span class="comment">//如果Object后面不加问号，即Object?那么mList = null会报错</span></span><br><span class="line">Log.d(TAG, <span class="string">"ListSize = <span class="subst">$&#123;mList?.size&#125;</span>"</span>)<span class="comment">//用 mList!!.size 会抛出空指针异常</span></span><br><span class="line">Log日志：com.yooking.socket.ChatActivity: ListSize = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>构建javabean</strong></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> type: <span class="built_in">Int</span>) : MultiItemEntity &#123;</span><br><span class="line">	<span class="keyword">var</span> name: String? = <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对应的java写法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChatData</span> <span class="keyword">extends</span> <span class="title">MultiItemEntity</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">private</span> String name = <span class="string">""</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatData</span><span class="params">(<span class="keyword">int</span> type)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在Kotlin中 get 方法 的使用方法为 chatData.name</span></span><br><span class="line"><span class="comment">//在Kotlin中 set 方法 的使用方法为 chatData.name = "string"</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="WebSocketLib构建"><a href="#WebSocketLib构建" class="headerlink" title="WebSocketLib构建"></a>WebSocketLib构建</h2><p>框架引入：<a href="https://square.github.io/okhttp/">OkHttp-GithubPage</a></p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">api <span class="string">'com.squareup.okhttp3:okhttp:4.0.1'</span><span class="comment">//okhttp 4.0.1</span></span><br><span class="line"><span class="comment">//api 'com.squareup.okhttp3:mockwebserver:4.0.1'//okhttp moc 请求验证</span></span><br><span class="line">api <span class="string">'com.squareup.okhttp3:logging-interceptor:4.0.1'</span><span class="comment">//okhttp 请求日志</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>匿名内部类</strong><br>在kotlin中，匿名内部类和java中的差别不大</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> handler: Handler</span><br><span class="line"><span class="keyword">init</span>&#123;</span><br><span class="line">    handler = Handler &#123;<span class="comment">//it:Messag!</span></span><br><span class="line">        send(heartMessage)</span><br><span class="line">        it.target.sendEmptyMessageDelayed(WHAT_HEART, heartTime)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//java</span></span><br><span class="line">handler = <span class="keyword">new</span> Handler()&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerMessage</span><span class="params">(Message msg)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        send(heartMessage);</span><br><span class="line">        sendEmptyMessageDelayed(WHAT_HEART, heartTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>静态内部类</strong><br>由于handler调用外部方法容易造成内存泄漏，所以，静态内部类了解一下：</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WithoutLeakHandler</span></span>(wsu:WebSocketUtils):Handler()&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> mWsu:WeakReference&lt;WebSocketUtils&gt; = WeakReference(wsu)</span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleMessage</span><span class="params">(msg: <span class="type">Message</span>?)</span></span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.handleMessage(msg)</span><br><span class="line">            <span class="keyword">val</span> webSocketUtils = mWsu.<span class="keyword">get</span>()!!</span><br><span class="line">            webSocketUtils.send(webSocketUtils.heartMessage)</span><br><span class="line">            msg!!.target.sendEmptyMessageDelayed(WHAT_HEART, webSocketUtils.heartTime)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="具体实现请见Demo"><a href="#具体实现请见Demo" class="headerlink" title="具体实现请见Demo"></a>具体实现请见Demo</h1><p>聊天代码：<a href="https://github.com/yooking-git/DEMO-IM">Demo</a></p>
+</li>
+</ol>
+<h1 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h1><p>附上各服务器源路径，自行替换使用——可能过期</p>
+<ul>
+<li><p>Ubuntu 官方<strong>（欧洲，国内较慢，无同步延迟）</strong></p>
+<p><a href="http://archive.ubuntu.com/ubuntu/">http://archive.ubuntu.com/ubuntu/</a></p>
+</li>
+<li><p>Ubuntu 官方中国<strong>（目前是阿里云）</strong></p>
+<p><a href="http://cn.archive.ubuntu.com/ubuntu/">http://cn.archive.ubuntu.com/ubuntu/</a></p>
+</li>
+<li><p>网易<strong>（广东广州电信/联通千兆双线接入）</strong></p>
+<p><a href="http://mirrors.163.com/ubuntu/">http://mirrors.163.com/ubuntu/</a></p>
+</li>
+<li><p>搜狐<strong>（山东联通千兆接入）</strong></p>
+<p><a href="http://mirrors.sohu.com/ubuntu/">http://mirrors.sohu.com/ubuntu/</a></p>
+</li>
+<li><p>阿里云<strong>（北京万网/浙江杭州阿里云服務器双线接入）</strong></p>
+<p><a href="http://mirrors.aliyun.com/ubuntu/">http://mirrors.aliyun.com/ubuntu/</a></p>
+</li>
+<li><p>腾讯</p>
+<p><a href="http://mirrors.cloud.tencent.com/ubuntu/">http://mirrors.cloud.tencent.com/ubuntu/</a></p>
+</li>
+<li><p>华为</p>
+<p><a href="http://mirrors.huaweicloud.com/ubuntu/">http://mirrors.huaweicloud.com/ubuntu/</a></p>
+</li>
+<li><p>首都在线科技</p>
+<p><a href="http://mirrors.yun-idc.com/ubuntu/">http://mirrors.yun-idc.com/ubuntu/</a></p>
+</li>
+<li><p>贝特康姆<strong>（江苏常州电信）</strong></p>
+<p><a href="http://centos.bitcomm.cn/ubuntu/">http://centos.bitcomm.cn/ubuntu/</a></p>
+</li>
+<li><p>CNNIC</p>
+<p><a href="https://mirrors.cnnic.cn/ubuntu/">https://mirrors.cnnic.cn/ubuntu/</a></p>
+</li>
+</ul>
+<p><strong>教育网</strong></p>
+<p>以下服務器有教育网接入，推荐教育网用户使用 IPv6：</p>
+<ul>
+<li><p>中科大 <a href="https://ustclug.org/">LUG</a><strong>（合肥，电信/联通/移动/教育网自动分流，同時也是 Deepin 官方）</strong></p>
+<p><a href="https://mirrors.ustc.edu.cn/ubuntu/">https://mirrors.ustc.edu.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://mirrors4.ustc.edu.cn/ubuntu/">http://mirrors4.ustc.edu.cn/ubuntu/</a> <em>(v4)</em><br><a href="http://mirrors6.ustc.edu.cn/ubuntu/">http://mirrors6.ustc.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>中科院 <a href="https://www.opencas.org/">OpenCAS</a></p>
+<p><a href="http://mirrors.opencas.cn/ubuntu/">http://mirrors.opencas.cn/ubuntu/</a></p>
+</li>
+<li><p>清华 <a href="https://tuna.moe/">TUNA</a><strong>（教育网核心节点百兆接入，已计划提高到千兆）</strong></p>
+<p><a href="http://mirrors.tuna.tsinghua.edu.cn/ubuntu/">http://mirrors.tuna.tsinghua.edu.cn/ubuntu/</a> <em>(v4/v6)</em> <a href="http://mirrors.4.tuna.tsinghua.edu.cn/ubuntu/">http://mirrors.4.tuna.tsinghua.edu.cn/ubuntu/</a> <em>(v4)</em> <a href="http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/">http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>中国地质大学镜像站，<a href="https://www.pointstone.org/">中国地质大学点石团队</a></p>
+<p><a href="http://mirrors.cug.edu.cn/ubuntu/">http://mirrors.cug.edu.cn/ubuntu/</a> <em>(v4/v6)</em> <a href="http://mirrors.cug6.edu.cn/ubuntu/">http://mirrors.cug6.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>北京交通大学更新服務器<strong>（教育网/电信百兆接入）</strong>，由<a href="http://ic.bjtu.edu.cn/">北交信息中心</a>赞助</p>
+<p><a href="http://mirror.bjtu.edu.cn/ubuntu/">http://mirror.bjtu.edu.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://mirror6.bjtu.edu.cn/ubuntu/">http://mirror6.bjtu.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>北京理工大学</p>
+<p><a href="http://mirror.bit.edu.cn/">http://mirror.bit.edu.cn/</a> <em>(v4/v6)</em><br><a href="http://mirror.bit6.edu.cn/ubuntu/">http://mirror.bit6.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>北京化工大学</p>
+<p><a href="http://ubuntu.buct.cn/ubuntu/">http://ubuntu.buct.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://ubuntu.buct6.edu.cn/ubuntu/">http://ubuntu.buct6.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>北京外国语大学</p>
+<p><a href="https://mirrors.bfsu.edu.cn/ubuntu/">https://mirrors.bfsu.edu.cn/ubuntu/</a> <em>(v4/v6)</em> </p>
+</li>
+<li><p>天津大学，天津大学信息与网络协会和<a href="http://tju.zyrj.org/">天津大学自由软件联盟</a>(校外限 IPv6 访问)</p>
+<p><a href="http://mirror.tju.edu.cn/ubuntu/">http://mirror.tju.edu.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://mirror.tju6.edu.cn/ubuntu/">http://mirror.tju6.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>南开大学，<strong>限教育网访问</strong></p>
+<p><a href="http://ftp.nankai.edu.cn/ubuntu/">http://ftp.nankai.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>山东理工大学，<strong>限校内访问</strong></p>
+<p><a href="http://mirrors.sdutlinux.org/ubuntu/">http://mirrors.sdutlinux.org/ubuntu/</a></p>
+</li>
+<li><p>东北大学</p>
+<p><a href="http://ftp.neu.edu.cn/mirrors/ubuntu/">http://ftp.neu.edu.cn/mirrors/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://ftp.neu6.edu.cn/mirrors/">http://ftp.neu6.edu.cn/mirrors/</a> <em>(v6)</em></p>
+</li>
+<li><p>哈尔滨工业大学</p>
+<p><a href="http://run.hit.edu.cn/ubuntu/">http://run.hit.edu.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://run6.hit.edu.cn/ubuntu/">http://run6.hit.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>吉林大学，由<a href="http://nic.jlu.edu.cn/">吉林大学网络中心</a>维护</p>
+<p><a href="http://mirrors.jlu.edu.cn/ubuntu/">http://mirrors.jlu.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>大连理工大学</p>
+<p><a href="http://mirror.dlut.edu.cn/ubuntu/">http://mirror.dlut.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>上海交通大学（教育网千兆接入，联通/电信连接情况不详）</p>
+<p><a href="http://ftp.sjtu.edu.cn/ubuntu/">http://ftp.sjtu.edu.cn/ubuntu/</a> <em>(v4/v6)</em><br><a href="http://ftp6.sjtu.edu.cn/ubuntu/">http://ftp6.sjtu.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>上海大学</p>
+<p><a href="http://mirrors.shuosc.org/ubuntu">http://mirrors.shuosc.org/ubuntu</a></p>
+</li>
+<li><p>上海科技大学</p>
+<p><a href="http://mirrors.geekpie.org/ubuntu">http://mirrors.geekpie.org/ubuntu</a></p>
+</li>
+<li><p>南京大学，由人工微结构科学与技术协同创新中心‧南京微结构国家实验室‧南京大学网络信息中心维护</p>
+<p><a href="http://mirrors.nju.edu.cn/ubuntu/">http://mirrors.nju.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>南京师范大学，<strong>限校內访问</strong></p>
+<p><a href="http://mirrors.njnu.edu.cn/ubuntu/">http://mirrors.njnu.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>南京邮电大学</p>
+<p><a href="http://mirrors.njupt.edu.cn/ubuntu/">http://mirrors.njupt.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>南京信息工程大学，<strong>限教育网访问</strong></p>
+<p><a href="http://mirrors.duohuo.org/ubuntu/">http://mirrors.duohuo.org/ubuntu/</a></p>
+</li>
+<li><p>浙江大学，由<a href="https://zjulug.org/">浙江大学Linux用户组</a>维护</p>
+<p><a href="http://mirrors.zju.edu.cn/ubuntu/">http://mirrors.zju.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>华中科技大学，由<a href="http://ncc.hust.edu.cn/">华中科技大学网络与计算中心</a>维护</p>
+<p><a href="http://mirrors.hust.edu.cn/ubuntu/">http://mirrors.hust.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>华中科大联创团队，由<a href="http://ncc.hust.edu.cn/">华中科技大学启明学院 </a>的<a href="https://www.hustunique.com/">联创团队</a>维护</p>
+<p><a href="https://mirrors.hustunique.com/ubuntu/">http://mirrors.hustunique.com/ubuntu/</a></p>
+</li>
+<li><p>厦门大学，由<a href="http://net.xmu.edu.cn/">厦门大学信息与网络中心</a>维护</p>
+<p> <a href="http://mirrors.xmu.edu.cn/ubuntu/archive/">http://mirrors.xmu.edu.cn/ubuntu/archive/</a> <em>(v4/v6)</em><br><a href="http://mirrors.xmu6.edu.cn/ubuntu/">http://mirrors.xmu6.edu.cn/ubuntu/</a> <em>(v6)</em></p>
+</li>
+<li><p>中山大学，由<a href="http://inc.sysu.edu.cn/">中山大学网络与信息技术中心</a>维护</p>
+<p><a href="http://mirror.sysu.edu.cn/ubuntu/">http://mirror.sysu.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>华南农业大学，由华南农业大学红满堂工作室维护</p>
+<p><a href="https://mirrors.scau.edu.cn/ubuntu/">https://mirrors.scau.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>电子科技大学（位于成都），由<a href="http://ubuntu.dormforce.net/about.html">电子科技大学学生宿舍网络管理委员会</a>維護，<a href="http://ubuntu.dormforce.net/">仅包含 Ubuntu 镜像</a></p>
+<p><a href="http://ubuntu.dormforce.net/ubuntu/">http://ubuntu.dormforce.net/ubuntu/</a></p>
+</li>
+<li><p>重庆大学，由<a href="http://lanunion.cqu.edu.cn/">重庆大学蓝盟</a>维护</p>
+<p><a href="http://mirrors.cqu.edu.cn/ubuntu/">http://mirrors.cqu.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>西安交通大学，由<a href="http://www.xjtuns.cn/">西安交通大学众享社</a>维护</p>
+<p><a href="http://ubuntu.xjtuns.cn/ubuntu/">http://ubuntu.xjtuns.cn/ubuntu/</a></p>
+</li>
+<li><p>西安电子科技大学，<strong>限教育网访问</strong></p>
+<p><a href="http://ftp.xdlinux.info/ubuntu/">http://ftp.xdlinux.info/ubuntu/</a></p>
+</li>
+<li><p>西北农林大学</p>
+<p><a href="https://mirrors.nwafu.edu.cn/ubuntu/">https://mirrors.nwafu.edu.cn/ubuntu/</a></p>
+</li>
+<li><p>兰州大学，由<a href="http://oss.lzu.edu.cn/">兰州大学开源社区</a>维护</p>
+<p><a href="http://mirror.lzu.edu.cn/ubuntu/">http://mirror.lzu.edu.cn/ubuntu/</a></p>
+</li>
+</ul>
 
     </div>
 
@@ -332,12 +465,12 @@
   <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
 
-  <p><span>本文标题:</span>Kotlin初体验：IM项目体验</a></p>
+  <p><span>本文标题:</span>Ubuntu更换软件源</a></p>
   <p><span>文章作者:</span>yooking</a></p>
-  <p><span>发布时间:</span>2019年08月09日 - 11:32:46</p>
-  <p><span>最后更新:</span>2020年05月13日 - 09:19:37</p>
-  <p><span>原始链接:</span><a href="/dev/190809-kotlin-IM.html" title="Kotlin初体验：IM项目体验">http://blog.yookingh.cn/dev/190809-kotlin-IM.html</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/190809-kotlin-IM.html"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2020年12月22日 - 14:51:33</p>
+  <p><span>最后更新:</span>2020年12月22日 - 16:27:06</p>
+  <p><span>原始链接:</span><a href="/dev/201222-Ubuntu-path.html" title="Ubuntu更换软件源">http://blog.yookingh.cn/dev/201222-Ubuntu-path.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://blog.yookingh.cn/dev/201222-Ubuntu-path.html"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span>© <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -361,8 +494,7 @@
           
           <div class="post-tags">
               <a href="/tags/study/" rel="tag"><i class="fa fa-tag"></i> 学习笔记</a>
-              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
-              <a href="/tags/Kotlin/" rel="tag"><i class="fa fa-tag"></i> Kotlin</a>
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
           </div>
 
         
@@ -371,13 +503,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dev/190808-virtual-Keyboard.html" rel="prev" title="Android沉浸式布局导致的键盘遮挡问题处理方案">
-      <i class="fa fa-chevron-left"></i> Android沉浸式布局导致的键盘遮挡问题处理方案
+    <a href="/dev/20201218-HarmonyOS-UI.html" rel="prev" title="HarmonyOS探索（UI篇）">
+      <i class="fa fa-chevron-left"></i> HarmonyOS探索（UI篇）
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dev/190809-webSocket.html" rel="next" title="Kotlin-webSocket的基本封装">
-      Kotlin-webSocket的基本封装 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -436,7 +565,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#项目"><span class="nav-number">1.</span> <span class="nav-text">项目</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#项目构建"><span class="nav-number">2.</span> <span class="nav-text">项目构建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#聊天窗口构建"><span class="nav-number">2.1.</span> <span class="nav-text">聊天窗口构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebSocketLib构建"><span class="nav-number">2.2.</span> <span class="nav-text">WebSocketLib构建</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体实现请见Demo"><span class="nav-number">3.</span> <span class="nav-text">具体实现请见Demo</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内容"><span class="nav-number">2.</span> <span class="nav-text">内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-获取Ubuntu版本代号"><span class="nav-number">2.1.</span> <span class="nav-text">1.获取Ubuntu版本代号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-修改源文件"><span class="nav-number">2.2.</span> <span class="nav-text">2.修改源文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-运行更新"><span class="nav-number">2.3.</span> <span class="nav-text">3.运行更新</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结尾"><span class="nav-number">3.</span> <span class="nav-text">结尾</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
